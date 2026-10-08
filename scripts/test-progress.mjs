@@ -1,0 +1,62 @@
+import assert from 'node:assert/strict';
+import { createStore, emptyJourney, recordPractice, summarize, localDay, shiftDay, validateBackup, PREFIX } from '../src/progress.mjs';
+
+const ids = ['rope-rotate-pair', 'norm-rmsnorm'];
+const day = '2026-10-08';
+let journey = emptyJourney();
+journey = recordPractice(journey, { id: ids[0], day: '2026-10-06', accepted: false });
+journey = recordPractice(journey, { id: ids[0], day: '2026-10-07', accepted: true });
+assert.equal(summarize(journey, {}, day).streak, 2, 'Yesterday streak remains while today is still available');
+journey = recordPractice(journey, { id: ids[0], day, accepted: false });
+journey = recordPractice(journey, { id: ids[0], day, accepted: true });
+journey = recordPractice(journey, { id: ids[0], day, accepted: true });
+assert.equal(summarize(journey, {}, day).todayAccepted, 1, 'Repeated accepts do not inflate daily goal');
+assert.equal(summarize(journey, {}, day).streak, 3);
+assert.equal(summarize(journey, {}, '2026-10-10').streak, 0);
+assert.equal(summarize(journey, {}, '2026-10-10').best, 3, 'A break preserves best streak');
+assert.equal(summarize(journey, { [ids[0]]: true }, '2026-10-10').solved, 1);
+assert.equal(shiftDay('2024-03-01', -1), '2024-02-29');
+assert.equal(shiftDay('2026-01-01', -1), '2025-12-31');
+assert.equal(localDay(new Date(2026, 9, 8, 0, 1)), day, 'Uses device local date at midnight');
+assert.equal(summarize(emptyJourney(), { [ids[0]]: true }, day).activeDays, 0, 'Legacy solves do not fabricate history');
+
+function memoryStorage(initial = {}) {
+  const values = new Map(Object.entries(initial));
+  return { values, getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
+}
+const storage = memoryStorage({ [PREFIX + 'completed']: JSON.stringify({ [ids[0]]: true }), [PREFIX + 'draft:' + ids[0]]: JSON.stringify('old draft') });
+const store = createStore(() => storage);
+assert.equal(store.get('completed', {})[ids[0]], true, 'Existing prefix is preserved');
+store.set('journey', { ...journey, goal: 3 });
+const backup = store.backup(ids);
+const destination = memoryStorage({ [PREFIX + 'draft:' + ids[0]]: JSON.stringify('newer draft') });
+const imported = createStore(() => destination);
+const result = imported.importBackup(JSON.stringify(backup), ids);
+assert.equal(result.retainedDrafts, 1);
+assert.equal(imported.get('draft:' + ids[0], null), 'newer draft');
+assert.equal(imported.get('journey', null).goal, 3, 'Fresh browser restores the backed-up goal');
+const firstImport = JSON.stringify(imported.backup(ids));
+imported.importBackup(JSON.stringify(backup), ids);
+const twice = imported.backup(ids);
+assert.deepEqual(twice.journey, JSON.parse(firstImport).journey, 'Repeated import is idempotent');
+assert.equal(imported.get('completed', {})[ids[0]], true);
+assert.throws(() => validateBackup('{broken', ids), /valid JSON/);
+assert.throws(() => validateBackup(JSON.stringify({ ...backup, version: 999 }), ids), /supported/);
+assert.throws(() => validateBackup(JSON.stringify({ ...backup, completed: { evil: true } }), ids), /unknown/);
+assert.throws(() => validateBackup(JSON.stringify({ ...backup, journey: { ...journey, days: { '2026-02-30': { runs: 1, accepted: [] } } } }), ids), /activity day/);
+assert.throws(() => validateBackup(JSON.stringify({ ...backup, drafts: JSON.parse('{"__proto__":"attack"}') }), ids), /unknown/);
+
+const blocked = createStore(() => { throw new Error('SecurityError'); });
+assert.equal(blocked.set('draft:' + ids[0], 'unsaved code'), false);
+assert.equal(blocked.backup(ids).drafts[ids[0]], 'unsaved code', 'Unsaved in-memory draft can still be exported');
+assert.ok(blocked.error);
+const quota = memoryStorage();
+quota.setItem(PREFIX + 'completed', JSON.stringify({ [ids[1]]: true }));
+const originalSet = quota.setItem;
+let failOnce = true;
+quota.setItem = (key, value) => { if (key.endsWith('journey') && failOnce) { failOnce = false; throw new Error('QuotaExceeded'); } originalSet(key, value); };
+const rollback = createStore(() => quota);
+assert.throws(() => rollback.importBackup(JSON.stringify(backup), ids), /cancelled/);
+assert.deepEqual(rollback.get('completed', {}), { [ids[1]]: true }, 'Partial imports roll back');
+assert.equal(rollback.get('journey', null), null);
+console.log('PASS progress migration, local dates, streaks, deduplication, backup merge, validation and failed-write recovery');

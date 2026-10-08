@@ -61,6 +61,49 @@ try {
   await page.waitForFunction(() => document.querySelector('#run-note').textContent.startsWith('Accepted'), null, { timeout: 120000 });
   pass('Infinite loop is terminated and subsequent submission recovers');
 
+  await page.goto(base + 'progress/');
+  await page.waitForFunction(() => document.querySelector('#solved-total').textContent === '1');
+  assert.equal(await page.locator('#practice-streak').textContent(), '1');
+  assert.equal(await page.locator('#today-goal-count').textContent(), '1/1');
+  assert.equal(await page.locator('#practice-badges .earned').count(), 1);
+  assert.equal(await page.locator('#activity-calendar .active-day').count(), 1);
+  const dailyHref = await page.locator('#daily-challenge').getAttribute('href');
+  await page.locator('#daily-goal').selectOption('2');
+  await page.reload();
+  await page.waitForFunction(() => document.querySelector('#today-goal-count').textContent === '1/2');
+  assert.equal(await page.locator('#daily-challenge').getAttribute('href'), dailyHref);
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('#export-progress').click();
+  const download = await downloadPromise;
+  await download.saveAs('artifacts/progress-backup.json');
+  const payload = JSON.parse(await (await import('node:fs/promises')).readFile('artifacts/progress-backup.json', 'utf8'));
+  assert.equal(payload.completed[selected.id], true);
+  assert.equal(payload.drafts[selected.id], selected.solution);
+  assert.equal(payload.journey.goal, 2);
+  // A fresh browser context represents a second device without any account.
+  const freshContext = await browser.newContext();
+  const fresh = await freshContext.newPage();
+  await fresh.goto(base + 'progress/');
+  await fresh.waitForFunction(() => document.querySelector('#plan-progress').children.length === 19);
+  assert.equal(await fresh.locator('#solved-total').textContent(), '0');
+  await fresh.locator('#import-progress-file').setInputFiles('artifacts/progress-backup.json');
+  await fresh.waitForFunction(() => document.querySelector('#solved-total').textContent === '1');
+  assert.equal(await fresh.locator('#today-goal-count').textContent(), '1/2');
+  await fresh.locator('#import-progress-file').setInputFiles('artifacts/progress-backup.json');
+  await fresh.waitForFunction(() => document.querySelector('#backup-status').textContent.startsWith('Backup merged'));
+  assert.equal(await fresh.locator('#today-goal-count').textContent(), '1/2');
+  await fresh.goto(base + `problems/${selected.id}/`);
+  assert.equal(await fresh.locator('#code-editor').inputValue(), selected.solution);
+  assert.equal(await fresh.locator('#completion-indicator').isVisible(), true);
+  await freshContext.close();
+  await page.screenshot({ path: 'artifacts/progress-desktop.png', fullPage: true });
+  await page.goto(base + 'problems/');
+  await page.locator('#progress-filter').selectOption('solved');
+  assert.equal(await page.locator('.problem-row:visible').count(), 1);
+  await page.locator('#progress-filter').selectOption('unsolved');
+  assert.equal(await page.locator('.problem-row:visible').count(), 99);
+  pass('Daily progress, stable recommendation, goal persistence, backup transfer to a fresh browser and solved filtering');
+
   // Exercise every published reference through the production Worker and actual Pyodide.
   const verdicts = await page.evaluate(async ({ items, workerUrl }) => {
     const worker = new Worker(workerUrl);
@@ -87,13 +130,16 @@ try {
   }
   pass(`${verdicts.reduce((n, p) => n + p.results.length, 0)} real Pyodide assertions across all 100 problems`);
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const path of ['', 'problems/', `problems/${selected.id}/`, 'privacy/', 'contact/']) {
+  for (const path of ['', 'problems/', `problems/${selected.id}/`, 'progress/', 'privacy/', 'contact/']) {
     await page.goto(base + path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     assert.equal(overflow, false, `Mobile overflow at ${path}`);
   }
   await page.goto(base);
   await page.screenshot({ path: 'artifacts/home-mobile.png', fullPage: true });
+  await page.goto(base + 'progress/');
+  await page.waitForFunction(() => document.querySelector('#solved-total').textContent === '1');
+  await page.screenshot({ path: 'artifacts/progress-mobile.png', fullPage: true });
   await page.goto(base + `problems/${selected.id}/`);
   await page.screenshot({ path: 'artifacts/workbench-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);

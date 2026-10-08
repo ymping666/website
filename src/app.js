@@ -1,11 +1,15 @@
+import { createStore, recordPractice, localDay } from './progress.mjs';
+import { mountProgressUI } from './progress-ui.js';
 const $ = selector => document.querySelector(selector);
 const $$ = selector => Array.from(document.querySelectorAll(selector));
 // Preserve v0.4/v0.5 user drafts and solved records after upgrades.
-const store = {
-  get(key, fallback) { try { const value = localStorage.getItem('frontiercode:v04:' + key); return value === null ? fallback : JSON.parse(value); } catch { return fallback; } },
-  set(key, value) { try { localStorage.setItem('frontiercode:v04:' + key, JSON.stringify(value)); } catch {} }
-};
-const solved = store.get('completed', {});
+const store = createStore(() => localStorage, () => window.dispatchEvent(new Event('fc-progress-change')));
+const initialSolved = store.get('completed', {});
+const solved = initialSolved && typeof initialSolved === 'object' && !Array.isArray(initialSolved) ? initialSolved : {};
+mountProgressUI(store).catch(() => {
+  const notice = $('#global-storage-notice');
+  if (notice) { notice.hidden = false; notice.textContent = 'The progress dashboard could not load. Your saved drafts are still available; reload to retry.'; }
+});
 for (const element of $$('[data-solved]')) {
   if (solved[element.dataset.solved]) { element.textContent = '✓'; element.classList.add('done'); }
 }
@@ -14,15 +18,18 @@ if ($('#catalog-list')) {
     const query = ($('#query').value || '').toLowerCase().trim();
     const track = $('#track-filter').value;
     const difficulty = $('#level-filter').value;
+    const progress = $('#progress-filter')?.value || 'all';
+    const completedNow = store.get('completed', {}) || {};
     let count = 0;
     for (const row of $$('.problem-row')) {
-      const visible = (!query || row.dataset.title.includes(query)) && (track === 'all' || row.dataset.track === track) && (difficulty === 'all' || row.dataset.level === difficulty);
+      const done = completedNow[row.querySelector('[data-solved]').dataset.solved] === true;
+      const visible = (!query || row.dataset.title.includes(query)) && (track === 'all' || row.dataset.track === track) && (difficulty === 'all' || row.dataset.level === difficulty) && (progress === 'all' || (progress === 'solved' ? done : !done));
       row.hidden = !visible;
       count += Number(visible);
     }
     $('#catalog-empty').hidden = count > 0;
   };
-  ['#query', '#track-filter', '#level-filter'].forEach(selector => $(selector).addEventListener('input', filter));
+  ['#query', '#track-filter', '#level-filter', '#progress-filter'].forEach(selector => $(selector)?.addEventListener('input', filter));
 }
 
 if ($('#challenge-json')) {
@@ -46,10 +53,13 @@ if ($('#challenge-json')) {
 
   editor.value = store.get('draft:' + problem.id, problem.starter);
   const updateCompletion = () => {
-    if (solved[problem.id]) { completed.hidden = false; completed.textContent = '✓ Solved locally'; }
+    completed.hidden = !store.get('completed', {})?.[problem.id];
+    if (!completed.hidden) completed.textContent = '✓ Solved locally';
   };
   updateCompletion();
-  editor.addEventListener('input', () => { store.set('draft:' + problem.id, editor.value); saved.textContent = 'Draft saved on this device'; });
+  window.addEventListener('storage', updateCompletion);
+  window.addEventListener('fc-progress-change', updateCompletion);
+  editor.addEventListener('input', () => { const ok = store.set('draft:' + problem.id, editor.value); saved.textContent = ok ? 'Draft saved on this browser' : 'Draft not saved · Download a backup'; });
   editor.addEventListener('keydown', event => {
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -64,8 +74,8 @@ if ($('#challenge-json')) {
   $('#reset-code').addEventListener('click', () => {
     if (editor.value !== problem.starter && !window.confirm('Restore the original starter code? Your current draft will be replaced.')) return;
     editor.value = problem.starter;
-    store.set('draft:' + problem.id, problem.starter);
-    saved.textContent = 'Starter restored';
+    const ok = store.set('draft:' + problem.id, problem.starter);
+    saved.textContent = ok ? 'Starter restored and saved' : 'Starter restored · Not saved · Download a backup';
     editor.focus();
   });
   $('#reveal-hint').addEventListener('click', () => {
@@ -118,6 +128,7 @@ if ($('#challenge-json')) {
   }
   function renderResults(rows, mode, tests, elapsedMs) {
     const passing = rows.filter(item => item.pass).length;
+    store.set('journey', recordPractice(store.get('journey', null), { id: problem.id, day: localDay(), accepted: rows.length > 0 && passing === rows.length && mode === 'submit' }));
     results.replaceChildren();
     const intro = document.createElement('div');
     intro.className = 'result-intro';
@@ -150,6 +161,7 @@ if ($('#challenge-json')) {
     }
     status.textContent = passing === rows.length ? `✓ ${passing}/${rows.length} passed` : `${passing}/${rows.length} passed`;
     if (passing === rows.length && mode === 'submit') {
+      Object.assign(solved, store.get('completed', {}) || {});
       solved[problem.id] = true;
       store.set('completed', solved);
       updateCompletion();

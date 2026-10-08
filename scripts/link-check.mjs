@@ -10,7 +10,7 @@ import {problems} from '../src/problems.mjs';
 import {practiceSets} from '../src/practice-sets.mjs';
 import {concepts} from '../src/concepts.mjs';
 const trackDirs=(await readdir(join(root,'tracks'),{withFileTypes:true})).filter(x=>x.isDirectory()).length;
-const expected=9+practiceSets.length+trackDirs+concepts.length+2*problems.length;
+const expected=10+practiceSets.length+trackDirs+concepts.length+2*problems.length;
 if(pages.length!==expected)errors.push(`Expected ${expected} distinct HTML pages; found ${pages.length}`);
 for(const file of pages){
  const html=await readFile(file,'utf8');
