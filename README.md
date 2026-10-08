@@ -26,7 +26,7 @@ npx playwright install chromium
 npm run check:browser
 ```
 
-`check:browser` serves real files, loads the production Pyodide Worker from the CDN, checks sample failure, successful submission, saved drafts/progress, timeout recovery, all 100 reference solutions, and mobile overflow. Evidence goes to `artifacts/`. Set `TEST_URL` to a deployed URL ending in `/` to test that deployment instead. `PORT` selects a different local port.
+`check:browser` serves real files, loads the production Pyodide Worker from the CDN, checks sample failure, successful submission, saved drafts/progress, timeout recovery, all 100 reference solutions, and mobile overflow. Evidence goes to `artifacts/`. Set `TEST_URL` to a deployed URL ending in `/` to test that deployment instead. `PORT` selects a different local port. If your network requires a proxy, set `TEST_PROXY` to its URL for browser traffic; loopback preview requests bypass it. Proxy addresses and credentials are not stored in this repository.
 
 `npm run check:ui` validates offline UI behavior using real generated files and a **mocked Worker**. This does not verify Python execution. `PLAYWRIGHT_MODULE` and `BROWSER_EXECUTABLE` can select an existing local test runtime; normal installations do not need them.
 
@@ -40,11 +40,11 @@ Current local Windows validation passes:
 - All 261 HTML routes and internal links in both `/` and `/website/` modes.
 - Offline Chrome catalog filtering/empty state, sample failure and submit success, draft/solved persistence, stop controls, and 375px mobile home/catalog/workbench/privacy/contact layouts.
 
-**Pending:** actual CDN Pyodide execution in a connected browser. This execution environment blocks browser navigation to local sites and external CDN access. CPython and mocked-Worker tests cannot replace that check. The GitHub Pages workflow requires live browser validation before deployment.
+**Live Python verified:** 553 actual Pyodide assertions across all 100 problems passed in Windows Chrome through a locally configured proxy, including submission/persistence, infinite-loop termination and recovery, and mobile layout. The GitHub Actions build also passed its real Chromium/Pyodide validation. Offline mocks remain separate from this evidence. The Pages workflow requires live browser validation before each deployment.
 
 ## GitHub Pages test preview
 
-Expected URL after successful deployment: `https://ymping666.github.io/website/`.
+Published test preview: `https://ymping666.github.io/website/`.
 
 The workflow `.github/workflows/deploy-pages.yml` builds and validates `/website/`, runs live browser tests and publishes the `site/` artifact. `.github/workflows/ci.yml` independently validates the root-domain build. Browser evidence and the sitemap are preserved as workflow artifacts.
 
@@ -68,7 +68,7 @@ SITE_BASE=/website/ npm run check
 
 Generated `site/` and test evidence are excluded from Git. GitHub Pages is a project test preview without advertisements. For production, evaluate Cloudflare Pages: build `npm run build`, output `site`, `SITE_BASE=/`, and `SITE_ORIGIN` set to the actual project URL or custom domain. Do not publish placeholder canonical URLs.
 
-**Handoff status:** GitHub upload is blocked by the connected integration returning `403 Resource not accessible by integration`. No online deployment, domain, analytics account or advertising account has been activated. [The launch plan](docs/launch-plan.zh-CN.md) documents cost boundaries, demand validation, migration, metrics and payment considerations.
+**Status (2026-10-08):** Source uploaded, GitHub Pages enabled with HTTPS, root build CI passed, and Pages deployment succeeded. The published home page returned HTTP 200. No custom domain, analytics account or advertising account has been activated. [The launch plan](docs/launch-plan.zh-CN.md) documents cost boundaries, demand validation, migration, metrics and payment considerations.
 
 ## Content and privacy
 

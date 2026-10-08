@@ -2,6 +2,8 @@
 
 更新：2026-10-08。代码仓库：<https://github.com/ymping666/website>。
 
+当前已完成：源码上传、GitHub Pages HTTPS 测试预览发布、根路径与子路径检查、真实 Chrome/Pyodide 的 553 条断言及超时恢复、GitHub 云端浏览器测试。测试站：<https://ymping666.github.io/website/>。尚未购买域名或启用广告、流量分析。
+
 ## 定位与文章经验的应用
 
 面向希望掌握 AI 原理和实现细节的学习者，免费、免注册地完成短 Python 实现题，获取可执行测试和独立题解。现有英文内容优先上线验证，语言扩展应由真实用户反馈决定。

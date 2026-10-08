@@ -22,6 +22,7 @@ try {
     });
   }
   browser = await chromium.launch({ headless: true,
+    ...(process.env.TEST_PROXY ? { proxy: { server: process.env.TEST_PROXY, bypass: '127.0.0.1,localhost' } } : {}),
     ...(process.env.BROWSER_EXECUTABLE ? { executablePath: process.env.BROWSER_EXECUTABLE } : {}) });
   const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
   const errors = [];
