@@ -1,0 +1,266 @@
+[
+  {
+    "id": "cnn-average-pooling",
+    "title": "实现 2×2 平均池化",
+    "description": "计算每个不重叠 2×2 窗口的算术平均值，对特征图下采样。",
+    "requirements": [
+      "image 为非空 H×W 矩形，H、W>=2。",
+      "步长 2、无填充，丢弃不完整边缘窗口。",
+      "每个输出单元是恰好四个输入像素的平均值。"
+    ],
+    "explanation": [
+      "步长 2 的平均池化降低空间分辨率，保留平均激活。",
+      "由于忽略不完整边缘窗口，分母始终为四。"
+    ],
+    "complexity": "时间 O(HW)，空间为池化输出大小。",
+    "pitfall": "不要除以二，也不要纳入已丢弃的尾部像素。",
+    "hints": [
+      "严格按 avg_pool2d 的约定，先手算小例子。",
+      "检查分母与不完整尾部处理。"
+    ],
+    "testNames": [
+      "简单平均",
+      "正负值",
+      "多个窗口",
+      "忽略边缘"
+    ]
+  },
+  {
+    "id": "norm-batch-training",
+    "title": "计算 BatchNorm 训练输出",
+    "description": "用当前小批次估计的统计量实现逐特征批归一化，运行平均值不在本题范围内。",
+    "requirements": [
+      "batch 为 B×D，B>=1；gamma、beta 长度为 D，eps>0。",
+      "每个特征 j 使用 B 行上的总体均值和总体方差。",
+      "返回 B×D 值 gamma[j]*(x-mean[j])/sqrt(var[j]+eps)+beta[j]。"
+    ],
+    "explanation": [
+      "BatchNorm 对当前批次中不同样本的同一特征归一化。",
+      "可学习 gamma、beta 在归一化后施加缩放与平移。"
+    ],
+    "complexity": "时间 O(BD)，输出空间 O(BD)，统计量空间 O(D)。",
+    "pitfall": "不要分别归一化每一行，那更接近 LayerNorm。",
+    "hints": [
+      "严格按 batch_norm_train 的约定，先手算小例子。",
+      "检查是否错误地按行归一化。"
+    ],
+    "testNames": [
+      "两个样本",
+      "仿射偏移",
+      "逐通道统计量",
+      "常量特征",
+      "平移不变性"
+    ]
+  },
+  {
+    "id": "norm-batch-inference",
+    "title": "推理时使用 BatchNorm 运行统计量",
+    "description": "推理时使用固定的运行统计量归一化批次，不重新计算当前输入批次的均值或方差。",
+    "requirements": [
+      "batch 为 B×D；running_mean、running_var、gamma、beta 长度均为 D。",
+      "逐特征应用 y=gamma*(x-running_mean)/sqrt(running_var+eps)+beta。",
+      "不重新计算批次统计量，也不更新运行估计。"
+    ],
+    "explanation": [
+      "推理使用训练阶段累计的运行统计量，不使用当前批次统计量。",
+      "同一样本的结果不应取决于同批推理的其他样本。"
+    ],
+    "complexity": "时间与输出空间 O(BD)。",
+    "pitfall": "不要从当前推理批次重新计算特征均值。",
+    "hints": [
+      "严格按 batch_norm_eval 的约定，先手算小例子。",
+      "检查是否重新计算了当前批次均值。"
+    ],
+    "testNames": [
+      "使用运行均值",
+      "不同特征",
+      "不依赖当前批次",
+      "零方差保持稳定"
+    ]
+  },
+  {
+    "id": "norm-rmsnorm",
+    "title": "实现不去均值的 RMSNorm",
+    "description": "实现现代 Transformer 常用的均方根归一化。与 LayerNorm 不同，RMSNorm 不减去特征均值。",
+    "requirements": [
+      "x 为非空有限实数列表，eps>0。",
+      "计算 rms=sqrt(sum(v*v for v in x)/len(x)+eps)。",
+      "返回每个 x[i]/rms，本题不含可学习增益。"
+    ],
+    "explanation": [
+      "RMSNorm 控制特征向量尺度，但不进行均值消除。",
+      "分母取决于幅值平方均值，而非中心化方差。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要减均值，否则会变成另一种归一化方法。",
+    "hints": [
+      "严格按 rms_norm 的约定，先手算小例子。",
+      "检查是否错误减去了均值。"
+    ],
+    "testNames": [
+      "正常量",
+      "正负向量",
+      "零向量",
+      "不去均值",
+      "单元素"
+    ]
+  },
+  {
+    "id": "norm-rmsnorm-gain",
+    "title": "为 RMSNorm 添加可学习通道增益",
+    "description": "对 RMS 归一化的特征向量应用逐通道可学习增益，不包含偏置项。",
+    "requirements": [
+      "x、gain 为等长非空向量，eps>0。",
+      "计算 y[i]=gain[i]*x[i]/sqrt(mean(x**2)+eps)。",
+      "不对输入去均值，不加入偏移。"
+    ],
+    "explanation": [
+      "增益向量在归一化后提供可学习的逐特征缩放。",
+      "本题指定的 RMSNorm 变体没有偏置和均值消除，与带仿射参数的 BatchNorm、LayerNorm 不同。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要将 gain 简化为共享标量，也不要减去均值后再使用 gain。",
+    "hints": [
+      "严格按 rms_norm_gain 的约定，先手算小例子。",
+      "逐通道使用 gain，并保持不去均值的约定。"
+    ],
+    "testNames": [
+      "零增益",
+      "不同增益",
+      "增益逐通道作用",
+      "零输入"
+    ]
+  },
+  {
+    "id": "autograd-relu-backward",
+    "title": "实现 ReLU 反向传播",
+    "description": "为逐元素 ReLU 实现与上游梯度的链式计算，并明确零点的导数约定。",
+    "requirements": [
+      "x、upstream 为等长向量。",
+      "x[i]>0 时梯度为 upstream[i]；x[i]<=0 时为 0。",
+      "返回新向量，不修改 x 或 upstream。"
+    ],
+    "explanation": [
+      "ReLU 的雅可比矩阵为对角矩阵，正输入处为 1，其余为 0。",
+      "非光滑原点必须明确次梯度约定，本题选择零。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要用上游梯度的符号决定 ReLU 掩码。",
+    "hints": [
+      "严格按 relu_backward 的约定，先手算小例子。",
+      "掩码取决于 x，而非 upstream 的符号。"
+    ],
+    "testNames": [
+      "正负输入混合",
+      "负上游梯度",
+      "全部为零",
+      "空向量"
+    ]
+  },
+  {
+    "id": "autograd-linear-forward",
+    "title": "实现线性层前向传播",
+    "description": "使用列表实现全连接仿射层 y=Wx+b。",
+    "requirements": [
+      "x 长度为 D_in，weights 为 D_out×D_in，biases 长度为 D_out。",
+      "返回 D_out 长度列表，y[o]=sum(weights[o][i]*x[i])+biases[o]。",
+      "权重与偏置已提供，不初始化或更新参数。"
+    ],
+    "explanation": [
+      "每个输出特征具有自己的一行权重。",
+      "沿全部输入特征求和后再加偏置。"
+    ],
+    "complexity": "时间 O(D_in D_out)，输出空间 O(D_out)。",
+    "pitfall": "除非约定输入维度优先存储，否则不要转置权重矩阵。",
+    "hints": [
+      "严格按 linear_forward 的约定，先手算小例子。",
+      "检查权重布局，不要误转置。"
+    ],
+    "testNames": [
+      "恒等变换",
+      "多个输出",
+      "零输入",
+      "单特征"
+    ]
+  },
+  {
+    "id": "autograd-mse-gradient",
+    "title": "对均方误差求导",
+    "description": "为非空向量计算均方误差相对于预测值的梯度。",
+    "requirements": [
+      "predictions、targets 为等长非空向量。",
+      "损失为 (1/n)*sum((pred-target)**2)。",
+      "返回梯度 2*(predictions[i]-targets[i])/n。"
+    ],
+    "explanation": [
+      "残差平方的导数为两倍残差。",
+      "损失沿 n 个元素取平均，因此每项梯度含 1/n 因子。"
+    ],
+    "complexity": "时间与输出空间 O(n)。",
+    "pitfall": "不要遗漏平均因子，也不要误对 targets 求导。",
+    "hints": [
+      "严格按 mse_gradient 的约定，先手算小例子。",
+      "检查归约因子与求导对象。"
+    ],
+    "testNames": [
+      "单元素",
+      "平均归约",
+      "零误差",
+      "负误差"
+    ]
+  },
+  {
+    "id": "autograd-linear-backward",
+    "title": "实现线性层反向传播",
+    "description": "给定单样本仿射变换 y=Wx+b 的上游 dL/dy，计算各项梯度。",
+    "requirements": [
+      "x 长度 D_in，weights 为 D_out×D_in，upstream 长度 D_out。",
+      "返回 (dx,dw,db)，其中 dx[i]=sum(weights[o][i]*upstream[o])。",
+      "返回 dw[o][i]=upstream[o]*x[i]，db[o]=upstream[o]。"
+    ],
+    "explanation": [
+      "输入梯度由转置权重作用于上游梯度得到。",
+      "权重梯度是上游向量与输入向量的外积。"
+    ],
+    "complexity": "时间 O(D_in D_out)，返回权重梯度空间 O(D_in D_out)。",
+    "pitfall": "不要混淆权重梯度形状 D_out×D_in 与输入梯度形状 D_in。",
+    "hints": [
+      "严格按 linear_backward 的约定，先手算小例子。",
+      "分别检查 dx、dw、db 的形状。"
+    ],
+    "testNames": [
+      "单输出",
+      "两个输出",
+      "零上游梯度",
+      "负上游梯度",
+      "形状"
+    ]
+  },
+  {
+    "id": "autograd-central-difference",
+    "title": "用中心差分检查梯度",
+    "description": "为标量值 Python 函数实现数值梯度估计，用于核对解析反向传播。",
+    "requirements": [
+      "f 为标量 x 的纯标量函数，h 严格为正。",
+      "返回 (f(x+h)-f(x-h))/(2*h)。",
+      "只在 x+h 和 x-h 调用 f，不修改外部状态。"
+    ],
+    "explanation": [
+      "中心差分消除了前向差分的一阶泰勒截断误差。",
+      "数值检查只能局部验证梯度，不能替代训练规模上的反向传播。"
+    ],
+    "complexity": "O(1) 次标量函数评估，空间 O(1)。",
+    "pitfall": "不要使用单侧 (f(x+h)-f(x))/h，其截断误差不同。",
+    "hints": [
+      "严格按 central_difference 的约定，先手算小例子。",
+      "确认使用两侧评估及 2*h 分母。"
+    ],
+    "testNames": [
+      "二次函数",
+      "线性函数",
+      "三次函数零点",
+      "正弦函数",
+      "负斜率"
+    ]
+  }
+]

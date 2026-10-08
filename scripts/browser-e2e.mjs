@@ -81,9 +81,10 @@ try {
   assert.equal(payload.drafts[selected.id], selected.solution);
   assert.equal(payload.journey.goal, 2);
   // A fresh browser context represents a second device without any account.
-  const freshContext = await browser.newContext();
+  const freshContext = await browser.newContext({locale:'zh-CN'});
   const fresh = await freshContext.newPage();
   await fresh.goto(base + 'progress/');
+  assert.equal(await fresh.locator('html').getAttribute('lang'), 'en', 'English default even with a Chinese browser locale');
   await fresh.waitForFunction(() => document.querySelector('#plan-progress').children.length === 19);
   assert.equal(await fresh.locator('#solved-total').textContent(), '0');
   await fresh.locator('#import-progress-file').setInputFiles('artifacts/progress-backup.json');
@@ -123,6 +124,52 @@ try {
   assert.equal(await page.locator('.problem-row:visible').count(), 99);
   pass('Daily progress, stable recommendation, goal persistence, backup transfer to a fresh browser and solved filtering');
 
+  await page.goto(base + `problems/${selected.id}/`);
+  await page.locator('[data-language="zh"]').click();
+  assert.equal(page.url(), base + `zh/problems/${selected.id}/`);
+  assert.equal(await page.locator('html').getAttribute('lang'), 'zh-CN');
+  assert.match(await page.locator('h1').textContent(), /RoPE.*二维特征/);
+  assert.equal(await page.locator('#code-editor').inputValue(), selected.solution);
+  await page.waitForFunction(() => document.querySelector('#completion-indicator').textContent.includes('已在本地通过'));
+  await page.locator('#code-editor').fill(selected.solution + '\n# 中文页面保留同一份草稿');
+  await page.locator('#run-samples').click();
+  await page.waitForFunction(() => document.querySelector('#status').textContent === '✓ 2/2 通过', null, {timeout:120000});
+  await page.locator('#reveal-hint').click();
+  assert.match(await page.locator('#hint-text').textContent(), /[\u4e00-\u9fff]/);
+  await page.locator('.panel-tabs a').click();
+  assert.equal(page.url(), base + `zh/editorials/${selected.id}/`);
+  assert.match(await page.locator('h1').textContent(), /题解/);
+  assert.equal(await page.locator('.code-pre').textContent(), selected.solution);
+  await page.locator('[data-language="en"]').click();
+  assert.equal(page.url(), base + `editorials/${selected.id}/`);
+  await page.goto(base + `problems/${selected.id}/`);
+  assert.equal(await page.locator('#code-editor').inputValue(), selected.solution + '\n# 中文页面保留同一份草稿');
+  await page.locator('#code-editor').fill(selected.solution);
+  await page.goto(base + 'zh/problems/');
+  await page.locator('#query').fill('安全解析');
+  assert.equal(await page.locator('.problem-row:visible').count(), 1);
+  await page.locator('#level-filter').selectOption('Medium');
+  assert.equal(await page.locator('.problem-row:visible').count(), 1);
+  await page.locator('#level-filter').selectOption('Easy');
+  assert.equal(await page.locator('.problem-row:visible').count(), 0);
+  await page.locator('#level-filter').selectOption('all');
+  await page.locator('#query').fill('RMSNorm');
+  assert.equal(await page.locator('.problem-row:visible').count(), 2);
+  await page.goto(base + 'zh/progress/');
+  await page.waitForFunction(() => document.querySelector('#solved-total').textContent === '1');
+  assert.equal(await page.locator('#today-goal-count').textContent(), '1/2');
+  assert.ok((await page.locator('#resume-practice').getAttribute('href')).includes('/zh/problems/'));
+  assert.match(await page.locator('#resume-practice').textContent(), /继续/);
+  const chineseBackupPromise = page.waitForEvent('download');
+  await page.locator('#export-progress').click();
+  await (await chineseBackupPromise).saveAs('artifacts/chinese-progress-backup.json');
+  const chineseBackup = JSON.parse(await (await import('node:fs/promises')).readFile('artifacts/chinese-progress-backup.json','utf8'));
+  assert.equal(chineseBackup.completed[selected.id], true);
+  assert.equal(chineseBackup.drafts[selected.id], selected.solution);
+  await page.waitForFunction(() => document.querySelector('#backup-status').textContent.startsWith('备份已下载'));
+  await page.goto(base + 'problems/');
+  pass('English default, same-page Chinese switch, shared draft/progress, Chinese Python feedback/editorial/search and compatible backup');
+
   // Exercise every published reference through the production Worker and actual Pyodide.
   const verdicts = await page.evaluate(async ({ items, workerUrl }) => {
     const worker = new Worker(workerUrl);
@@ -149,7 +196,7 @@ try {
   }
   pass(`${verdicts.reduce((n, p) => n + p.results.length, 0)} real Pyodide assertions across all 100 problems`);
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const path of ['', 'problems/', `problems/${selected.id}/`, 'progress/', 'privacy/', 'contact/']) {
+  for (const path of ['', 'problems/', `problems/${selected.id}/`, 'progress/', 'privacy/', 'contact/', 'zh/', 'zh/problems/', `zh/problems/${selected.id}/`, `zh/editorials/${selected.id}/`, 'zh/progress/']) {
     await page.goto(base + path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     assert.equal(overflow, false, `Mobile overflow at ${path}`);
@@ -161,6 +208,10 @@ try {
   await page.screenshot({ path: 'artifacts/progress-mobile.png', fullPage: true });
   await page.goto(base + `problems/${selected.id}/`);
   await page.screenshot({ path: 'artifacts/workbench-mobile.png', fullPage: true });
+  await page.goto(base + `zh/problems/${selected.id}/`);
+  await page.screenshot({ path: 'artifacts/workbench-zh-mobile.png', fullPage: true });
+  await page.goto(base + 'zh/');
+  await page.screenshot({ path: 'artifacts/home-zh-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
   pass('375px mobile layout and no uncaught page errors');
   await writeFile('artifacts/browser-report.json', JSON.stringify({ base, checks, problems: verdicts.length,

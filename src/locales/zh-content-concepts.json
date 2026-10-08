@@ -1,0 +1,158 @@
+[
+  {
+    "slug": "numerical-building-blocks",
+    "title": "数值计算基础模块",
+    "summary": "实现现代架构底层的算术、归一化与激活函数。",
+    "prerequisites": "尚未从零实现过神经网络层，可以从这里开始。"
+  },
+  {
+    "slug": "attention-fundamentals",
+    "title": "注意力与因果掩码",
+    "summary": "组装 Transformer 前，理解注意力分数、归一化与信息流限制。",
+    "prerequisites": "需要基本的矩阵与 Softmax 直觉。"
+  },
+  {
+    "slug": "multi-head-attention",
+    "title": "多头注意力布局",
+    "summary": "练习沿特征轴拆分头与逆向拼接，每个头保留独立通道块。",
+    "prerequisites": "需要理解张量形状与基本注意力。"
+  },
+  {
+    "slug": "transformer-blocks",
+    "title": "Transformer 模块组件",
+    "summary": "将归一化、位置编码、激活与前置归一化残差顺序拆成独立确定性模块。",
+    "prerequisites": "需要向量运算基础。"
+  },
+  {
+    "slug": "vision-transformer",
+    "title": "视觉 Transformer（ViT）",
+    "summary": "将图像转为块 token，加入分类 token 与位置嵌入，理解编码器输入布局。",
+    "prerequisites": "需要理解 token 与 Transformer 输入。"
+  },
+  {
+    "slug": "gan-objectives",
+    "title": "GAN 与 WGAN-GP 目标",
+    "summary": "分别实现判别器、生成器与 WGAN 梯度惩罚项。",
+    "prerequisites": "需要 Logistic 损失与基本向量范数。"
+  },
+  {
+    "slug": "diffusion-forward",
+    "title": "扩散：前向过程",
+    "summary": "连接 Beta 调度、累计信号保留、直接加噪采样与 epsilon 回归。",
+    "prerequisites": "需要基本概率与向量运算。"
+  },
+  {
+    "slug": "diffusion-reverse",
+    "title": "扩散：反向采样",
+    "summary": "区分干净样本重建、DDPM 后验均值与确定性 DDIM 转移。",
+    "prerequisites": "需要理解前向过程中的 alpha 与 alpha_bar。"
+  },
+  {
+    "slug": "diffusion-guidance",
+    "title": "扩散：引导方法",
+    "summary": "比较无分类器条件／无条件混合与分类器梯度的反向均值偏移。",
+    "prerequisites": "需要扩散去噪基础；CFG 与分类器引导是不同算法。"
+  },
+  {
+    "slug": "dit-conditioning",
+    "title": "DiT：AdaLN 与 AdaLN-Zero",
+    "summary": "理解条件平移与缩放如何进入归一化特征，以及零门控如何保持恒等残差。",
+    "prerequisites": "需要层归一化与残差连接知识。"
+  },
+  {
+    "slug": "vae-vqvae",
+    "title": "VAE 与 VQ-VAE 组件",
+    "summary": "分别练习连续潜在变量、KL、离散码本与重建目标。",
+    "prerequisites": "需要基本概率与平方误差损失。"
+  },
+  {
+    "slug": "flow-matching",
+    "title": "Flow Matching 组件",
+    "summary": "先实现概率路径、目标速度、采样求解器与引导计算，再研究大型扩散 Transformer。",
+    "prerequisites": "需要数值 ODE 的基本直觉。"
+  },
+  {
+    "slug": "agent-control",
+    "title": "智能体控制与可靠性",
+    "summary": "尝试多智能体架构前，学习基本控制规则、轨迹验证与工具边界。",
+    "prerequisites": "需要 Python 函数与结构化数据基础。"
+  },
+  {
+    "slug": "state-estimation",
+    "title": "世界模型：状态与信念",
+    "summary": "从状态估计、马尔可夫转移与贝叶斯信念更新开始学习世界模型。",
+    "prerequisites": "需要概率与动力学状态定义。"
+  },
+  {
+    "slug": "cnn-convolutions",
+    "title": "CNN：卷积与通道混合",
+    "summary": "不使用外部库，实现 Valid／Same 空间卷积与 1×1 通道投影。",
+    "prerequisites": "需要矩阵乘法与嵌套循环。"
+  },
+  {
+    "slug": "cnn-pooling",
+    "title": "CNN：空间池化",
+    "summary": "比较步长 2 的最大与平均池化，包括不完整边缘处理。",
+    "prerequisites": "需要二维数组索引与局部算子知识。"
+  },
+  {
+    "slug": "batch-normalization",
+    "title": "BatchNorm：训练与推理",
+    "summary": "比较当前批次特征统计量与固定运行统计量。",
+    "prerequisites": "需要均值、方差和逐特征仿射变换。"
+  },
+  {
+    "slug": "rms-normalization",
+    "title": "RMSNorm：核心与增益",
+    "summary": "区分均方根归一化、可学习逐元素增益与 LayerNorm。",
+    "prerequisites": "需要特征归一化与 epsilon 数值稳定知识。"
+  },
+  {
+    "slug": "gradient-backpropagation",
+    "title": "反向传播与梯度检查",
+    "summary": "推导激活、仿射层和 MSE 梯度，并用数值方法验证。",
+    "prerequisites": "需要一元微积分与基本矩阵知识。"
+  },
+  {
+    "slug": "sgd-and-gradient-clipping",
+    "title": "SGD 动量与梯度裁剪",
+    "summary": "控制梯度尺度，在步骤之间维护优化器速度状态。",
+    "prerequisites": "需要导数与向量范数。"
+  },
+  {
+    "slug": "adam-and-adamw",
+    "title": "Adam 与 AdamW 优化器",
+    "summary": "分别理解矩偏差校正、参数更新和解耦权重衰减。",
+    "prerequisites": "需要 SGD、矩估计与平方根知识。"
+  },
+  {
+    "slug": "rope-rotary-position",
+    "title": "RoPE：旋转位置嵌入",
+    "summary": "先旋转单个特征对，再对 token 应用位置与频率相关的旋转。",
+    "prerequisites": "需要弧度、三角函数与注意力通道布局。"
+  },
+  {
+    "slug": "swiglu-gating",
+    "title": "SwiGLU 门控激活",
+    "summary": "在 Transformer 前馈路径中区分 SiLU 门控与普通 Sigmoid 门控。",
+    "prerequisites": "需要 Sigmoid、乘法与稳定指数计算。"
+  },
+  {
+    "slug": "attention-padding-masks",
+    "title": "注意力键填充掩码",
+    "summary": "将填充键过滤与因果掩码分别练习。",
+    "prerequisites": "需要基本注意力分数与掩码 Softmax。"
+  },
+  {
+    "slug": "ddpm-reverse-sampling",
+    "title": "DDPM 反向采样",
+    "summary": "区分后验均值计算与按方差缩放的反向高斯采样。",
+    "prerequisites": "需要 DDPM 前向调度与 x0 重建知识。"
+  },
+  {
+    "slug": "gan-loss-derivatives",
+    "title": "GAN 判别器梯度",
+    "summary": "将 Logistic 损失对 logit 的梯度，与判别器、生成器标量目标分开推导。",
+    "prerequisites": "需要 Sigmoid 与二元分类损失知识。"
+  }
+]

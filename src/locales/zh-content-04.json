@@ -1,0 +1,291 @@
+[
+  {
+    "id": "video-frame-mse",
+    "title": "计算像素重建 MSE",
+    "description": "视频解码器重建一系列展平的等大小帧。请实现全部帧、全部像素上的均方误差。",
+    "requirements": [
+      "pred 与 target 是同形帧列表，每帧是非空有限浮点列表；外层列表可以同时为空。",
+      "返回像素差平方和，除以全部帧的像素总数。",
+      "两个空视频返回 0.0，不修改任一视频。"
+    ],
+    "explanation": [
+      "将视频视为像素集合，可得到不依赖张量库的清晰重建目标。",
+      "按标量像素数量归一化；若帧宽不同，逐帧等权平均可能产生不同结果。",
+      "此目标衡量逐点保真度，不衡量感知或时间质量。"
+    ],
+    "complexity": "P 个像素，时间 O(P)，额外空间 O(1)。",
+    "pitfall": "除以帧数而非像素数会改变损失尺度。",
+    "hints": [
+      "遍历两层结构，累计差值平方。",
+      "统计标量像素，而非帧。"
+    ],
+    "testNames": [
+      "两帧",
+      "单像素",
+      "全部相同",
+      "空序列",
+      "不同帧宽",
+      "保留输入"
+    ]
+  },
+  {
+    "id": "video-temporal-velocity",
+    "title": "计算相邻帧差分向量",
+    "description": "给定潜在帧特征向量序列，估计相邻观测之间的离散时间变化。",
+    "requirements": [
+      "frames 是等长有限浮点向量列表，向量可以为空。",
+      "为每对相邻帧返回 frames[t+1] - frames[t]，保持坐标顺序。",
+      "不足两帧时返回 []，不修改输入。"
+    ],
+    "explanation": [
+      "有限差分近似潜在特征的时间变化。",
+      "相邻变化保留时间顺序，可作为简单的速度类特征。",
+      "这不是图像像素间的光流，本身也不编码几何。"
+    ],
+    "complexity": "T 帧、维度 D，时间与输出空间均为 O(TD)。",
+    "pitfall": "只计算末帧与首帧的差，得到位移而非每次局部转移。",
+    "hints": [
+      "使用 zip(frames, frames[1:])。",
+      "各坐标用新值减旧值。"
+    ],
+    "testNames": [
+      "两帧",
+      "三帧",
+      "单帧",
+      "空帧列表",
+      "零维",
+      "保留输入"
+    ]
+  },
+  {
+    "id": "vae-reparameterization",
+    "title": "实现高斯 VAE 重参数化",
+    "description": "使用给定 epsilon 样本，实现 VAE 重参数化技巧中的确定性计算，不进行随机采样。",
+    "requirements": [
+      "mean、logvar、epsilon 为等长有限浮点列表，允许为空。",
+      "每维返回 mean[i] + exp(0.5 * logvar[i]) * epsilon[i]。",
+      "精确使用提供的 epsilon，不生成随机数，不修改输入。"
+    ],
+    "explanation": [
+      "VAE 编码器返回分布参数，而非直接采样独立潜在变量。",
+      "标准差等于 exp(logvar / 2)，不是 exp(logvar)。",
+      "固定 epsilon，使计算在浏览器判题中确定且可测。"
+    ],
+    "complexity": "D 个潜在维度，时间与输出空间 O(D)。",
+    "pitfall": "乘以 exp(logvar) 使用的是方差，而非标准差。",
+    "hints": [
+      "从对数方差计算标准差。",
+      "乘 epsilon 后再加均值。"
+    ],
+    "testNames": [
+      "单位方差",
+      "方差为四",
+      "epsilon 为零",
+      "二维",
+      "空输入",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "vae-standard-normal-kl",
+    "title": "计算 VAE 相对标准正态的 KL",
+    "description": "计算 q(z|x)=N(mu,diag(exp(logvar))) 与标准正态先验之间的对角高斯 KL 散度。",
+    "requirements": [
+      "mu 与 logvar 为等长有限浮点列表，表示独立潜在维度。",
+      "返回 0.5 * sum(exp(logvar[i]) + mu[i]**2 - 1 - logvar[i])。",
+      "空向量返回 0.0，不截断中间值，不修改输入。"
+    ],
+    "explanation": [
+      "闭式高斯 KL 是传统 VAE ELBO 的正则项。",
+      "本题对单个样本的潜在维度求和，批次平均不在范围内。",
+      "结果为零表示近似后验与单位高斯先验一致。"
+    ],
+    "complexity": "时间 O(D)，额外空间 O(1)。",
+    "pitfall": "将 exp(logvar) 替换为 logvar，会混淆方差与其对数。",
+    "hints": [
+      "方差等于 exp(logvar)。",
+      "将方差与均值平方相加，再减 1 和对数方差。"
+    ],
+    "testNames": [
+      "后验匹配先验",
+      "非零均值",
+      "非单位方差",
+      "二维",
+      "空输入",
+      "正 KL 示例"
+    ]
+  },
+  {
+    "id": "vae-beta-objective",
+    "title": "组合重建损失与 Beta-VAE KL",
+    "description": "简化的 beta-VAE 单样本训练损失需要平衡重建误差与潜在 KL 正则。",
+    "requirements": [
+      "reconstruction 为每个像素的非负有限平方误差列表，可以为空。",
+      "kl_per_dim 为各潜在维度的非负 KL 贡献，beta 为有限非负浮点数。",
+      "返回 mean(reconstruction)（为空则取 0.0）加上 beta * sum(kl_per_dim)。"
+    ],
+    "explanation": [
+      "本题明确对标量像素损失求平均。",
+      "KL 对潜在维度求和，再乘 beta。",
+      "真实 VAE 可能使用伯努利或高斯负对数似然及不同归约方式，应明确具体约定。"
+    ],
+    "complexity": "时间 O(P+D)，额外空间 O(1)。",
+    "pitfall": "对 KL 维度取平均，会在维度改变时改变题设权重。",
+    "hints": [
+      "单独计算重建平均值。",
+      "加上 beta 乘以 KL 总和。"
+    ],
+    "testNames": [
+      "典型损失",
+      "beta 为零",
+      "空重建项",
+      "空 KL 项",
+      "两项均空",
+      "像素平均"
+    ]
+  },
+  {
+    "id": "vqvae-nearest-code",
+    "title": "寻找最近的 VQ-VAE 码本条目",
+    "description": "用平方欧氏距离，将连续编码器潜在向量映射到最近离散码本嵌入的索引。",
+    "requirements": [
+      "vector 为 D 维浮点列表，codebook 为非空 D 维浮点向量列表，D 可以为零。",
+      "返回使 sum((vector[d]-code[d])**2) 最小的码本索引，从零计数。",
+      "精确平局选最小索引，不修改向量。"
+    ],
+    "explanation": [
+      "VQ 编码器用最近的学习嵌入替换连续潜在向量。",
+      "平方欧氏距离无需开平方，且保持最近邻排名。",
+      "明确平局规则，使多次运行的码本索引稳定。"
+    ],
+    "complexity": "K 个 D 维码本条目，时间 O(KD)，辅助空间 O(1)。",
+    "pitfall": "按向量范数或逐坐标单独选择，都不等于最小总平方距离。",
+    "hints": [
+      "为每个码本向量计算差值平方和。",
+      "使用 min(range(len(codebook)), key=...) 稳定处理平局。"
+    ],
+    "testNames": [
+      "基本最近邻",
+      "单条码本",
+      "平局取最小索引",
+      "精确平局",
+      "零维向量",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "vqvae-codebook-perplexity",
+    "title": "计算 VQ-VAE 码本使用困惑度",
+    "description": "使用 exp(entropy) 衡量视频编码块对有限 VQ 码本的使用是否均匀。",
+    "requirements": [
+      "indices 为 [0, n_codes) 内整数 ID 列表，n_codes 为正整数。",
+      "非空时 p[k] = occurrences(k)/len(indices)，困惑度 = exp(-sum(p[k]*log(p[k]) for p[k]>0))。",
+      "空 indices 返回 0.0，绝不计算 log(0)。"
+    ],
+    "explanation": [
+      "使用困惑度是离散码本分配熵的指数。",
+      "均匀使用 K 个码的困惑度为 K，塌缩到单个码时为 1。",
+      "未使用码对熵贡献零，不应导致零的对数错误。"
+    ],
+    "complexity": "时间 O(N+K)，额外空间 O(K)。",
+    "pitfall": "按配置码本大小而非分配总次数归一化，会得到错误分布。",
+    "hints": [
+      "统计每种码 ID 的次数。",
+      "熵求和时忽略零概率项。"
+    ],
+    "testNames": [
+      "均匀使用两个码",
+      "码本塌缩",
+      "均匀使用四个码",
+      "单样本",
+      "空分配",
+      "未使用码"
+    ]
+  },
+  {
+    "id": "vqvae-quantization-error",
+    "title": "衡量 VQ 码本量化失真",
+    "description": "给定量化码本向量与编码器输出，计算全部标量潜在坐标上的平均平方量化失真。",
+    "requirements": [
+      "encoder 与 quantized 为同形向量列表，所有向量维度为同一个正整数 D。",
+      "返回坐标差平方和除以坐标总数 N*D。",
+      "两列表均空时返回 0.0。输入视为固定数组，不实现停止梯度。"
+    ],
+    "explanation": [
+      "量化失真衡量连续潜在向量与所选离散向量的距离。",
+      "平方距离与 VQ-VAE 码本损失、承诺损失有关，但梯度路径不同。",
+      "该确定性损失函数不进行反向传播，也不实现直通梯度。"
+    ],
+    "complexity": "时间 O(ND)，额外空间 O(1)。",
+    "pitfall": "用绝对误差替代平方误差，会改变量化目标。",
+    "hints": [
+      "累计全部潜在坐标的差值平方。",
+      "除以标量坐标总数。"
+    ],
+    "testNames": [
+      "两个向量",
+      "完美匹配",
+      "单坐标",
+      "空输入",
+      "按元素取平均"
+    ]
+  },
+  {
+    "id": "video-latent-sequence",
+    "title": "展平时空视频 Token",
+    "description": "量化视频具有按时间、行、列索引的离散潜在网格。请按时间优先、行优先顺序展平，供自回归先验使用。",
+    "requirements": [
+      "codes 为非空 T 帧列表，每帧有 H 行、每行 W 个整数码 ID；T、H、W 为一致的正整数。",
+      "返回 codes[t][y][x] 序列，t 为最外层，y 次之，x 最内层。",
+      "保留重复与零 ID，不排序输出 token。"
+    ],
+    "explanation": [
+      "VideoGPT 类模型可以预测量化的时空 token 序列。",
+      "token 顺序是数据约定的一部分，决定哪些 token 属于较早上下文。",
+      "展平保留离散码身份，并不训练 Transformer。"
+    ],
+    "complexity": "时间与输出空间 O(THW)。",
+    "pitfall": "先展平空间列、再处理时间，会改变自回归顺序。",
+    "hints": [
+      "依次遍历帧、行、token。",
+      "不对索引排序。"
+    ],
+    "testNames": [
+      "两帧",
+      "单像素",
+      "不得排序 token",
+      "三帧",
+      "相同码重复",
+      "矩形网格"
+    ]
+  },
+  {
+    "id": "video-temporal-patchify",
+    "title": "切分时间潜在序列",
+    "description": "将固定宽度的帧特征分组为不重叠的时间块，同时保留时间顺序。",
+    "requirements": [
+      "frames 为 T 个等宽特征向量列表，patch_size 为严格正整数。",
+      "返回展平时间块列表，每块拼接 patch_size 个连续帧。",
+      "丢弃末尾不完整组；不足 patch_size 帧时返回 []。"
+    ],
+    "explanation": [
+      "时间分块以更粗的 token 分辨率换取更短序列。",
+      "每块拼接必须保持时间与特征顺序。",
+      "这是时间分组的简化算子，不是生产视频 VAE 的空间三维卷积。"
+    ],
+    "complexity": "T 帧、宽度 D，时间与输出空间 O(TD)。",
+    "pitfall": "步长为 1 会形成重叠窗口，而非要求的不重叠块。",
+    "hints": [
+      "每次将 t 增加 patch_size。",
+      "限制遍历范围，忽略最后的不完整块。"
+    ],
+    "testNames": [
+      "每块两帧",
+      "丢弃不完整尾部",
+      "块大小为一",
+      "帧数不足",
+      "空输入",
+      "不修改输入"
+    ]
+  }
+]

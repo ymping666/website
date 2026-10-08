@@ -1,0 +1,314 @@
+[
+  {
+    "id": "agent-jsonrpc-response",
+    "title": "验证 JSON-RPC 工具响应封装",
+    "description": "工具集成常交换 JSON-RPC 形式的消息。请验证简化响应结构，区分成功结果与远端错误。",
+    "requirements": [
+      "message 为解析 JSON 后的 Python 对象；expected_id 为 str 或 int，bool 不是有效 ID。",
+      "有效响应必须是字典，jsonrpc == \"2.0\"，且 id 的类型和值均与 expected_id 相同。",
+      "\"result\" 与 \"error\" 必须恰好存在一个。result 可为任意 JSON 值，包括 None。",
+      "使用 error 时，它必须是字典，code 为非 bool 的 int，message 为非空白字符串。返回 \"success\"、\"remote_error\" 或 \"invalid\"。"
+    ],
+    "explanation": [
+      "不要假设任意已解析 JSON 都具有 RPC 响应结构。",
+      "检查键是否存在，而非值是否为真；null 是合法的成功结果。",
+      "关联 ID 必须同时匹配类型和值。Python 中 True == 1，因此必须显式比较类型。",
+      "有效远端错误不同于无效协议封装，调用方应分别处理。"
+    ],
+    "complexity": "字段视为已解析对象，时间 O(1)，额外空间 O(1)。",
+    "pitfall": "用 message.get(\"result\") 判断成功，会拒绝 result=None 的有效响应。",
+    "hints": [
+      "对两个键的存在检查使用异或，确保恰好一种结果。",
+      "注意 Python bool 是 int 的子类。"
+    ],
+    "testNames": [
+      "有效结果",
+      "null 结果有效",
+      "远端错误",
+      "同时含两个结果字段无效",
+      "缺少字段",
+      "ID 类型不匹配",
+      "错误码无效",
+      "版本无效",
+      "容器类型错误"
+    ]
+  },
+  {
+    "id": "world-discrete-bayes-filter",
+    "title": "更新离散 POMDP 信念状态",
+    "description": "部分可观测世界模型先用转移矩阵预测下一隐藏状态，再按贝叶斯法则纳入新观测。",
+    "requirements": [
+      "belief 是长度 n 的概率向量；transition 为 n×n 行随机矩阵，transition[i][j] = P(s_next=j | s=i)。",
+      "likelihood[j] 为 P(observation | s_next=j)，所有元素有限且非负，维度保证一致。",
+      "计算 predicted[j] = sum_i belief[i] * transition[i][j]，再计算 posterior[j] ∝ predicted[j] * likelihood[j]。",
+      "归一化使和为 1。归一化常数为零时抛出 ValueError，返回新列表，不修改输入。"
+    ],
+    "explanation": [
+      "预测：用动作条件转移模型对上一隐藏状态边缘化，本题隐含固定动作。",
+      "更新：将每个预测状态概率乘以新观测的似然。",
+      "归一化未归一的后验。证据项为零表示观测在给定模型下不可能发生。",
+      "返回的是隐藏状态上的信念分布，而非单个最可能状态。"
+    ],
+    "complexity": "n 个隐藏状态，时间 O(n²)，额外空间 O(n)。",
+    "pitfall": "只归一化观测似然，会丢掉动力学先验。",
+    "hints": [
+      "对每个目标状态 j，沿源状态 i 求和。",
+      "所有状态乘以似然后再统一归一化。"
+    ],
+    "testNames": [
+      "单位转移矩阵",
+      "状态互换",
+      "动力学结合观测",
+      "均匀似然保留先验",
+      "零证据",
+      "单状态",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "world-belief-propagation",
+    "title": "传播线性高斯状态信念",
+    "description": "简化随机动力学为 x_(t+1) = a*x_t + u_t + noise，其中过程噪声是独立的零均值高斯噪声。请沿控制序列传播均值与方差。",
+    "requirements": [
+      "mean、variance 为初始高斯信念的标量参数，variance >= 0；假设 process_var >= 0，控制值有限。",
+      "每个控制 u 更新 mean = a*mean + u。",
+      "更新 variance = (a*a)*variance + process_var，独立于 u。",
+      "返回每次控制之后的 [(next_mean, next_variance), ...]，不包含初始状态；控制为空则返回 []。"
+    ],
+    "explanation": [
+      "线性高斯转移的期望和方差可解析传播，无需采样。",
+      "随机变量乘以 a，方差乘以 a²；独立加性噪声贡献 process_var。",
+      "即使均值轨迹合理，较长的想象轨迹仍可能累积不确定性。"
+    ],
+    "complexity": "T 个控制，时间 O(T)，输出及额外空间 O(T)。",
+    "pitfall": "用 a 而非 a² 更新方差是错误的，a 为负时还可能产生负方差。",
+    "hints": [
+      "均值遵循确定性转移。",
+      "方差每步乘 a**2，再加过程噪声方差。"
+    ],
+    "testNames": [
+      "两个控制",
+      "负动力学系数",
+      "零动力学系数",
+      "空控制序列",
+      "确定性情况",
+      "每步加入过程方差"
+    ]
+  },
+  {
+    "id": "world-rollout-error-curve",
+    "title": "计算多步轨迹误差曲线",
+    "description": "单步预测准确率可能掩盖累积模型误差。请构建误差曲线，记录开环预测长度增长时的累计均方误差。",
+    "requirements": [
+      "predicted 与 target 为等长状态向量序列，每个向量具有相同的非零维度 d；序列可以为空。",
+      "对长度 h（从 1 计数），返回前 h 个状态向量、全部 d 个坐标上的平均平方误差。",
+      "输出长度为 T 的列表，对应 h=1..T 的每个前缀；T=0 时返回 []。",
+      "不修改输入，不使用 NumPy 或外部包。"
+    ],
+    "explanation": [
+      "随着长度增加，可逐步累计各时间步坐标误差。",
+      "前缀分母为 h*d，使每个长度评估截至该步的全部坐标。",
+      "误差曲线是一种诊断；更低的轨迹 MSE 不一定意味着规划决策更好。"
+    ],
+    "complexity": "T 步、状态维度 d，时间 O(Td)，额外空间 O(T)。",
+    "pitfall": "只除以 d 得到累计平方误差，而非前缀 MSE。",
+    "hints": [
+      "逐步累计残差平方。",
+      "除以截至当前的坐标总数。"
+    ],
+    "testNames": [
+      "两个标量步",
+      "两个坐标",
+      "后期出现误差",
+      "空序列",
+      "精确预测",
+      "正负误差对称"
+    ]
+  },
+  {
+    "id": "world-diagonal-gaussian-kl",
+    "title": "计算高斯潜在状态的 KL 损失",
+    "description": "概率潜在状态模型比较近似后验与先验。请实现两个对角高斯分布之间的 KL 散度；这是一个基础模块，而非完整 RSSM。",
+    "requirements": [
+      "q_mean、q_var、p_mean、p_var 为等长向量，所有方差严格为正。",
+      "返回各维度相加的 KL(q || p)：0.5 * sum(log(p_var/q_var) + (q_var + (q_mean-p_mean)**2)/p_var - 1)。",
+      "零维向量返回 0.0，使用自然对数。",
+      "不导入 NumPy，也不要假设散度具有对称性。"
+    ],
+    "explanation": [
+      "独立维度的 KL 散度等于各标量散度之和。",
+      "相对方差和均值差平方都会贡献损失，后验与先验的位置不可交换。",
+      "本题假设对角高斯分布，不实现完整循环状态空间模型及其训练目标。"
+    ],
+    "complexity": "d 个潜在坐标，时间 O(d)，额外空间 O(1)。",
+    "pitfall": "混淆方差与标准差会带来系统性的倍数误差。",
+    "hints": [
+      "先写一维闭式表达式。",
+      "d 个独立坐标逐项求和，再乘 0.5。"
+    ],
+    "testNames": [
+      "相同分布",
+      "均值偏移",
+      "不同方差",
+      "非对称性",
+      "维度可加性",
+      "零维",
+      "两个均值差平方项"
+    ]
+  },
+  {
+    "id": "llm-mean-reciprocal-rank",
+    "title": "实现检索平均倒数排名 MRR",
+    "description": "检索系统常需要对排序敏感的指标。请根据各查询的排序 ID 列表与相关集合计算 MRR。",
+    "requirements": [
+      "ranked_lists 为文档 ID 列表的列表；relevant_per_query 为对应的相关 ID 容器列表。",
+      "每个查询使用 1/r，其中 r 是首个相关结果的排名（从 1 开始）；没有相关结果则记零。",
+      "返回所有查询的算术平均值；没有查询时返回 0.0。",
+      "不要累计所有相关结果，MRR 只依据首个相关结果的排名。"
+    ],
+    "explanation": [
+      "MRR 奖励首个相关文档靠近排序列表顶部。",
+      "没有命中的查询贡献零，但仍计入分母。",
+      "不同于 Recall@K，MRR 不奖励首个相关结果之后的额外相关文档。"
+    ],
+    "complexity": "时间为排序列表及相关集合长度总和的 O(·)，额外空间 O(最大相关集合大小)。",
+    "pitfall": "只除以至少有一次命中的查询数，会人为抬高 MRR。",
+    "hints": [
+      "寻找首个相关文档的位置。",
+      "对全部查询求平均倒数排名，包括未命中的查询。"
+    ],
+    "testNames": [
+      "首个命中排名第二",
+      "混合查询",
+      "只看首个命中",
+      "空查询列表",
+      "无命中",
+      "多个可能相关结果",
+      "重复结果"
+    ]
+  },
+  {
+    "id": "llm-topk-softmax",
+    "title": "实现稳定的 Top-K Token 概率",
+    "description": "大语言模型解码器先将候选词表限制为 K 个 logits，再归一化概率。请实现确定性的概率变换，不实际采样 token。",
+    "requirements": [
+      "logits 为非空有限浮点列表；k 为 1 到 len(logits) 之间的整数（含端点）。",
+      "保留 logit 最大的 k 个索引，相等时优先较小 token 索引。",
+      "只对保留的 logits 做 Softmax，求指数前减去其最大值以防溢出。",
+      "返回原词表长度的概率列表，被排除位置为 0.0，总概率约为 1。"
+    ],
+    "explanation": [
+      "按 logit 降序、索引升序排序，可确定 Top-K 的成员。",
+      "排除的 token 在归一化前后都必须具有精确零概率。",
+      "减去最大值能避免溢出，共同偏移不改变 Softmax 比例。"
+    ],
+    "complexity": "词表大小 V，时间 O(V log V)，额外空间 O(V)。",
+    "pitfall": "先对全部词表做 Softmax，再将尾部概率清零但不重新归一化，会导致概率和小于 1。",
+    "hints": [
+      "先选择 Top-K 索引，而不仅是值。",
+      "仅对所选索引的 exp(logit - max_selected_logit) 归一化。"
+    ],
+    "testNames": [
+      "Top-1 确定性选择",
+      "相同 logits 按索引",
+      "全词表 Softmax",
+      "较大正 logits",
+      "较大负 logits",
+      "所选权重归一化",
+      "边界平局"
+    ]
+  },
+  {
+    "id": "llm-evidence-context-pack",
+    "title": "在 Token 预算内装入检索证据",
+    "description": "检索段落按相关性排序到达。请实现确定性的上下文装配器，在剩余提示预算内保留最长连续前缀。",
+    "requirements": [
+      "chunks 为不同段落 ID 列表，token_counts 为等长非负整数列表。",
+      "从首个段落开始，仅在其 token 数不超过剩余预算时加入。",
+      "遇到首个无法放入的段落立即停止，不跳过后继续选。",
+      "按原顺序返回已接受 ID 的新列表，budget 非负。"
+    ],
+    "explanation": [
+      "严格前缀策略保留检索排序，避免为了低排名段落丢弃高排名段落。",
+      "每次加入后扣减预算，恰好放得下的段落应保留。",
+      "本题只模拟上下文装配；实际系统还需考虑消息格式与分词器成本。"
+    ],
+    "complexity": "n 个被检查段落，时间 O(n)，结果 ID 的额外空间 O(n)。",
+    "pitfall": "跳过过大段落再加入较小的后续段落，违反严格前缀要求。",
+    "hints": [
+      "按检索原顺序遍历。",
+      "放不下时使用 break，而非 continue。"
+    ],
+    "testNames": [
+      "前缀可放入",
+      "不得跳过",
+      "恰好达到预算",
+      "首段过大",
+      "空输入",
+      "零 token 段落",
+      "原始输入不变"
+    ]
+  },
+  {
+    "id": "foundation-epsilon-greedy",
+    "title": "确定性选择 Epsilon-Greedy 动作",
+    "description": "Epsilon-Greedy 策略平衡利用与探索。请使用已提供的随机数选择动作，使测试结果完全确定。",
+    "requirements": [
+      "q_values 为非空有限动作价值列表，epsilon 在 [0,1] 内，uniform_draw 在 [0,1) 内。",
+      "uniform_draw < epsilon 时返回 random_index，该有效动作索引由调用方提供。",
+      "否则返回最大 Q 值的索引，平局选择最小索引。",
+      "不调用 random 模块，随机数与随机动作索引已经提供。"
+    ],
+    "explanation": [
+      "epsilon 表示探索而非选择当前贪心动作的概率。",
+      "将随机数作为参数注入，使策略能用精确预期值测试。",
+      "Python max 在有序索引序列中返回首个最大值，实现确定性平局处理。"
+    ],
+    "complexity": "贪心模式时间 O(A)，探索模式 O(1)，额外空间 O(1)。",
+    "pitfall": "探索覆盖所有动作，包括贪心动作，不应排除最大价值动作。",
+    "hints": [
+      "比较 uniform_draw 与 epsilon。",
+      "贪心选择时按索引升序遍历。"
+    ],
+    "testNames": [
+      "纯贪心",
+      "探索指定动作",
+      "随机数等于阈值",
+      "平局取最小索引",
+      "探索也可选贪心动作",
+      "负价值",
+      "单动作"
+    ]
+  },
+  {
+    "id": "foundation-nstep-return",
+    "title": "计算考虑终止状态的折扣回报",
+    "description": "强化学习目标在轨迹未终止时结合观测奖励与自举估计。请实现折扣回报，在终止状态后屏蔽自举项。",
+    "requirements": [
+      "rewards 为有限浮点列表，terminals 为等长布尔列表，gamma 在 [0,1] 内。",
+      "按时间顺序累加 gamma**t * rewards[t]，直到首个终止标记，包含该步奖励。",
+      "遇到终止标记时，不加入自举估计，也不计后续奖励。",
+      "没有终止时加入 gamma**len(rewards) * bootstrap_value；奖励为空时返回 bootstrap_value。"
+    ],
+    "explanation": [
+      "先累计即时奖励，每个后续奖励再增加一个 gamma 因子。",
+      "终止转移结束轨迹，不能再用价值函数对之后的状态自举。",
+      "未终止时，全部已记录步之后的延续价值按 gamma**n 加入。"
+    ],
+    "complexity": "时间 O(n)，额外空间 O(1)。",
+    "pitfall": "在终止转移后仍加入自举价值，会抬高目标值。",
+    "hints": [
+      "维护初值为 1 的折扣权重。",
+      "计入 terminal 为 True 的那步奖励后立即返回。"
+    ],
+    "testNames": [
+      "未终止",
+      "提前终止",
+      "首步终止",
+      "空奖励",
+      "gamma 为零",
+      "gamma 为一",
+      "末步终止"
+    ]
+  }
+]

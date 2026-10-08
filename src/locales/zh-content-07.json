@@ -1,0 +1,272 @@
+[
+  {
+    "id": "vit-class-token",
+    "title": "添加 ViT 分类 Token 与位置嵌入",
+    "description": "在图像块嵌入前加入分类嵌入，并给每个 token 加位置嵌入，构造 ViT 编码器输入。",
+    "requirements": [
+      "patches 包含 n 个 d 维已投影图像块向量，cls_token 为 d 维。",
+      "positions 包含 n+1 个 d 维位置向量，其中一个属于分类 token。",
+      "返回 [n+1][d]，row0=cls_token+positions[0]，row i+1=patches[i]+positions[i+1]。"
+    ],
+    "explanation": [
+      "分类 token 占序列索引 0，并有自己的位置嵌入。",
+      "图像块投影结果已提供，本题只处理序列组装。"
+    ],
+    "complexity": "时间与输出空间 O((n+1)d)。",
+    "pitfall": "不要忘记给分类 token 本身加位置嵌入。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "单图像块",
+      "无图像块",
+      "两个图像块",
+      "位置全零",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "transformer-prenorm-residual",
+    "title": "实现 Pre-LayerNorm 残差子层",
+    "description": "实现现代 Transformer 常用的前置归一化残差规则：y = x + sublayer(normalize(x))。",
+    "requirements": [
+      "x 为数值向量，normalize 和 sublayer 为返回等长向量的确定性函数。",
+      "先调用 normalize(x)，再对归一化结果恰好调用一次 sublayer。",
+      "逐元素返回 x + sublayer(normalize(x))，不修改输入。"
+    ],
+    "explanation": [
+      "Pre-Norm 表示注意力或 MLP 子层之前先归一化。",
+      "残差旁路将未经归一化的原始 x 加到子层输出。"
+    ],
+    "complexity": "不计函数调用成本，算术时间 O(d)，输出空间 O(d)。",
+    "pitfall": "Post-Norm 计算 normalize(x + sublayer(x))，两者不等价。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "恒等函数",
+      "先归一化",
+      "空向量",
+      "不修改输入",
+      "调用顺序"
+    ]
+  },
+  {
+    "id": "gan-discriminator-bce",
+    "title": "计算 GAN 判别器 Logistic 损失",
+    "description": "直接从 logits 用数值稳定 Softplus 实现标准 Logistic 判别器 BCE 目标。",
+    "requirements": [
+      "real_logits、fake_logits 为非空等长有限实数列表。",
+      "每对真实与生成样本计算 softplus(-real_logit) + softplus(fake_logit)。",
+      "对各样本对的上述和取平均，不再除以二。"
+    ],
+    "explanation": [
+      "BCEWithLogits 无需显式计算 Sigmoid。",
+      "判别器最小化真实样本判为真、生成样本判为假的负对数概率。"
+    ],
+    "complexity": "时间 O(n)，额外空间 O(1)。",
+    "pitfall": "除非目标明确要求，否则不要对两项再取一次平均。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零 logits",
+      "完美分类器",
+      "错误分类器",
+      "样本对平均",
+      "大值保持稳定"
+    ]
+  },
+  {
+    "id": "gan-generator-nonsaturating",
+    "title": "计算非饱和 GAN 生成器损失",
+    "description": "实现常用非饱和生成器目标，使生成样本获得较高的判别器真实类别 logit。",
+    "requirements": [
+      "fake_logits 为非空有限数值列表。",
+      "每个生成样本用 softplus(-fake_logit)，等价于 -log(sigmoid(fake_logit))。",
+      "对生成样本取平均，采用数值稳定实现。"
+    ],
+    "explanation": [
+      "生成器尝试提高 D(fake)，而非直接最小化 log(1-D(fake))。",
+      "训练早期判别器很有把握时，非饱和损失能提供更有用的梯度。"
+    ],
+    "complexity": "时间 O(n)，额外空间 O(1)。",
+    "pitfall": "不要复用判别器的生成样本损失 softplus(fake_logit)，符号方向相反。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零 logit",
+      "生成样本真实性高",
+      "生成样本真实性低",
+      "批次平均",
+      "单调性"
+    ]
+  },
+  {
+    "id": "gan-gradient-penalty",
+    "title": "实现 WGAN-GP 梯度惩罚",
+    "description": "根据已提供的插值样本判别函数梯度，计算 WGAN-GP 范数惩罚，无需自动微分。",
+    "requirements": [
+      "gradients 为非空、等长、非空梯度向量列表，penalty_weight 非负。",
+      "每个梯度 g 计算 (sqrt(sum(g_i*g_i)) - 1)**2。",
+      "返回 penalty_weight 乘以范数偏差平方的平均值，不包含 Wasserstein 判别函数损失本身。"
+    ],
+    "explanation": [
+      "插值样本的梯度已在上游计算，本题只实现标量范数惩罚。",
+      "WGAN-GP 鼓励梯度范数接近 1，而非零。"
+    ],
+    "complexity": "时间 O(batch_size × feature_dim)，额外空间 O(1)。",
+    "pitfall": "L2 范数平方不同于（L2 范数减 1）的平方。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "单位范数",
+      "零范数",
+      "范数为二",
+      "批次平均",
+      "零权重"
+    ]
+  },
+  {
+    "id": "diffusion-linear-beta",
+    "title": "构建线性 DDPM Beta 调度",
+    "description": "为简单 DDPM 配置创建每步前向噪声方差调度 βₜ。",
+    "requirements": [
+      "steps 为正整数，0<beta_start<=beta_end<1。",
+      "steps>1 时，beta[t]=beta_start+(beta_end-beta_start)*t/(steps-1)，t=0..steps-1。",
+      "steps==1 返回 [beta_start]，本题不返回累计乘积。"
+    ],
+    "explanation": [
+      "Beta 控制每次前向转移加入的噪声。",
+      "Beta 调度不等于 alpha_bar；后者是 1-beta 的累计乘积。"
+    ],
+    "complexity": "时间与空间 O(steps)。",
+    "pitfall": "不要混淆 βₜ 与累计 ̅αₜ。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "五步",
+      "单步",
+      "常数 beta",
+      "端点",
+      "递增"
+    ]
+  },
+  {
+    "id": "diffusion-alpha-bar",
+    "title": "计算累计扩散 Alpha",
+    "description": "给定前向扩散方差调度，计算 ̅αₜ = ∏ₛ₌₁ᵗ(1-βₛ)。",
+    "requirements": [
+      "betas 为可为空的列表，各元素满足 0<beta<1。",
+      "设 alpha_t=1-beta_t，按输入顺序累计相乘。",
+      "用新列表返回每个累计乘积，空输入返回 []。"
+    ],
+    "explanation": [
+      "累计乘积描述此前所有加噪步骤后的信号保留程度。",
+      "该量出现在前向分布 q(x_t | x_0) 的闭式表达中。"
+    ],
+    "complexity": "时间与输出空间 O(T)。",
+    "pitfall": "不要对 beta 求和，也不要直接相乘 beta。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "两次转移",
+      "空输入",
+      "一个元素",
+      "三个元素",
+      "递减"
+    ]
+  },
+  {
+    "id": "diffusion-forward-sampling",
+    "title": "采样 DDPM 前向过程",
+    "description": "用给定噪声实现闭式前向加噪公式 xₜ = √ᾱₜ x₀ + √(1−ᾱₜ) ε。",
+    "requirements": [
+      "x0 与 noise 为等长数值列表，alpha_bar 为 [0,1] 内标量。",
+      "逐元素返回 sqrt(alpha_bar)*x0[i] + sqrt(1-alpha_bar)*noise[i]。",
+      "不得随机生成噪声，噪声向量已提供以保证测试确定。"
+    ],
+    "explanation": [
+      "闭式公式直接从 x0 采样 x_t，无需模拟此前全部步骤。",
+      "时间步 t 的系数由 alpha_bar 决定，而非单步 alpha。"
+    ],
+    "complexity": "时间与返回空间 O(d)。",
+    "pitfall": "两个混合系数都要开平方，不要混淆 alpha_bar 与 sqrt(alpha_bar)。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "纯数据",
+      "纯噪声",
+      "等权混合",
+      "空输入",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "diffusion-noise-mse",
+    "title": "计算 DDPM 噪声预测损失",
+    "description": "计算估计噪声与采样高斯噪声向量间的 MSE，作为 epsilon 预测扩散模型的训练损失模块。",
+    "requirements": [
+      "predicted、target 为等长数值列表，只能同时为空。",
+      "返回全部元素 (predicted[i]-target[i])**2 的平均值。",
+      "空向量返回 0.0，网络与时间步条件不在本题范围内。"
+    ],
+    "explanation": [
+      "简化 DDPM epsilon 目标回归用于构造带噪输入的噪声 ε。",
+      "这是损失模块，不是完整 DDPM 模型或训练优化器。"
+    ],
+    "complexity": "时间 O(d)，额外空间 O(1)。",
+    "pitfall": "只除以批次大小而非全部标量元素数量，会改变要求的平均方式。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "两个值",
+      "完全匹配",
+      "单值",
+      "空输入",
+      "负目标"
+    ]
+  },
+  {
+    "id": "diffusion-reconstruct-x0",
+    "title": "从预测噪声重建干净数据",
+    "description": "反解 DDPM 前向混合公式，从 xt 与预测噪声向量估计 x0。",
+    "requirements": [
+      "xt、eps 等长，alpha_bar 在 (0,1] 内。",
+      "逐元素使用 x0_hat=(xt - sqrt(1-alpha_bar)*eps)/sqrt(alpha_bar)。",
+      "alpha_bar=1 时返回 xt 的副本，不进行截断。"
+    ],
+    "explanation": [
+      "逆公式直接来自前向扩散方程的移项。",
+      "截断或动态阈值是独立建模选择，不属于本代数模块。"
+    ],
+    "complexity": "时间与返回空间 O(d)。",
+    "pitfall": "应除以 alpha_bar 的平方根，而非 alpha_bar。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "恢复 x0",
+      "无噪声",
+      "alpha 为四分之一",
+      "空输入",
+      "向量"
+    ]
+  }
+]

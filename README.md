@@ -1,10 +1,16 @@
 # FrontierCode — free AI coding practice
 
-100 original, English-language Python challenges with precise contracts, published tests, independent editorials and local browser execution. No sign-up, GPU, paid model API or server-side judge is required. The curriculum covers AI Foundations, Transformer & Vision, Generative Models, LLM Systems, Agent Engineering, World Models and Video World Models.
+100 original Python challenges with English and Simplified Chinese statements/editorials, precise contracts, published tests and local browser execution. No sign-up, GPU, paid model API or server-side judge is required. The curriculum covers AI Foundations, Transformer & Vision, Generative Models, LLM Systems, Agent Engineering, World Models and Video World Models.
 
 The 24 newest fundamentals cover CNN/pooling, BatchNorm/RMSNorm, backpropagation, SGD/Adam/AdamW, clipping, RoPE, SwiGLU, masking, DDPM sampling and GAN gradients. These are narrow numerical or engineering kernels, not complete model training projects.
 
-There are **262 standalone HTML routes**: 100 problems, 100 editorials, 26 concept hubs, 19 practice sets, 7 topic hubs, indexes and informational pages, including a personal progress dashboard. A separate 404 page is generated. The dashboard is excluded from the 261-page sitemap and marked noindex. Concepts and practice sets link only to implemented challenges.
+There are **524 standalone HTML routes**, 262 per language: 100 problems, 100 editorials, 26 concept hubs, 19 practice sets, 7 topic hubs, indexes and informational pages, including a personal progress dashboard. Separate English and Chinese 404 pages are generated. Both dashboards are excluded from the 522-page bilingual sitemap and marked noindex. Concepts and practice sets link only to implemented challenges.
+
+## English and Chinese
+
+English is the default, including in browsers configured for Chinese. Use **EN / 中文** in the header to switch to the same page. Chinese pages live at `/zh/` (or `/website/zh/` on the preview), and their navigation stays in Chinese. Locale URLs persist across reloads and can be shared directly. Canonical and alternate en/zh-CN/x-default links are generated when `SITE_ORIGIN` is set.
+
+All 100 problem statements, requirements, hints, test names, explanations, complexity notes and pitfalls are translated, as are all 26 concept hubs, 19 practice sets and informational pages. Python identifiers, starter/reference code, assertions and original paper titles are preserved. Chinese search accepts Chinese titles and original English keywords. Drafts, solved marks, goals and backups use the same problem IDs and storage across languages; switching never replaces code with a translated starter. Translation requires no runtime translation API.
 
 ## Progress without an account
 
@@ -45,7 +51,8 @@ Current local Windows validation passes:
 - 553 reference-solution assertions across all 100 problems.
 - 553 CPython checks of the production judge's assertion instrumentation, plus expected/actual, syntax-error and captured-output checks.
 - 91 deliberately incorrect implementations rejected (21 expansion, 20 video, 26 foundations, 24 newest fundamentals).
-- All 262 HTML routes and internal links in both `/` and `/website/` modes.
+- All 524 bilingual HTML routes and internal links in both `/` and `/website/` modes.
+- Complete Chinese content coverage, identical Python code/assertions, same-page language switching, Chinese search/feedback, shared drafts/progress and mobile layout.
 - Progress migration, date rollover/leap years, streak breaks, deduplication, backup merge/validation, and failed-write recovery.
 - Chrome catalog filtering, submission/persistence, goals/milestones, backup transfer and 375px mobile home/catalog/workbench/progress/privacy/contact layouts. Offline UI mocks inspect the export Blob; live checks verify native download and restoration.
 
@@ -91,6 +98,7 @@ Drafts, solved marks, goals and practice history use localStorage with manual JS
 - `src/concepts.mjs`, `src/practice-sets.mjs`: taxonomy and exercise sequences.
 - `src/app.js`, `src/runner.worker.js`: UI and browser Python execution.
 - `src/progress.mjs`, `src/progress-ui.js`: local persistence, portable backups and personal practice dashboard.
+- `src/locales/*`, `src/i18n.js`, `scripts/localize.mjs`: build-time Chinese content and runtime UI translations.
 - `scripts/build.mjs`, `scripts/config.mjs`, `scripts/serve.mjs`: portable static build and preview.
 - `scripts/test*.mjs`, `scripts/mutation-check.mjs`, `scripts/link-check.mjs`: correctness and link checks.
 - `scripts/browser-e2e.mjs`, `scripts/browser-offline.mjs`: distinct live-runtime and offline-UI checks.

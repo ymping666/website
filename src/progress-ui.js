@@ -1,16 +1,17 @@
 import { emptyJourney, normalizeJourney, localDay, shiftDay, summarize } from './progress.mjs';
+import { locale } from './i18n.js';
 
 const $ = selector => document.querySelector(selector);
 const text = (selector, value) => { const element = $(selector); if (element) element.textContent = value; };
 const node = (tag, value, cls) => { const element = document.createElement(tag); if (value !== undefined) element.textContent = value; if (cls) element.className = cls; return element; };
 
 export async function mountProgressUI(store) {
-  const response = await fetch(new URL('./catalog.json', import.meta.url));
+  const response = await fetch(new URL(locale === 'zh' ? './catalog-zh.json' : './catalog.json', import.meta.url));
   if (!response.ok) throw new Error('Unable to load the practice index.');
   const { problems, sets } = await response.json();
   const ids = problems.map(p => p.id);
   const byId = new Map(problems.map(p => [p.id, p]));
-  const href = path => new URL('../' + path, import.meta.url).href;
+  const href = path => new URL('../' + (locale === 'zh' ? 'zh/' : '') + path, import.meta.url).href;
   const link = (label, path, cls = '') => { const element = node('a', label, cls); element.href = href(path); return element; };
   const completed = () => {
     const raw = store.get('completed', {});

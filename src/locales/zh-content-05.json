@@ -1,0 +1,291 @@
+[
+  {
+    "id": "flow-linear-interpolation",
+    "title": "为 Flow Matching 插值噪声与数据",
+    "description": "构造噪声向量 x0 与数据向量 x1 之间的条件直线路径，这是基础 Rectified Flow 风格方法的一个模块。",
+    "requirements": [
+      "x0、x1 为等长有限浮点列表，t 为 [0,1] 内的有限标量。",
+      "返回向量 xt，每个坐标 xt[d] = (1-t)*x0[d] + t*x1[d]。",
+      "t=0 时输出 x0，t=1 时输出 x1，不修改输入。"
+    ],
+    "explanation": [
+      "位移插值是 Flow Matching 可用的一种简单条件路径。",
+      "噪声与数据分别位于两端，路径随 t 增大连续变化。",
+      "完整 Flow Matching 模型会对大量样本对拟合随时间变化的向量场，本辅助函数不进行训练。"
+    ],
+    "complexity": "D 个坐标，时间与输出空间 O(D)。",
+    "pitfall": "交换 x0 与 x1 会反转要求的生成方向。",
+    "hints": [
+      "噪声向量乘以 (1-t)。",
+      "数据向量乘 t，再逐元素相加。"
+    ],
+    "testNames": [
+      "中点",
+      "噪声端点",
+      "数据端点",
+      "非对称时间",
+      "空向量",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "flow-conditional-velocity",
+    "title": "推导线性流的目标速度",
+    "description": "对 x_t = (1-t)*x0 + t*x1，计算用作监督目标的条件位移速度。",
+    "requirements": [
+      "x0、x1 为等长浮点向量，可以为空。",
+      "逐坐标返回与 t 无关的导数 dx_t/dt = x1 - x0。",
+      "返回新列表，不修改任一端点。"
+    ],
+    "explanation": [
+      "解析求导直线插值：(1-t)x0+t x1 的导数为 x1-x0。",
+      "该目标是每个配对样本的条件速度，不一定是任意 x 处的边缘速度。",
+      "Flow Matching 在大量采样时间与样本上拟合这些速度目标。"
+    ],
+    "complexity": "时间与输出空间 O(D)。",
+    "pitfall": "返回 x0-x1 会反转从噪声到数据的积分方向。",
+    "hints": [
+      "分别对两个加权端点关于 t 求导。",
+      "直线路径的导数不依赖 t。"
+    ],
+    "testNames": [
+      "正位移",
+      "负位移",
+      "相同端点",
+      "空输入",
+      "多维",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "flow-velocity-regression",
+    "title": "计算 Flow Matching 速度 MSE",
+    "description": "将一次监督速度预测与对应的条件 Flow Matching 目标进行比较。",
+    "requirements": [
+      "prediction、x0、x1 为等长非空有限浮点列表。",
+      "目标速度为 x1-x0，返回 (prediction[d] - target[d])**2 的平均值。",
+      "不得用重建损失或端点距离损失替代速度损失。"
+    ],
+    "explanation": [
+      "匹配目标是所选条件概率路径的导数。",
+      "模型输出在某个采样时间的速度空间中评估。",
+      "对向量维度取平均；批次与时间期望不在本题范围内。"
+    ],
+    "complexity": "时间 O(D)，额外空间 O(1)。",
+    "pitfall": "直接将预测速度与 x1 而非 x1-x0 比较，会得到错误目标。",
+    "hints": [
+      "先计算 target = data - noise。",
+      "对速度残差平方取平均。"
+    ],
+    "testNames": [
+      "完美目标",
+      "错误的零速度",
+      "单坐标",
+      "负目标",
+      "平均而非求和"
+    ]
+  },
+  {
+    "id": "flow-euler-integration",
+    "title": "用欧拉法积分标量流 ODE",
+    "description": "用显式欧拉法，将满足 dx/dt = velocity(x,t) 的标量状态从 t=0 推进到 t=1。",
+    "requirements": [
+      "x0 为有限标量，steps 为严格正整数，velocity 是确定性函数 (x,t) -> float。",
+      "固定 dt=1/steps。第 i 步计算 v(x, i*dt)，再更新 x <- x + dt*v。",
+      "返回 t=1 时的最终标量，最后一步之后不再调用 velocity。"
+    ],
+    "explanation": [
+      "数值积分将学习到的向量场转化为生成样本。",
+      "显式欧拉法在每个积分区间的起点计算速度。",
+      "步数影响离散误差；与 Heun 方法比较可观察求解器选择的作用。"
+    ],
+    "complexity": "S 步需要 O(S) 次速度调用，额外空间 O(1)。",
+    "pitfall": "在已更新的端点计算速度，属于另一种离散方式，不是显式欧拉法。",
+    "hints": [
+      "dt = 1 / steps。",
+      "在 i*dt 时先计算速度，再更新 x。"
+    ],
+    "testNames": [
+      "常向量场",
+      "时间线性场",
+      "增长场",
+      "零场",
+      "单步",
+      "非线性状态场"
+    ]
+  },
+  {
+    "id": "flow-heun-integration",
+    "title": "用 Heun 方法积分标量流 ODE",
+    "description": "在单位时间区间内，为 dx/dt = velocity(x,t) 实现每步两次评估的预测—校正 ODE 求解器。",
+    "requirements": [
+      "x0 为有限浮点数，steps 严格为正，velocity 为纯确定性函数 (x,t)。",
+      "第 i 步计算 k1=v(x,t)、x_pred=x+dt*k1、k2=v(x_pred,t+dt)。",
+      "更新 x <- x + dt*(k1+k2)/2，返回最终状态，dt=1/steps。"
+    ],
+    "explanation": [
+      "Heun（显式梯形法）取区间起点斜率与预测终点斜率的平均值。",
+      "速度只线性依赖时间时，可精确积分该区间。",
+      "每步需要两次场评估，在光滑动力学下局部误差可能低于欧拉法。"
+    ],
+    "complexity": "时间 O(S)，共 2S 次场评估，额外空间 O(1)。",
+    "pitfall": "若 k2 仍在 (x,t) 计算而非预测终点状态与时间，求解器会退化为欧拉法。",
+    "hints": [
+      "先预测 x + dt*k1，再评估 k2。",
+      "第二次斜率使用 t+dt。"
+    ],
+    "testNames": [
+      "常向量场",
+      "时间线性场",
+      "状态增长",
+      "时间场单步",
+      "零场",
+      "负常量"
+    ]
+  },
+  {
+    "id": "flow-cfg-velocity",
+    "title": "混合条件与无条件流速度",
+    "description": "实现简单无分类器引导形式中，对两次速度预测进行组合的计算。",
+    "requirements": [
+      "unconditional、conditional 为等长浮点列表，可为空；guidance_scale 为有限浮点数。",
+      "逐坐标返回 u + guidance_scale*(c-u)。",
+      "scale=0 返回无条件速度，scale=1 返回条件速度。本函数不进行神经网络推理。"
+    ],
+    "explanation": [
+      "引导规则在无条件与条件预测之间插值或外推。",
+      "强度大于 1 时，外推到条件速度之外。",
+      "该确定性插值不含文本编码器、条件丢弃或学习流模型。"
+    ],
+    "complexity": "时间与输出空间 O(D)。",
+    "pitfall": "只将条件预测乘 scale，无法保持 scale=0 与 1 的规定行为。",
+    "hints": [
+      "从无条件速度开始。",
+      "加上 scale 乘以条件与无条件速度之差。"
+    ],
+    "testNames": [
+      "强度为零",
+      "强度为一",
+      "强度为二",
+      "小数强度",
+      "负值",
+      "空输入"
+    ]
+  },
+  {
+    "id": "video-action-conditioned-rollout",
+    "title": "推演动作条件潜在动力学",
+    "description": "给定初始潜在状态与动作序列，应用确定性的动力学替代函数，保留每个预测潜在状态。",
+    "requirements": [
+      "initial_state 为有限浮点数，actions 为标量动作列表，transition(state, action) 返回下一浮点状态。",
+      "返回长度 len(actions)+1 的列表，索引零包含 initial_state。",
+      "每次转移使用上一预测状态，不重置为 initial_state；不修改动作列表。"
+    ],
+    "explanation": [
+      "动作条件世界模型根据动作与当前状态预测未来潜在状态。",
+      "持续使用预测状态推演，会暴露长时间跨度中的累积误差。",
+      "标量转移函数代替学习到的潜在动力学模块，不生成视频帧。"
+    ],
+    "complexity": "O(T) 次转移评估，输出空间 O(T)。",
+    "pitfall": "每个动作都作用于 initial_state，会得到独立单步预测，而非多步轨迹。",
+    "hints": [
+      "结果用初始状态初始化。",
+      "将最后的预测状态输入下一次转移。"
+    ],
+    "testNames": [
+      "累计运动",
+      "状态依赖动力学",
+      "无动作",
+      "负动作",
+      "动作乘法影响",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "video-temporal-difference-loss",
+    "title": "衡量时间差分重建损失",
+    "description": "比较预测帧特征与目标片段的时间变化，而非静态像素值。",
+    "requirements": [
+      "predicted、target 为同形的 T 帧向量序列，宽度 D>0，坐标均有限。",
+      "每个 t>=1 和坐标 d，比较 (pred[t][d]-pred[t-1][d]) 与 (target[t][d]-target[t-1][d])。",
+      "返回 (T-1)*D 个元素的平均平方差；T<2 时返回 0.0。"
+    ],
+    "explanation": [
+      "逐帧重建质量不能充分描述运动演化是否正确。",
+      "向序列所有帧加入固定偏移，不会改变时间差分。",
+      "这是简单有限差分目标，不是感知运动指标或光流估计器。"
+    ],
+    "complexity": "时间 O(TD)，额外空间 O(1)。",
+    "pitfall": "直接比较预测与目标帧，会混淆外观不匹配和时间变化不匹配。",
+    "hints": [
+      "先分别对两个序列的相邻帧求差。",
+      "再用 MSE 比较两组时间差分。"
+    ],
+    "testNames": [
+      "运动一致",
+      "运动不同",
+      "二维",
+      "三帧",
+      "单帧",
+      "空输入"
+    ]
+  },
+  {
+    "id": "video-causal-token-context",
+    "title": "构建视频 Token 的因果上下文窗口",
+    "description": "为每个离散视频 token 构造有限的过去上下文，避免未来 token 泄漏。",
+    "requirements": [
+      "tokens 为整数 ID 列表，可以为空；context_size 为非负整数。",
+      "位置 i 返回 tokens[max(0,i-context_size):i]，排除 tokens[i] 本身。",
+      "为每个位置返回上下文，包括位置零，不填充、不重排。"
+    ],
+    "explanation": [
+      "自回归视频 token 先验不能以当前目标值或未来 token 为条件。",
+      "固定窗口明确限制条件范围。",
+      "本题构造数据上下文，不计算因果 Transformer 注意力权重。"
+    ],
+    "complexity": "T 个 token、窗口大小 K，输出时间与空间 O(T*K)。",
+    "pitfall": "tokens[:i+1] 会将当前目标 token 泄漏到自身上下文。",
+    "hints": [
+      "预测位置 i 时，只切片严格小于 i 的索引。",
+      "用 max(0,i-context_size) 限制左边界。"
+    ],
+    "testNames": [
+      "窗口为二",
+      "零窗口",
+      "大窗口",
+      "单 token",
+      "空输入",
+      "保留输入"
+    ]
+  },
+  {
+    "id": "video-token-cross-entropy",
+    "title": "计算视频 Token 先验负对数似然",
+    "description": "使用真实码索引与预测概率分布，评估离散视频下一 token 先验。",
+    "requirements": [
+      "probabilities 为非空概率向量组成的列表；targets 为每个向量提供一个有效整数索引。",
+      "返回各时间步 -log(probabilities[t][targets[t]]) 的平均值。",
+      "空序列返回 0.0；真实目标预测概率恰好为零时抛出 ValueError；不修改输入。"
+    ],
+    "explanation": [
+      "离散自回归视频先验被训练为下一观测码赋予高概率。",
+      "负对数似然惩罚真实目标的低预测概率。",
+      "本题假设概率已归一化，真实码已提供。"
+    ],
+    "complexity": "T 个 token，时间 O(T)，额外空间 O(1)。",
+    "pitfall": "取最大概率的对数而非真实索引概率，衡量的是置信度而非似然。",
+    "hints": [
+      "每步读取 distribution[target]。",
+      "对负自然对数取平均，显式处理零概率。"
+    ],
+    "testNames": [
+      "确定预测",
+      "均匀二元分布",
+      "混合置信度",
+      "单 token",
+      "空输入",
+      "目标概率为零"
+    ]
+  }
+]

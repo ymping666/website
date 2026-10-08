@@ -10,11 +10,12 @@ import {problems} from '../src/problems.mjs';
 import {practiceSets} from '../src/practice-sets.mjs';
 import {concepts} from '../src/concepts.mjs';
 const trackDirs=(await readdir(join(root,'tracks'),{withFileTypes:true})).filter(x=>x.isDirectory()).length;
-const expected=10+practiceSets.length+trackDirs+concepts.length+2*problems.length;
+const expected=2*(10+practiceSets.length+trackDirs+concepts.length+2*problems.length);
 if(pages.length!==expected)errors.push(`Expected ${expected} distinct HTML pages; found ${pages.length}`);
 for(const file of pages){
  const html=await readFile(file,'utf8');
- if(!html.includes('<html lang="en">')||!html.includes('<meta name="description"'))errors.push(`Metadata incomplete: ${file}`);
+ const chinese=file.startsWith(join(root,'zh')+sep);
+ if(!html.includes(`<html lang="${chinese?'zh-CN':'en'}">`)||!html.includes('<meta name="description"'))errors.push(`Metadata incomplete: ${file}`);
  for(const match of html.matchAll(/(?:href|src)="(\/[^"?#]*)["?#]?/g)){
   const url=match[1]; if(!url.startsWith(base)) {errors.push(`Wrong base ${file}: ${url}`);continue;}
   const local=url.slice(base.length);
@@ -25,4 +26,4 @@ for(const file of pages){
  }
 }
 if(errors.length){console.error(errors.slice(0,25).join('\n'));process.exit(1)}
-console.log('PASS',pages.length,'English HTML routes and internal asset/navigation links');
+console.log('PASS',pages.length,'English/Chinese HTML routes and internal asset/navigation links');

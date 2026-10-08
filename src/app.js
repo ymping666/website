@@ -1,5 +1,7 @@
 import { createStore, recordPractice, localDay } from './progress.mjs';
 import { mountProgressUI } from './progress-ui.js';
+import { initLanguage, confirmLocalized } from './i18n.js';
+initLanguage();
 const $ = selector => document.querySelector(selector);
 const $$ = selector => Array.from(document.querySelectorAll(selector));
 // Preserve v0.4/v0.5 user drafts and solved records after upgrades.
@@ -72,7 +74,7 @@ if ($('#challenge-json')) {
     }
   });
   $('#reset-code').addEventListener('click', () => {
-    if (editor.value !== problem.starter && !window.confirm('Restore the original starter code? Your current draft will be replaced.')) return;
+    if (editor.value !== problem.starter && !confirmLocalized('Restore the original starter code? Your current draft will be replaced.')) return;
     editor.value = problem.starter;
     const ok = store.set('draft:' + problem.id, problem.starter);
     saved.textContent = ok ? 'Starter restored and saved' : 'Starter restored · Not saved · Download a backup';

@@ -1,0 +1,273 @@
+[
+  {
+    "id": "foundation-matmul",
+    "title": "从零实现矩阵乘法",
+    "description": "不使用 NumPy 实现矩形矩阵乘法。该操作是注意力投影和图像块嵌入的基础。",
+    "requirements": [
+      "a 为 m×k、b 为 k×n，均为非空矩形数值矩阵。",
+      "返回 m×n 二维列表，output[i][j] = sum(a[i][t]*b[t][j] for t in range(k))。",
+      "不修改输入，保持自然行列顺序。"
+    ],
+    "explanation": [
+      "共享内维度 k 决定求和轴。",
+      "输出行数等于 a 的行数，列数等于 b 的列数。"
+    ],
+    "complexity": "时间 O(mkn)，返回矩阵空间 O(mn)。",
+    "pitfall": "不是逐元素相乘；矩阵乘法沿共享维度求和。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "二乘二",
+      "非方阵",
+      "负值与零",
+      "单位矩阵",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "foundation-layer-normalization",
+    "title": "实现层归一化 LayerNorm",
+    "description": "用总体均值与总体方差归一化单个特征向量，不包含可学习仿射参数。",
+    "requirements": [
+      "x 为非空有限浮点列表，eps 为正标量。",
+      "使用 mean=sum(x)/len(x)、variance=sum((v-mean)**2)/len(x)，不使用样本方差。",
+      "返回 [(v-mean)/sqrt(variance+eps) for v in x]，不修改 x。"
+    ],
+    "explanation": [
+      "LayerNorm 沿单个 token 的特征位置归一化，而非沿批次。",
+      "正 epsilon 防止常量向量除以零。"
+    ],
+    "complexity": "时间 O(d)，输出空间 O(d)。",
+    "pitfall": "不要除以 d-1，也不要省略 epsilon，否则小输入或常量输入会出错。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "对称向量",
+      "常量输入",
+      "单值",
+      "平移不变性",
+      "总体方差缩放"
+    ]
+  },
+  {
+    "id": "foundation-gelu",
+    "title": "实现精确 GELU 激活",
+    "description": "用 erf 实现标量高斯误差线性单元，不使用可选的 tanh 近似。",
+    "requirements": [
+      "x 为任意有限实标量。",
+      "返回 x * 0.5 * (1 + erf(x/sqrt(2)))。",
+      "使用 math.erf 和 math.sqrt；本题测试精确 GELU，而非 tanh 近似。"
+    ],
+    "explanation": [
+      "GELU 等于 x 乘以标准正态累积分布函数 Φ(x)。",
+      "tanh 近似虽常见，但属于不同计算约定。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "ReLU 不等于 GELU；GELU 对负输入可产生较小负值。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "原点",
+      "正一",
+      "负一",
+      "奇偶关系",
+      "较大的负数"
+    ]
+  },
+  {
+    "id": "foundation-sinusoidal-positions",
+    "title": "计算正弦位置编码",
+    "description": "为单个非负 token 位置实现原始 Transformer 的绝对正弦位置编码。",
+    "requirements": [
+      "d_model 为正偶数，position 为非负整数。",
+      "i=0...d_model/2-1 时，angle=position / (10000 ** (2*i/d_model))。",
+      "返回浮点列表 [sin(angle0),cos(angle0),sin(angle1),cos(angle1),...]。"
+    ],
+    "explanation": [
+      "偶数与奇数通道组成正弦、余弦对，波长按几何比例缩放。",
+      "不同通道频率使相对位置可区分，无需学习位置表。"
+    ],
+    "complexity": "时间与输出空间 O(d_model)。",
+    "pitfall": "指数必须为 2*i/d_model，不能替换成 i/d_model。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零位置",
+      "两个通道",
+      "不同频率",
+      "维度",
+      "位置影响编码"
+    ]
+  },
+  {
+    "id": "attention-scaled-dot-product",
+    "title": "实现缩放点积注意力",
+    "description": "对一个查询向量与多组键值向量，用数值稳定 Softmax 计算 softmax(QKᵀ/√dₖ)V。",
+    "requirements": [
+      "q 与每个 key 为 dₖ>0 维向量；value 向量维度相同且为正。",
+      "计算 scores = dot(q,key)/sqrt(dₖ)，求指数前减 max(scores)。",
+      "返回 value 向量的加权和，保证至少一组键值。"
+    ],
+    "explanation": [
+      "注意力对 value 做软加权平均，查询与键的相似度决定权重。",
+      "平方根缩放使用键维度，而非值维度。",
+      "减去最大 logit 可避免大分数溢出。"
+    ],
+    "complexity": "时间 O(n·dₖ + n·dᵥ)，额外空间 O(n+dᵥ)。",
+    "pitfall": "省略 √dₖ 会改变概率集中程度；不使用稳定 Softmax 可能溢出。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "相同分数取平均",
+      "单个键",
+      "大分数保持稳定",
+      "值维度不同",
+      "正确缩放"
+    ]
+  },
+  {
+    "id": "attention-causal-mask",
+    "title": "构建因果注意力掩码",
+    "description": "将注意力 logits 方阵转换为不能关注未来 token 位置的自回归 logits。",
+    "requirements": [
+      "logits 为 n×n 数值二维列表，n 可以为零。",
+      "每行 i 中，列 j>i 的值替换为 float(\"-inf\")。",
+      "精确保留 j<=i 的 logits，返回新矩阵，不修改输入。"
+    ],
+    "explanation": [
+      "因果自注意力允许 token i 只读取位置 0...i。",
+      "每行至少有一个有效位置时，-∞ 经 Softmax 后概率为零。"
+    ],
+    "complexity": "时间与输出空间 O(n²)。",
+    "pitfall": "屏蔽 j>i，而不是 j>=i；token 必须能关注自身。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "三个 token",
+      "单 token",
+      "空输入",
+      "输入不可变",
+      "不屏蔽对角线"
+    ]
+  },
+  {
+    "id": "attention-split-heads",
+    "title": "将 Token 嵌入拆为注意力头",
+    "description": "沿特征轴拆分 token 嵌入序列，得到 [head][token][feature] 布局。",
+    "requirements": [
+      "tokens 形状为 [seq_len][d_model]，d_model 可被正整数 n_heads 整除，序列可为空。",
+      "每个 token 的特征切为大小 d_model/n_heads 的连续块。",
+      "返回形状 [n_heads][seq_len][d_head] 的新嵌套列表；空序列返回 n_heads 个空列表。"
+    ],
+    "explanation": [
+      "多头注意力将嵌入通道划分给独立的头。",
+      "此操作只改变布局，可学习的 Q/K/V 投影在其他步骤完成。"
+    ],
+    "complexity": "时间与输出空间 O(sequence_length × d_model)。",
+    "pitfall": "不要跨头交错特征，也不要交换 token 顺序。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "两个头",
+      "单头",
+      "空输入",
+      "每头单特征",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "attention-merge-heads",
+    "title": "将注意力头合并回 Token 嵌入",
+    "description": "逆转 [head][token][feature] 拆分，按头顺序拼接每个 token 的头向量。",
+    "requirements": [
+      "heads 形状为 [n_heads][seq_len][d_head]，n_heads>=1，各头 token 数相同。",
+      "返回 [seq_len][n_heads*d_head]，头之间拼接而非平均。",
+      "各头均无 token 时返回 []。"
+    ],
+    "explanation": [
+      "注意力头通常并行计算，输出投影前拼接各头结果。",
+      "拼接是拆分布局的逆操作。"
+    ],
+    "complexity": "时间与输出空间 O(sequence_length × d_model)。",
+    "pitfall": "平均各头会丢失独立特征通道，拼接才会保留它们。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "两个头",
+      "单头",
+      "空 token",
+      "三个头",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "transformer-cross-attention",
+    "title": "实现多查询交叉注意力",
+    "description": "实现查询 token 来自一个序列、键值 token 来自另一个序列的交叉注意力，全部投影已提供。",
+    "requirements": [
+      "queries 为 [n_q][d_k]，keys 为 [n_k][d_k]，values 为 [n_k][d_v]；n_q、n_k、d_k、d_v 均大于零。",
+      "对每个查询，点积键分数除以 sqrt(d_k)，求指数前减最大分数，再做 Softmax。",
+      "返回 [n_q][d_v] 的 value 加权输出，不修改输入。"
+    ],
+    "explanation": [
+      "交叉注意力允许查询与键值来自不同序列，区别于自注意力。",
+      "即使键数不同，输出仍是每个查询一行。"
+    ],
+    "complexity": "时间 O(n_q n_k (d_k+d_v))，辅助空间 O(n_q d_v+n_k)。",
+    "pitfall": "不要假设查询数量等于键数量。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "均匀查询",
+      "两个不同查询",
+      "单源 token",
+      "多个查询",
+      "数值稳定性"
+    ]
+  },
+  {
+    "id": "vit-patchify",
+    "title": "为 ViT 切分灰度图像块",
+    "description": "将二维灰度图切为不重叠的展平图像块，按块网格的行优先顺序排列。",
+    "requirements": [
+      "image 为 H×W 矩形，H、W 为正数且均可被正整数 patch_size 整除。",
+      "块网格中，每行从左到右，再从上到下遍历。",
+      "每个块内逐行展平像素，返回块列表，不修改 image。"
+    ],
+    "explanation": [
+      "ViT 将图像转为局部块序列，再把每个块投影为 token 嵌入。",
+      "本题只提取与展平图像块，不隐式添加可学习投影。"
+    ],
+    "complexity": "时间与输出空间 O(HW)。",
+    "pitfall": "不要先展平整幅图像的行，再分组空间块。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "四个图像块",
+      "非方形图像",
+      "单像素块",
+      "单个图像块",
+      "输入不变"
+    ]
+  }
+]

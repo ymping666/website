@@ -1,0 +1,271 @@
+[
+  {
+    "id": "optimizer-sgd-momentum",
+    "title": "实现一次 SGD 动量更新",
+    "description": "对标量参数实现经典动量 SGD 更新，不含 dampening 或 Nesterov 加速。",
+    "requirements": [
+      "param、grad、velocity 为浮点数，lr>=0、0<=momentum<1。",
+      "计算 new_velocity=momentum*velocity+grad。",
+      "返回 (param-lr*new_velocity, new_velocity)，不含权重衰减。"
+    ],
+    "explanation": [
+      "动量跨步骤累计指数加权的梯度方向。",
+      "即使 lr=0，velocity 仍要更新，因为它属于优化器状态。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "动量应作用于上一 velocity，而非参数值。",
+    "hints": [
+      "严格按 sgd_momentum 的约定，先手算小例子。",
+      "检查动量是否作用于上一 velocity。"
+    ],
+    "testNames": [
+      "首步",
+      "累计动量",
+      "零学习率",
+      "负梯度"
+    ]
+  },
+  {
+    "id": "optimizer-adam-bias-correction",
+    "title": "校正 Adam 一阶与二阶矩偏差",
+    "description": "当 Adam 矩累积器从零开始时，对指数移动平均进行初始化偏差校正。",
+    "requirements": [
+      "m、v 为步骤更新后的标量矩估计，0<beta1,beta2<1，step>=1。",
+      "返回 m_hat=m/(1-beta1**step)，v_hat=v/(1-beta2**step)。",
+      "本题不更新参数。"
+    ],
+    "explanation": [
+      "零初始化矩估计在训练早期偏向零。",
+      "一阶与二阶矩需要各自的 beta 幂和分母。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "不要对两种矩使用同一 beta，也不要遗漏 step 指数。",
+    "hints": [
+      "严格按 adam_bias_correction 的约定，先手算小例子。",
+      "分别检查 beta1、beta2 和 step 幂。"
+    ],
+    "testNames": [
+      "第一步",
+      "第二步",
+      "零状态",
+      "长时间跨度"
+    ]
+  },
+  {
+    "id": "optimizer-adamw-update",
+    "title": "实现一次解耦 AdamW 更新",
+    "description": "用 Adam 矩估计与解耦权重衰减更新单个标量参数，函数返回新参数与新矩状态。",
+    "requirements": [
+      "step>=1，m、v 为上一步矩估计，beta1、beta2 在 (0,1) 内，eps>0。",
+      "先计算 m_new=beta1*m+(1-beta1)*g，v_new=beta2*v+(1-beta2)*g*g，再根据 step 校正两种矩偏差。",
+      "设 p_new=p*(1-lr*weight_decay)-lr*m_hat/(sqrt(v_hat)+eps)，返回 (p_new,m_new,v_new)。"
+    ],
+    "explanation": [
+      "指数矩更新属于优化器状态，应在偏差校正前进行。",
+      "AdamW 权重衰减是解耦的：p 乘 1-lr*weight_decay，而非将衰减加入梯度矩。"
+    ],
+    "complexity": "标量时间与空间 O(1)，向量逐元素计算 O(d)。",
+    "pitfall": "计算 Adam 矩前将权重衰减加入梯度，会改变算法。",
+    "hints": [
+      "严格按 adamw_step 的约定，先手算小例子。",
+      "检查是否误将权重衰减加入梯度矩。"
+    ],
+    "testNames": [
+      "首步无衰减",
+      "无梯度时衰减",
+      "不同二阶矩",
+      "零学习率",
+      "负梯度"
+    ]
+  },
+  {
+    "id": "optimizer-global-norm-clipping",
+    "title": "按全局 L2 范数裁剪梯度",
+    "description": "用同一个缩放因子裁剪整个梯度向量，避免异常大梯度影响参数更新。",
+    "requirements": [
+      "grad 为实数列表，max_norm>0。",
+      "grad 的 L2 范数 <= max_norm 时返回不变副本；零或空梯度保持不变。",
+      "否则每个分量乘 max_norm/norm，保留方向。"
+    ],
+    "explanation": [
+      "全局范数裁剪保持各坐标之间的比例。",
+      "逐分量截断是另一种操作，会改变梯度方向。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要独立截断各分量，应使用整个向量的范数。",
+    "hints": [
+      "严格按 clip_global_norm 的约定，先手算小例子。",
+      "检查是否对全部分量使用共同缩放因子。"
+    ],
+    "testNames": [
+      "裁剪 3-4-5 向量",
+      "无需裁剪",
+      "保留负号",
+      "零梯度",
+      "空梯度",
+      "范数等于上限"
+    ]
+  },
+  {
+    "id": "rope-rotate-pair",
+    "title": "用 RoPE 旋转一对二维特征",
+    "description": "实现旋转位置嵌入中，对一对查询或键通道施加的二维旋转。",
+    "requirements": [
+      "x、y、angle 为有限实标量，angle 使用弧度。",
+      "返回 [x*cos(angle)-y*sin(angle), x*sin(angle)+y*cos(angle)]。",
+      "旋转保持该特征对的 L2 范数，允许浮点误差。"
+    ],
+    "explanation": [
+      "每对 RoPE 通道乘以二维旋转矩阵。",
+      "同一对通道使用相同角度，使几何随位置变化并保持范数。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "不要只旋转一个通道，也不要混淆角度与弧度。",
+    "hints": [
+      "严格按 rope_pair 的约定，先手算小例子。",
+      "检查两个通道及弧度单位。"
+    ],
+    "testNames": [
+      "零角度",
+      "四分之一转",
+      "负四分之一转",
+      "保留范数",
+      "两个分量均非零"
+    ]
+  },
+  {
+    "id": "rope-position-encoding",
+    "title": "对 Token 向量序列应用 RoPE",
+    "description": "按位置相关频率旋转相邻通道对，编码绝对 token 位置；本题采用交错配对约定。",
+    "requirements": [
+      "tokens 为 T 个等维向量组成的列表，公共维度 D 为偶数。",
+      "token 位置 p、通道对 i 的 angle = p/(base ** (2*i/D))，base>1。",
+      "用该角度旋转通道 (2*i,2*i+1)，保持 token 与特征顺序。"
+    ],
+    "explanation": [
+      "RoPE 旋转角度随位置增大，并随通道对索引增大而减小。",
+      "本题明确采用相邻交错配对，实际模型也可能采用不同通道排列。"
+    ],
+    "complexity": "时间与输出空间 O(TD)。",
+    "pitfall": "不要给所有通道对相同频率，也不要让位置索引从 1 开始。",
+    "hints": [
+      "严格按 apply_rope 的约定，先手算小例子。",
+      "检查各对频率以及从零开始的位置。"
+    ],
+    "testNames": [
+      "首位置恒等",
+      "位置一的首对",
+      "不同频率",
+      "每个 token 保留范数",
+      "空序列"
+    ]
+  },
+  {
+    "id": "transformer-swiglu",
+    "title": "实现 SwiGLU 激活分支",
+    "description": "在带门控的 Transformer MLP 最终输出投影之前，实现逐元素 SwiGLU 非线性。",
+    "requirements": [
+      "x、gate 等长，所有值有限。",
+      "SiLU(g)=g/(1+exp(-g))，返回 x[i]*SiLU(gate[i])。",
+      "返回列表，不进行输出投影，允许空列表。"
+    ],
+    "explanation": [
+      "SwiGLU 组合线性路径 x 与经 SiLU 变换的门控。",
+      "数值稳定形式应处理很负的 gate，避免 exp(-gate) 溢出。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要只使用 Sigmoid；SiLU(v)=v*sigmoid(v)，可以为负。",
+    "hints": [
+      "严格按 swiglu_gate 的约定，先手算小例子。",
+      "检查是否包含 gate 因子，而非只有 sigmoid。"
+    ],
+    "testNames": [
+      "零门控",
+      "正门控",
+      "负门控",
+      "负 x",
+      "空输入",
+      "极负值保持稳定"
+    ]
+  },
+  {
+    "id": "attention-key-padding-mask",
+    "title": "为注意力分数应用键填充掩码",
+    "description": "在 Softmax 前，屏蔽单查询注意力分数向量中的无效键位置。",
+    "requirements": [
+      "scores、valid_keys 等长，valid_keys 为布尔值列表。",
+      "每个位置返回 score if valid_keys[i] else float(\"-inf\")。",
+      "不改变分数顺序，不应用 Softmax，保证至少一个有效键。"
+    ],
+    "explanation": [
+      "键填充掩码阻止注意力向填充 token 分配概率。",
+      "它与因果掩码不同，后者根据查询位置屏蔽未来位置。"
+    ],
+    "complexity": "时间与输出空间 O(n)。",
+    "pitfall": "不要用零等有限哨兵值，因为合法负分数可能低于零。",
+    "hints": [
+      "严格按 mask_key_padding 的约定，先手算小例子。",
+      "无效位置使用 -inf，不使用有限数值。"
+    ],
+    "testNames": [
+      "一个填充位",
+      "全部有效",
+      "屏蔽首个键",
+      "保留很负的有效值"
+    ]
+  },
+  {
+    "id": "diffusion-ddpm-stochastic-step",
+    "title": "采样一次 DDPM 反向高斯步骤",
+    "description": "给定已计算的反向高斯均值与方差，采样下一标量 DDPM 状态。不要将采样模块与后验均值计算混淆。",
+    "requirements": [
+      "mean 为反向均值标量，variance>=0，noise 为提供的标准正态样本。",
+      "timestep>0 时返回 mean+sqrt(variance)*noise。",
+      "timestep==0 时精确返回 mean，忽略噪声，采用常见的最终步无噪声约定。"
+    ],
+    "explanation": [
+      "DDPM 采样核使用方差参数化高斯，因此噪声系数是标准差 sqrt(variance)。",
+      "指定最终步省略随机噪声，精确返回反向均值。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "不要用方差本身乘噪声，也不要在时间步零加噪声。",
+    "hints": [
+      "严格按 ddpm_reverse_step 的约定，先手算小例子。",
+      "检查平方根和最终步无噪声规则。"
+    ],
+    "testNames": [
+      "最终步确定性",
+      "非最终步正噪声",
+      "负噪声",
+      "零方差",
+      "区分方差与标准差"
+    ]
+  },
+  {
+    "id": "gan-discriminator-logit-gradients",
+    "title": "对 GAN 判别器 Logit 损失求导",
+    "description": "实现标准 Logistic 判别器损失对单个真实和生成样本标量 logit 的导数。",
+    "requirements": [
+      "损失为 softplus(-real_logit)+softplus(fake_logit)，不取平均。",
+      "返回 (sigmoid(real_logit)-1, sigmoid(fake_logit))。",
+      "对大幅值 logits 使用稳定 Sigmoid；梯度针对 logits，而非模型权重。"
+    ],
+    "explanation": [
+      "判别器最小化 -log(sigmoid(real)) 与 -log(1-sigmoid(fake)) 之和。",
+      "分别求导得到 sigmoid(real)-1 和 sigmoid(fake)，对应相反的期望梯度方向。"
+    ],
+    "complexity": "时间与空间 O(1)。",
+    "pitfall": "真实 logit 梯度应为负，不要返回正值 sigmoid(-real)。",
+    "hints": [
+      "严格按 discriminator_logit_grads 的约定，先手算小例子。",
+      "检查真实 logit 导数的负号。"
+    ],
+    "testNames": [
+      "两者为零",
+      "正确且强的判别",
+      "真实与生成均判错",
+      "大 logits 保持有限",
+      "非对称情况"
+    ]
+  }
+]

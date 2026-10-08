@@ -1,0 +1,275 @@
+[
+  {
+    "id": "diffusion-ddpm-posterior",
+    "title": "计算 DDPM 后验均值",
+    "description": "计算单个扩散步骤的精确前向后验 q(x_{t-1} | x_t, x0) 的均值。",
+    "requirements": [
+      "xt、x0 为等长数值向量，alpha_t、alpha_bar_prev 在 (0,1) 内，alpha_bar_t=alpha_t*alpha_bar_prev。",
+      "设 beta_t=1-alpha_t，denom=1-alpha_t*alpha_bar_prev。",
+      "返回 coeff_x0*x0 + coeff_xt*xt，其中 coeff_x0=beta_t*sqrt(alpha_bar_prev)/denom，coeff_xt=sqrt(alpha_t)*(1-alpha_bar_prev)/denom。"
+    ],
+    "explanation": [
+      "给定 x0，前向扩散链具有解析高斯后验。",
+      "反向采样器常将估计的 x0 代入后验均值，本函数不采样噪声。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "alpha_bar_prev 与 alpha_t 表示不同统计量，不能替换。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零向量",
+      "标量核对",
+      "向量线性性",
+      "不修改输入",
+      "仅 x0 项"
+    ]
+  },
+  {
+    "id": "diffusion-cfg-epsilon",
+    "title": "实现噪声预测的无分类器引导",
+    "description": "将独立的无条件和条件 epsilon 预测组合为引导后的扩散噪声估计。",
+    "requirements": [
+      "eps_uncond、eps_cond 为等长数值向量，guidance_scale 为任意有限标量。",
+      "逐元素返回 eps_uncond + guidance_scale * (eps_cond-eps_uncond)。",
+      "强度 0 得无条件输出，1 得条件输出，大于 1 则向条件预测之外外推。"
+    ],
+    "explanation": [
+      "无分类器引导需要模型的条件与无条件输出，不需要单独训练的分类器梯度。",
+      "不同论文使用不同强度参数化，本题明确采用 u+s(c-u)。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要将该标量插值或外推与基于 ∇log p(y|x_t) 的分类器引导混淆。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零强度为无条件",
+      "一强度为条件",
+      "外推",
+      "负强度",
+      "空输入",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "diffusion-classifier-guidance",
+    "title": "对反向均值应用分类器梯度引导",
+    "description": "实现简化的分类器引导高斯反向均值偏移 μ_guided = μ + scale Σ∇log p(y|x_t)。",
+    "requirements": [
+      "mean、variance、log_prob_gradient 为等长向量，variance[i]>=0 表示对角反向协方差元素。",
+      "坐标 i 返回 mean[i] + scale*variance[i]*log_prob_gradient[i]。",
+      "本题只是反向高斯均值偏移模块；分类器梯度已提供，不在此学习或计算。"
+    ],
+    "explanation": [
+      "分类器引导使用分类器对数似然梯度引导采样分布。",
+      "对角协方差下，每个梯度坐标先乘对应方差，再加到反向均值。",
+      "这个简化步骤既不是分类器网络，也不是无分类器引导。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要将方差加权的分类器梯度更新与 CFG 的条件／无条件混合混淆。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零强度",
+      "正梯度",
+      "负梯度",
+      "零方差",
+      "不同坐标",
+      "不修改输入"
+    ]
+  },
+  {
+    "id": "diffusion-ddim-deterministic",
+    "title": "实现一次确定性 DDIM 更新",
+    "description": "使用 epsilon 预测，在两个噪声水平间计算 eta=0 的确定性 DDIM 更新。",
+    "requirements": [
+      "xt、eps_hat 等长，0<alpha_bar_t<=alpha_bar_prev<=1。",
+      "计算 x0_hat = (xt-sqrt(1-alpha_bar_t)*eps_hat)/sqrt(alpha_bar_t)。",
+      "返回 sqrt(alpha_bar_prev)*x0_hat + sqrt(1-alpha_bar_prev)*eps_hat，不加入新噪声。"
+    ],
+    "explanation": [
+      "eta=0 时，DDIM 可确定性地跨越噪声水平。",
+      "先重建预测的干净样本，再在前一个噪声水平重新混合。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不得加入随机噪声，也不要将 alpha_bar_prev 与单步 alpha 混淆。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "最终干净端点",
+      "同一步恒等性",
+      "零噪声",
+      "空输入",
+      "向量"
+    ]
+  },
+  {
+    "id": "dit-adaln-modulation",
+    "title": "实现自适应层归一化 AdaLN",
+    "description": "对经过 LayerNorm 的 token 应用条件逐特征仿射调制：y=LN(x)*(1+scale)+shift。",
+    "requirements": [
+      "x、shift、scale 为等长非空向量，eps 为正标量。",
+      "沿 x 的特征轴计算总体均值与方差，再用 sqrt(var+eps) 归一化。",
+      "各特征返回 normalized_x[i]*(1+scale[i])+shift[i]。"
+    ],
+    "explanation": [
+      "AdaLN 通过逐特征平移与缩放，对归一化特征向量施加条件。",
+      "DiT 常采用 (1+scale) 参数化调制。",
+      "预测 shift 与 scale 的条件网络不属于这个独立模块。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "不要直接将原始 x 乘 scale，应先归一化，再使用 1+scale。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "常量输入得到平移项",
+      "零条件",
+      "缩放为负一",
+      "逐特征平移",
+      "输入不变"
+    ]
+  },
+  {
+    "id": "dit-adaln-zero-gate",
+    "title": "实现 AdaLN-Zero 残差门控",
+    "description": "条件调制的 Transformer 子层产生输出后，实现 AdaLN-Zero 使用的残差门控。",
+    "requirements": [
+      "x、block_output、gate 为等长数值向量。",
+      "逐元素返回 y[i] = x[i] + gate[i]*block_output[i]。",
+      "零门控必须精确恒等，输出各项等于 x。本题只实现门控，不计算归一化。"
+    ],
+    "explanation": [
+      "零初始化门控使条件模块起初成为恒等残差连接。",
+      "AdaLN 的 shift 与 scale 变换模块输入，gate 则乘在模块输出上。",
+      "本题是一个组件，不是完整 DiT Transformer 模块。"
+    ],
+    "complexity": "时间与输出空间 O(d)。",
+    "pitfall": "对 x 而非子层输出施加 gate，会破坏初始化时的恒等行为。",
+    "hints": [
+      "从题目给出的精确数学定义开始。",
+      "提交前检查维度、归一化方式与边界测试。"
+    ],
+    "testNames": [
+      "零门控恒等",
+      "门控为一",
+      "小数门控",
+      "不同通道",
+      "空输入"
+    ]
+  },
+  {
+    "id": "cnn-valid-convolution",
+    "title": "实现 Valid 二维卷积（互相关）",
+    "description": "实现 CNN 库常用的空间滑动窗口。本题明确使用互相关，不翻转卷积核，与深度学习 conv2d 的常见语义一致。",
+    "requirements": [
+      "image 为非空 H×W 矩形列表，kernel 为非空 Kh×Kw 矩形列表，Kh<=H、Kw<=W。",
+      "步长 1、无填充，返回 (H-Kh+1)×(W-Kw+1)。",
+      "每项输出为窗口内 image[i+a][j+b]*kernel[a][b] 的总和。"
+    ],
+    "explanation": [
+      "深度学习 API 的卷积核通常按互相关应用。",
+      "左上输出来自左上图像窗口；无填充会舍弃越过边缘的窗口。"
+    ],
+    "complexity": "时间 O((H-Kh+1)(W-Kw+1)KhKw)，空间等于输出大小。",
+    "pitfall": "除非明确要求数学卷积，否则不要反转卷积核空间索引。",
+    "hints": [
+      "严格按 conv2d_valid 的约定，先手算一个小例子。",
+      "检查是否错误翻转了卷积核空间索引。"
+    ],
+    "testNames": [
+      "一乘一",
+      "窗口求和",
+      "非对称卷积核",
+      "负权重",
+      "矩形空间尺寸"
+    ]
+  },
+  {
+    "id": "cnn-zero-padded-convolution",
+    "title": "实现零填充二维卷积",
+    "description": "用奇数尺寸空间卷积核与零填充，使输出分辨率等于输入分辨率。",
+    "requirements": [
+      "image 为非空 H×W，卷积核 Kh、Kw 均为正奇数。",
+      "输出 (i,j) 时，卷积核中心对准输入 (i,j)，越界索引视为零。",
+      "使用不翻转核的互相关，返回 H×W 列表。"
+    ],
+    "explanation": [
+      "奇数核在各轴的填充半径为 floor(kernel_size/2)。",
+      "跳过越界图像位置等价于零扩展，并保持输出形状。"
+    ],
+    "complexity": "时间 O(H W Kh Kw)，输出空间 O(H W)。",
+    "pitfall": "不要循环回绕索引，填充值必须为零。",
+    "hints": [
+      "严格按 conv2d_same 的约定，先手算一个小例子。",
+      "检查是否循环回绕了索引；越界值应为零。"
+    ],
+    "testNames": [
+      "恒等核",
+      "十字卷积核",
+      "外部为零",
+      "水平模板",
+      "非对称边缘"
+    ]
+  },
+  {
+    "id": "cnn-pointwise-projection",
+    "title": "实现多通道 1×1 卷积",
+    "description": "理解 1×1 卷积如何在每个像素位置混合通道，而不聚合邻居。",
+    "requirements": [
+      "channels 为 C_in×H×W，weights 为 C_out×C_in，biases 含 C_out 个标量。",
+      "返回 C_out×H×W，out[o][i][j]=biases[o]+sum(weights[o][c]*channels[c][i][j])。",
+      "空间坐标与输入顺序不变，不修改输入。"
+    ],
+    "explanation": [
+      "1×1 卷积在每个空间位置做密集线性通道投影。",
+      "与较大卷积核不同，邻近像素不贡献当前位置结果。"
+    ],
+    "complexity": "时间 O(C_out C_in H W)，输出空间 O(C_out H W)。",
+    "pitfall": "不要将 H/W 维度混入通道点积。",
+    "hints": [
+      "严格按 pointwise_conv 的约定，先手算一个小例子。",
+      "检查通道点积是否错误混入 H/W 维度。"
+    ],
+    "testNames": [
+      "单输入单输出",
+      "混合两通道",
+      "两个输出滤波器",
+      "保留空间布局"
+    ]
+  },
+  {
+    "id": "cnn-max-pooling",
+    "title": "实现 2×2 最大池化",
+    "description": "使用不重叠的 2×2 最大值下采样图像，对应常规步长 2 的 CNN 池化层。",
+    "requirements": [
+      "image 为非空 H×W 矩形，H、W>=2。",
+      "返回 floor(H/2)×floor(W/2)，忽略不完整边缘窗口。",
+      "每项输出为对应 2×2 块的最大值。"
+    ],
+    "explanation": [
+      "步长等于池化窗口大小，窗口不重叠。",
+      "最大池化保留各块最强标量激活，空间维度向下取整。"
+    ],
+    "complexity": "时间 O(HW)，输出空间 O(floor(H/2)floor(W/2))。",
+    "pitfall": "不要填充末尾不完整块，也不要跨通道比较。",
+    "hints": [
+      "严格按 max_pool2d 的约定，先手算一个小例子。",
+      "检查是否填充了不完整尾块或跨通道比较。"
+    ],
+    "testNames": [
+      "二乘二",
+      "四个图像块",
+      "负值",
+      "丢弃奇数边缘"
+    ]
+  }
+]
