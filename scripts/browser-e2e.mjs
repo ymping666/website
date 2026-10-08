@@ -96,6 +96,25 @@ try {
   assert.equal(await fresh.locator('#code-editor').inputValue(), selected.solution);
   assert.equal(await fresh.locator('#completion-indicator').isVisible(), true);
   await freshContext.close();
+  // If writes fail, export the in-memory draft directly from the workbench.
+  // Navigating to the dashboard first would discard that unsaved memory.
+  const blockedContext = await browser.newContext();
+  await blockedContext.addInitScript(() => {
+    Storage.prototype.setItem = () => { throw new DOMException('Storage full', 'QuotaExceededError'); };
+  });
+  const blocked = await blockedContext.newPage();
+  await blocked.goto(base + `problems/${selected.id}/`);
+  await blocked.waitForFunction(() => document.querySelector('#header-progress').textContent === '0/100 solved');
+  await blocked.locator('#code-editor').fill('unsaved draft to recover');
+  assert.match(await blocked.locator('#editor-save').textContent(), /not saved/i);
+  assert.equal(await blocked.locator('#global-storage-notice').isVisible(), true);
+  const unsavedDownloadPromise = blocked.waitForEvent('download');
+  await blocked.locator('#export-unsaved-progress').click();
+  await (await unsavedDownloadPromise).saveAs('artifacts/unsaved-progress-backup.json');
+  const unsaved = JSON.parse(await (await import('node:fs/promises')).readFile('artifacts/unsaved-progress-backup.json', 'utf8'));
+  assert.equal(unsaved.drafts[selected.id], 'unsaved draft to recover');
+  await blockedContext.close();
+  pass('Storage failure is visible and the unsaved draft can be downloaded without leaving the workbench');
   await page.screenshot({ path: 'artifacts/progress-desktop.png', fullPage: true });
   await page.goto(base + 'problems/');
   await page.locator('#progress-filter').selectOption('solved');

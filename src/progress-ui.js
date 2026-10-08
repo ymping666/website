@@ -23,6 +23,13 @@ export async function mountProgressUI(store) {
     return pool[seed % pool.length];
   };
   const setProgress = (element, value, total) => { if (element) { element.max = total; element.value = value; } };
+  function downloadBackup() {
+    const data = store.backup(ids);
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    const anchor = node('a'); anchor.href = url; anchor.download = `frontiercode-backup-${localDay()}.json`;
+    document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    text('#backup-status', 'Backup downloaded. It contains your code drafts; keep it private.');
+  }
   function refresh() {
     const today = localDay(), journey = state(), solved = completed();
     const summary = summarize(journey, solved, today);
@@ -56,7 +63,16 @@ export async function mountProgressUI(store) {
     const storageWarning = $('#storage-warning');
     if (storageWarning) { storageWarning.hidden = !store.error; storageWarning.textContent = store.error; }
     const notice = $('#global-storage-notice');
-    if (notice) { notice.hidden = !store.error; notice.textContent = store.error + ' Open Progress to download a backup.'; }
+    if (notice) {
+      notice.hidden = !store.error;
+      notice.replaceChildren();
+      if (store.error) {
+        notice.append(node('span', store.error + ' Download here before reloading or leaving this page. '));
+        const button = node('button', 'Download backup', 'button outline small');
+        button.type = 'button'; button.id = 'export-unsaved-progress';
+        button.addEventListener('click', downloadBackup); notice.append(button);
+      }
+    }
     if ($('#activity-calendar')) {
       const calendar = $('#activity-calendar'); calendar.replaceChildren();
       for (let offset = -27; offset <= 0; offset++) {
@@ -113,13 +129,7 @@ export async function mountProgressUI(store) {
   $('#daily-goal')?.addEventListener('change', event => {
     const journey = state(); journey.goal = Number(event.target.value); store.set('journey', journey);
   });
-  $('#export-progress')?.addEventListener('click', () => {
-    const data = store.backup(ids);
-    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-    const anchor = node('a'); anchor.href = url; anchor.download = `frontiercode-backup-${localDay()}.json`;
-    document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-    text('#backup-status', 'Backup downloaded. It contains your code drafts; keep it private.');
-  });
+  $('#export-progress')?.addEventListener('click', downloadBackup);
   $('#import-progress-file')?.addEventListener('change', async event => {
     const file = event.target.files[0]; if (!file) return;
     try {
