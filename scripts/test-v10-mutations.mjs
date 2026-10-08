@@ -1,0 +1,10 @@
+import {pythonCommand} from './config.mjs';
+import {readFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {coreNextProblems} from '../src/core-next-problems.mjs';
+const wrong=JSON.parse(readFileSync(new URL('./v10-mutations.json',import.meta.url),'utf8'));
+const tests=coreNextProblems.map(p=>({id:p.id,solution:wrong[p.id],tests:p.tests}));
+if(tests.some(p=>!p.solution)||tests.length!==24)throw Error('v1.0 mutation set incomplete');
+const script=`import json,sys\nitems=json.load(sys.stdin)\nfor p in items:\n  caught=False\n  for test in p['tests']:\n    ns={}\n    try:\n      exec(p['solution'],ns,ns)\n      exec(test['code'],ns,ns)\n    except Exception:\n      caught=True\n      break\n  if not caught:\n    print('SURVIVED',p['id'])\n    sys.exit(1)\n  print('CAUGHT',p['id'])\nprint('PASS',len(items),'new erroneous implementations detected')`;
+const result=spawnSync(pythonCommand,['-c',script],{input:JSON.stringify(tests),encoding:'utf8'});
+process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');if(result.status!==0)process.exit(result.status||1);
