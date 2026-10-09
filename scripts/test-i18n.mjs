@@ -14,6 +14,7 @@ assert.equal(translate('✓ 5/5 passed'), '✓ 5/5 通过');
 assert.equal(translate('Full local suite · 4 of 5 passed · 0.25s'), '完整本地测试 · 4/5 通过 · 0.25 秒');
 assert.equal(translate('15 min · Python 3'), '15 分钟 · Python 3');
 assert.equal(translate('6 published, independently tested coding exercises'), '6 道独立验证的已发布练习');
+assert.equal(translate('6 published, independently tested coding challenges'), '6 道独立验证的已发布练习');
 assert.equal(translate('print("passed")'), 'print("passed")', 'Unknown code is never translated');
 for (const problem of problems) {
   const en = await readFile(join(siteRoot, 'problems', problem.id, 'index.html'), 'utf8');
@@ -41,6 +42,7 @@ for (const item of [...concepts,...practiceSets]) {
   const path = item.ids ? 'concepts' : 'practice-sets';
   const html = decodeHtml(await readFile(join(siteRoot,'zh',path,item.slug,'index.html'),'utf8'));
   assert.ok(html.includes(chinese.translate(item.title)));
+  if (item.ids) assert.ok(html.includes(`${item.ids.length} 道独立验证的已发布练习`), 'Complete Chinese concept exercise-count label');
   for (const text of [...(item.outcomes || []), ...(item.segments || []).map(s => s.note)]) assert.ok(html.includes(chinese.translate(text)));
 }
 for (const path of ['index.html','progress/index.html','privacy/index.html']) {
