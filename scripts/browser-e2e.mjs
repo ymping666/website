@@ -129,8 +129,8 @@ try {
   assert.equal(page.url(), base + `zh/problems/${selected.id}/`);
   assert.equal(await page.locator('html').getAttribute('lang'), 'zh-CN');
   assert.match(await page.locator('h1').textContent(), /RoPE.*二维特征/);
-  assert.equal(await page.locator('#code-editor').inputValue(), selected.solution);
   await page.waitForFunction(() => document.querySelector('#completion-indicator').textContent.includes('已在本地通过'));
+  assert.equal(await page.locator('#code-editor').inputValue(), selected.solution);
   await page.locator('#code-editor').fill(selected.solution + '\n# 中文页面保留同一份草稿');
   await page.locator('#run-samples').click();
   await page.waitForFunction(() => document.querySelector('#status').textContent === '✓ 2/2 通过', null, {timeout:120000});
