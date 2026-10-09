@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node scripts/test-progress.mjs && node scripts/test-i18n.mjs && node scripts/test.mjs && node scripts/test-judge.mjs && node scripts/mutation-check.mjs && node scripts/test-video-mutations.mjs && node scripts/test-foundations-mutations.mjs && node scripts/test-v10-mutations.mjs && node scripts/link-check.mjs",
+    "check": "node scripts/test-progress.mjs && node scripts/test-i18n.mjs && node scripts/test.mjs && node scripts/test-judge.mjs && node scripts/mutation-check.mjs && node scripts/test-video-mutations.mjs && node scripts/test-foundations-mutations.mjs && node scripts/test-v10-mutations.mjs && node scripts/link-check.mjs && node scripts/test-seo.mjs",
     "dev": "npm run build && node scripts/serve.mjs",
     "check:foundations": "node scripts/test-foundations-mutations.mjs",
     "check:browser": "node scripts/browser-e2e.mjs",

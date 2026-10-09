@@ -3,6 +3,7 @@ import { zhUI, translate } from '../src/locales/zh-ui.mjs';
 import { problems } from '../src/problems.mjs';
 import { concepts } from '../src/concepts.mjs';
 import { practiceSets } from '../src/practice-sets.mjs';
+import { searchTranslations } from '../src/search-pages.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const decodeHtml = text => text.replace(/&(amp|lt|gt|quot|nbsp|#39|#\d+);/g, (_, entity) =>
@@ -37,6 +38,7 @@ export async function loadChinese() {
       original.segments.forEach((segment, i) => add(segment.note, chinese.notes[i], key + '.notes'));
     }
   }
+  Object.assign(dictionary, searchTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 
@@ -80,6 +82,11 @@ export function decorate(html, path, { base, origin, locale = 'en' }) {
   const href = language => base + (language === 'zh' ? 'zh/' : '') + path.replace(/^\//, '');
   const alternatives = origin ? ['en','zh'].map(language => `<link rel="alternate" hreflang="${language === 'zh' ? 'zh-CN' : 'en'}" href="${origin + href(language)}">`).join('') + `<link rel="alternate" hreflang="x-default" href="${origin + href('en')}">` : '';
   html = html.replace('</head>', alternatives + '</head>');
+  const title = decodeHtml(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] || 'TensorDrill');
+  const description = decodeHtml(html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '');
+  const social = `<meta property="og:type" content="website"><meta property="og:site_name" content="TensorDrill"><meta property="og:locale" content="${locale === 'zh' ? 'zh_CN' : 'en_US'}"><meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}">${origin ? `<meta property="og:url" content="${escapeHtml(origin + href(locale))}">` : ''}<meta name="twitter:card" content="summary"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}">`;
+  const website = origin && path === '/' ? `<script type="application/ld+json">${JSON.stringify({'@context':'https://schema.org','@type':'WebSite',name:'TensorDrill',url:origin + base,inLanguage:['en','zh-CN']}).replace(/</g,'\\u003c')}</script>` : '';
+  html = html.replace('</head>', social + website + '</head>');
   const switcher = `<nav class="language-switch" aria-label="${locale === 'zh' ? '语言' : 'Language'}"><a data-language="en" href="${href('en')}"${locale === 'en' ? ' aria-current="page"' : ''}>EN</a><a data-language="zh" href="${href('zh')}" lang="zh-CN"${locale === 'zh' ? ' aria-current="page"' : ''}>中文</a></nav>`;
   return html.replace('<span class="header-note"', switcher + '<span class="header-note"');
 }
