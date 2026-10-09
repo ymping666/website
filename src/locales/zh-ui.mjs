@@ -82,7 +82,7 @@ export const zhUI = {
   'Some changes are only in memory. Export a backup before leaving.':'部分修改仅保存在内存中，请在离开前导出备份。',
   'Download here before reloading or leaving this page.':'请在当前页下载备份，再刷新或离开。',
   'Choose a backup smaller than 3 MB.':'请选择小于 3 MB 的备份。', 'Backup must be a JSON file smaller than 3 MB.':'备份必须是小于 3 MB 的 JSON 文件。',
-  'This file is not valid JSON.':'该文件不是有效的 JSON。', 'This is not a supported FrontierCode backup.':'该文件不是支持的 FrontierCode 备份。',
+  'This file is not valid JSON.':'该文件不是有效的 JSON。', 'This is not a supported TensorDrill backup.':'该文件不是支持的 TensorDrill / 旧版备份。',
   'Backup contains an unknown exercise. Update the site before importing.':'备份含有未知题目，请更新网站后再导入。',
   'Invalid completed record.':'完成记录格式无效。', 'Invalid or oversized code draft.':'代码草稿无效或过大。',
   'Invalid activity history.':'练习历史格式无效。', 'Invalid activity day.':'练习日期或记录无效。', 'Invalid exercise history.':'题目历史记录无效。',
@@ -132,7 +132,7 @@ export function translate(text, dictionary = zhUI) {
       [/^Run samples: first 2 cases · Submit: all (\d+) inspectable local tests\.$/, (_, n) => `运行示例：前 2 个用例 · 提交：全部 ${n} 个可查看的本地测试。`],
       [/^FREE EDITORIAL · (.+)$/, (_, track) => `免费题解 · ${translated(track)}`],
       [/^All (\d+) published exercises have original contracts, editorial explanations and reference implementations checked against their stated tests\. Planned topics are not counted as published problems\.$/, (_, n) => `全部 ${n} 道已发布练习均有原创约定、题解与通过相应测试的参考实现。规划中的内容不计入题目数量。`],
-      [/^(.+) \| FrontierCode$/, (_, title) => `${translated(title)} | FrontierCode`]
+      [/^(.+) \| TensorDrill$/, (_, title) => `${translated(title)} | TensorDrill`]
     ];
     for (const [pattern, render] of patterns) {
       if (pattern.test(value)) { result = value.replace(pattern, render); break; }

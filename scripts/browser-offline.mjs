@@ -22,7 +22,8 @@ try {
     try {
       const body = await readFile(file);
       await route.fulfill({ body, contentType: file.endsWith('.html') ? 'text/html' :
-        file.endsWith('.css') ? 'text/css' : 'text/javascript' });
+        file.endsWith('.css') ? 'text/css' : file.endsWith('.svg') ? 'image/svg+xml' :
+        file.endsWith('.png') ? 'image/png' : 'text/javascript' });
     } catch { await route.fulfill({ status: 404 }); }
   });
   const selected = problems.find(p => p.id === 'rope-rotate-pair');
@@ -92,7 +93,7 @@ try {
     };
   });
   await page.locator('#export-progress').click();
-  assert.match(await page.evaluate(() => window.backupFilename), /^frontiercode-backup-\d{4}-\d{2}-\d{2}\.json$/);
+  assert.match(await page.evaluate(() => window.backupFilename), /^tensordrill-backup-\d{4}-\d{2}-\d{2}\.json$/);
   await writeFile('artifacts/progress-backup.json', await page.evaluate(() => window.backupBlob.text()));
   const payload = JSON.parse(await readFile('artifacts/progress-backup.json', 'utf8'));
   assert.equal(payload.completed[selected.id], true);

@@ -1,4 +1,4 @@
-# FrontierCode 上线与低成本运营计划
+# TensorDrill 上线与低成本运营计划
 
 更新：2026-10-08。代码仓库：<https://github.com/ymping666/website>。
 

@@ -1,3 +1,4 @@
+// Keep the original storage and backup identifiers so rebranding preserves existing records.
 export const PREFIX = 'frontiercode:v04:';
 export const emptyJourney = () => ({ version: 1, goal: 1, days: {}, stats: {}, lastProblem: null });
 const plain = value => value && typeof value === 'object' && !Array.isArray(value);
@@ -123,7 +124,7 @@ export function validateBackup(text, knownIds) {
   if (typeof text !== 'string' || text.length > 3000000) throw new Error('Backup must be a JSON file smaller than 3 MB.');
   let data; try { data = JSON.parse(text); } catch { throw new Error('This file is not valid JSON.'); }
   if (data?.app !== 'frontiercode' || data.version !== 1 || !plain(data.completed) || !plain(data.drafts) || !plain(data.journey) || data.journey.version !== 1) {
-    throw new Error('This is not a supported FrontierCode backup.');
+    throw new Error('This is not a supported TensorDrill backup.');
   }
   const known = new Set(knownIds);
   const completed = {}, drafts = {};

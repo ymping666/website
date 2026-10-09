@@ -27,7 +27,7 @@ export async function mountProgressUI(store) {
   function downloadBackup() {
     const data = store.backup(ids);
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-    const anchor = node('a'); anchor.href = url; anchor.download = `frontiercode-backup-${localDay()}.json`;
+    const anchor = node('a'); anchor.href = url; anchor.download = `tensordrill-backup-${localDay()}.json`;
     document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     text('#backup-status', 'Backup downloaded. It contains your code drafts; keep it private.');
   }

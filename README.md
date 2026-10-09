@@ -1,4 +1,4 @@
-# FrontierCode — free AI coding practice
+# TensorDrill — free AI coding practice
 
 100 original Python challenges with English and Simplified Chinese statements/editorials, precise contracts, published tests and local browser execution. No sign-up, GPU, paid model API or server-side judge is required. The curriculum covers AI Foundations, Transformer & Vision, Generative Models, LLM Systems, Agent Engineering, World Models and Video World Models.
 
