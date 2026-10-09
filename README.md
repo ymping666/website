@@ -82,15 +82,17 @@ SITE_BASE=/website/ SITE_ORIGIN=https://ymping666.github.io npm run build
 SITE_BASE=/website/ npm run check
 ```
 
-Generated `site/` and test evidence are excluded from Git. GitHub Pages is a project test preview without advertisements. For production, evaluate Cloudflare Pages: build `npm run build`, output `site`, `SITE_BASE=/`, and `SITE_ORIGIN` set to the actual project URL or custom domain. Do not publish placeholder canonical URLs.
+Generated `site/` and test evidence are excluded from Git. GitHub Pages is a project test preview without advertisements. Production is deployed through the Cloudflare Workers Builds project `website`: build `npm run build`, static assets `site`, `SITE_BASE=/`, and `SITE_ORIGIN=https://tensordrill.com`. Do not publish placeholder canonical URLs.
 
-**Status (2026-10-08):** Source uploaded, GitHub Pages enabled with HTTPS, root build CI passed, and Pages deployment succeeded. The published home page returned HTTP 200. No custom domain, analytics account or advertising account has been activated. [The launch plan](docs/launch-plan.zh-CN.md) documents cost boundaries, demand validation, migration, metrics and payment considerations.
+**Status (2026-10-09):** The custom domain `https://tensordrill.com` and bilingual content are live. GitHub Pages remains a preview. Advertising and analytics scripts are not activated. [The launch plan](docs/launch-plan.zh-CN.md) documents cost boundaries, demand validation, migration, metrics and payment considerations. [The AdSense preparation guide](docs/adsense-readiness.zh-CN.md) covers verification, consent management and the remaining account tasks.
 
 ## Content and privacy
 
 Problem text, implementations, explanations and tests are original project content. Per-problem references link to conceptual sources such as the BatchNorm, RMSNorm, Adam, AdamW, RoFormer, DDPM and GAN papers. Convolution exercises specify cross-correlation; BatchNorm differentiates training and inference; RMSNorm does not center; RoPE specifies pairing; AdamW uses decoupled decay.
 
-Drafts, solved marks, goals and practice history use localStorage with manual JSON backups. Python executes in a disposable Worker with time limits. Public client-side tests and personal milestones provide educational feedback rather than secure competition scores. The release includes no ad scripts or analytics trackers. Privacy and contact pages explain third-party hosting/CDN requests and provide a public issue-reporting channel.
+Drafts, solved marks, goals and practice history use localStorage with manual JSON backups. Python executes in a disposable Worker with time limits. Public client-side tests and personal milestones provide educational feedback rather than secure competition scores. The release includes no ad scripts or analytics trackers. Bilingual privacy, cookie, terms, advertising, about and contact pages explain the current service, future advertising and hosting/CDN requests. Contact supports private email and public issue reporting.
+
+Optional build variable `ADSENSE_PUBLISHER_ID` accepts a real `pub-` or `ca-pub-` ID with 16 digits and generates a verification meta tag and root `ads.txt`. It never enables advertising. Leave it unset until the real account ID is available; consent management and ad integration are separate work.
 
 ## Source
 
@@ -99,6 +101,7 @@ Drafts, solved marks, goals and practice history use localStorage with manual JS
 - `src/app.js`, `src/runner.worker.js`: UI and browser Python execution.
 - `src/progress.mjs`, `src/progress-ui.js`: local persistence, portable backups and personal practice dashboard.
 - `src/locales/*`, `src/i18n.js`, `scripts/localize.mjs`: build-time Chinese content and runtime UI translations.
+- `src/policy-pages.mjs`, `scripts/adsense.mjs`: bilingual policy content and optional AdSense verification without ad delivery.
 - `scripts/build.mjs`, `scripts/config.mjs`, `scripts/serve.mjs`: portable static build and preview.
 - `scripts/test*.mjs`, `scripts/mutation-check.mjs`, `scripts/link-check.mjs`: correctness and link checks.
 - `scripts/browser-e2e.mjs`, `scripts/browser-offline.mjs`: distinct live-runtime and offline-UI checks.
