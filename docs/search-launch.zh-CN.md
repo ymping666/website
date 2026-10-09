@@ -17,7 +17,7 @@
 
 主入口的独立中英文 `<title>`、description、H1 和可见介绍相互对应。首页及题库链接到五个优先专题，专题之间增加相关练习。内容直接包含在静态 HTML 中，不依赖 JavaScript 生成。
 
-全站使用语言独立的 self-canonical、相互对应的 `hreflang`、分享摘要；首页提供 TensorDrill 的 `WebSite` 结构化数据。保留 522 个公开页面的 sitemap，两种语言的个人进度页保持 noindex。没有添加 Google 不使用的 meta keywords，也没有新增重复的关键词落地页。
+全站使用语言独立的 self-canonical、相互对应的 `hreflang`、分享摘要；首页提供 TensorDrill 的 `WebSite` 结构化数据。当前 sitemap 包含 528 个公开页面（含后来补齐的双语条款页），两种语言的个人进度页保持 noindex。没有添加 Google 不使用的 meta keywords，也没有新增重复的关键词落地页。
 
 `npm run check` 包含渲染后的 SEO 检查。正式域名构建须使用 `SITE_BASE=/` 与 `SITE_ORIGIN=https://tensordrill.com`，GitHub Pages 预览继续使用自己的路径和域名。
 

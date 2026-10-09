@@ -4,7 +4,7 @@
 
 The 24 newest fundamentals cover CNN/pooling, BatchNorm/RMSNorm, backpropagation, SGD/Adam/AdamW, clipping, RoPE, SwiGLU, masking, DDPM sampling and GAN gradients. These are narrow numerical or engineering kernels, not complete model training projects.
 
-There are **524 standalone HTML routes**, 262 per language: 100 problems, 100 editorials, 26 concept hubs, 19 practice sets, 7 topic hubs, indexes and informational pages, including a personal progress dashboard. Separate English and Chinese 404 pages are generated. Both dashboards are excluded from the 522-page bilingual sitemap and marked noindex. Concepts and practice sets link only to implemented challenges.
+There are **530 standalone HTML routes**, 265 per language: 100 problems, 100 editorials, 26 concept hubs, 19 practice sets, 7 topic hubs, indexes and informational pages, including a personal progress dashboard. Separate English and Chinese 404 pages are generated. Both dashboards are excluded from the 528-page bilingual sitemap and marked noindex. Concepts and practice sets link only to implemented challenges.
 
 ## English and Chinese
 
@@ -51,7 +51,7 @@ Current local Windows validation passes:
 - 553 reference-solution assertions across all 100 problems.
 - 553 CPython checks of the production judge's assertion instrumentation, plus expected/actual, syntax-error and captured-output checks.
 - 91 deliberately incorrect implementations rejected (21 expansion, 20 video, 26 foundations, 24 newest fundamentals).
-- All 524 bilingual HTML routes and internal links in both `/` and `/website/` modes.
+- All 530 bilingual HTML routes and internal links in both `/` and `/website/` modes.
 - Complete Chinese content coverage, identical Python code/assertions, same-page language switching, Chinese search/feedback, shared drafts/progress and mobile layout.
 - Progress migration, date rollover/leap years, streak breaks, deduplication, backup merge/validation, and failed-write recovery.
 - Chrome catalog filtering, submission/persistence, goals/milestones, backup transfer and 375px mobile home/catalog/workbench/progress/privacy/contact layouts. Offline UI mocks inspect the export Blob; live checks verify native download and restoration.
@@ -93,6 +93,10 @@ Problem text, implementations, explanations and tests are original project conte
 Drafts, solved marks, goals and practice history use localStorage with manual JSON backups. Python executes in a disposable Worker with time limits. Public client-side tests and personal milestones provide educational feedback rather than secure competition scores. The release includes no ad scripts or analytics trackers. Bilingual privacy, cookie, terms, advertising, about and contact pages explain the current service, future advertising and hosting/CDN requests. Contact supports private email and public issue reporting.
 
 Optional build variable `ADSENSE_PUBLISHER_ID` accepts a real `pub-` or `ca-pub-` ID with 16 digits and generates a verification meta tag and root `ads.txt`. It never enables advertising. Leave it unset until the real account ID is available; consent management and ad integration are separate work.
+
+## Blog preparation
+
+[The first publication pack](docs/outreach/README.zh-CN.md) contains Chinese/English platform comparisons, a Chinese Flow Matching tutorial, an English Attention tutorial for DEV review, evidence and publishing instructions. These are prepared Markdown files; they have not been posted to external accounts or published as new blog routes on this site. The tutorials' Python examples have been executed, and exercise links checked against the current build.
 
 ## Source
 

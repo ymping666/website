@@ -13,6 +13,7 @@ const parseChallenge = html => JSON.parse(html.match(/id="challenge-json">([\s\S
 assert.equal(translate('✓ 5/5 passed'), '✓ 5/5 通过');
 assert.equal(translate('Full local suite · 4 of 5 passed · 0.25s'), '完整本地测试 · 4/5 通过 · 0.25 秒');
 assert.equal(translate('15 min · Python 3'), '15 分钟 · Python 3');
+assert.equal(translate('6 published, independently tested coding exercises'), '6 道独立验证的已发布练习');
 assert.equal(translate('print("passed")'), 'print("passed")', 'Unknown code is never translated');
 for (const problem of problems) {
   const en = await readFile(join(siteRoot, 'problems', problem.id, 'index.html'), 'utf8');
