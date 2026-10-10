@@ -1,7 +1,7 @@
 export const publicContactEmail = 'pym123amingge@gmail.com';
 const link = (en, zh, href) => ({label:[en,zh],href});
 const section = (en, zh, paragraphs, links=[]) => ({heading:[en,zh],paragraphs,links});
-const contact = link('Email the maintainer','发送邮件给维护者','mailto:'+publicContactEmail);
+const contact = link('Email TensorDrill','联系 TensorDrill','mailto:'+publicContactEmail);
 const privacy = link('Privacy policy','隐私政策','/privacy/');
 const cookies = link('Cookie and storage choices','Cookie 与存储选择','/cookies/');
 const googleData = link('How Google uses data on partner sites','Google 如何使用合作网站的数据','https://policies.google.com/technologies/partner-sites');
@@ -13,7 +13,7 @@ export const policyPages = [
   path:'/privacy/', title:['Privacy Policy','隐私政策'],
   description:['How TensorDrill handles local practice data, hosting requests, advertising cookies, privacy choices and enquiries.','了解 TensorDrill 如何处理本地练习记录、托管请求、广告 Cookie、隐私选择及相关咨询。'],
   heading:['Privacy Policy','隐私政策'],
-  intro:['This policy covers tensordrill.com and its English and Chinese pages. TensorDrill is maintained by the project maintainer, GitHub user ymping666. Contact: '+publicContactEmail+'.','本政策适用于 tensordrill.com 及其中英文页面。TensorDrill 由项目维护者（GitHub 用户 ymping666）维护。联系邮箱：'+publicContactEmail+'。'],
+  intro:['This policy covers tensordrill.com and its English and Chinese pages. For privacy enquiries, contact '+publicContactEmail+'.','本政策适用于 tensordrill.com 及其中英文页面。隐私相关咨询请联系 '+publicContactEmail+'。'],
   sections:[
    section('What is active today','目前启用的功能',[
     ['The application has no account registration, cloud progress database or analytics tags. The production site includes the Google AdSense script. Loading that script sends a request to Google, which can include your IP address, browser information and page URL. Whether ads appear depends on Google approval, account settings and applicable privacy choices.','应用没有账号注册、云端进度数据库或分析追踪标签。正式站已接入 Google AdSense 脚本。加载脚本会向 Google 发出请求，可能包含你的 IP 地址、浏览器信息及页面网址。广告是否展示取决于 Google 审核、账号设置及适用的隐私选择。']
@@ -24,9 +24,9 @@ export const policyPages = [
     ['You can download or import a JSON backup on the Progress page. Backups contain your code and are processed locally. Clearing site data removes local progress, so download a backup first if you want to keep it. We cannot recover deleted local records.','你可以在练习进度页下载或导入 JSON 备份。备份含有代码，由浏览器本地处理。清除网站数据会移除本地进度，如需保留请先下载备份。我们无法恢复已删除的本地记录。']
    ],[link('Progress and backups','练习进度与备份','/progress/')]),
    section('Hosting, security and the Python download','托管、安全与 Python 下载',[
-    ['Cloudflare delivers and protects the production site. GitHub hosts the source repository and the GitHub Pages preview. jsDelivr delivers the Python runtime when you run code. These providers receive normal request information, which can include IP address, requested URL, browser information, referrer and timing, to deliver their services and handle security or abuse.','Cloudflare 负责正式站的访问与安全防护，GitHub 托管源码仓库和 GitHub Pages 预览，jsDelivr 在运行代码时提供 Python 运行时。这些提供方会收到常规请求信息，可能包括 IP 地址、请求网址、浏览器信息、来源页面及时间，用于交付服务和处理安全或滥用问题。'],
+    ['Cloudflare delivers and protects the production site. jsDelivr delivers the Python runtime when you run code. These providers receive normal request information, which can include IP address, requested URL, browser information, referrer and timing, to deliver their services and handle security or abuse.','Cloudflare 负责正式站的访问与安全防护，jsDelivr 在运行代码时提供 Python 运行时。这些提供方会收到常规请求信息，可能包括 IP 地址、请求网址、浏览器信息、来源页面及时间，用于交付服务和处理安全或滥用问题。'],
     ['Hosting and security providers may use cookies or browser checks for protection. Their processing locations and retention periods depend on their own policies. We do not control their infrastructure or promise a particular log-retention period.','托管与安全提供方可能使用 Cookie 或浏览器验证进行防护。其数据处理地点及保留时间取决于各自政策。我们不控制其基础设施，也不承诺特定的日志保留期限。']
-   ],[link('Cloudflare privacy policy','Cloudflare 隐私政策','https://www.cloudflare.com/privacypolicy/'),link('GitHub privacy statement','GitHub 隐私声明','https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement'),link('jsDelivr privacy policy','jsDelivr 隐私政策','https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net')]),
+   ],[link('Cloudflare privacy policy','Cloudflare 隐私政策','https://www.cloudflare.com/privacypolicy/'),link('jsDelivr privacy policy','jsDelivr 隐私政策','https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net')]),
    section('Google AdSense and other advertising providers','Google AdSense 与其他广告提供方',[
     ['If Google AdSense is activated, Google and participating advertising companies may store and read advertising cookies and similar identifiers. Browsing activity from this site or other sites can be used to choose personalized ads. Google advertising cookies allow Google and its partners to relate those visits to advertising shown to you.','未来启用 Google AdSense 后，Google 及参与投放的广告公司可能存储并读取广告 Cookie 和类似标识符。本网站或其他网站的浏览活动可能被用于选择个性化广告。Google 广告 Cookie 可帮助 Google 及其合作方将这些访问与向你展示的广告关联。'],
     ['Ad delivery may also involve web beacons, IP addresses, device or browser information and interactions with ads for delivery, measurement and fraud prevention. Where other ad vendors participate, their identities, purposes and privacy information will be available through the advertising consent interface before relevant processing is enabled.','广告投放还可能涉及网络信标、IP 地址、设备或浏览器信息及广告交互数据，用于交付、衡量效果和防范作弊。如有其他广告供应商参与，将在启用相关处理前，通过广告同意界面提供其身份、用途及隐私信息。'],
@@ -68,7 +68,7 @@ export const policyPages = [
   path:'/terms/',title:['Terms of Use','使用条款'],
   description:['Terms for using TensorDrill exercises, browser code execution, local progress, reference solutions and external services.','TensorDrill 练习、浏览器代码执行、本地进度、参考题解与外部服务的使用条款。'],
   heading:['Terms of Use','使用条款'],
-  intro:['These terms describe the use of TensorDrill, a free educational coding-practice project maintained by GitHub user ymping666. Questions can be sent to '+publicContactEmail+'.','本条款说明如何使用 TensorDrill。该项目由 GitHub 用户 ymping666 维护，免费提供教学编程练习。相关问题请发送至 '+publicContactEmail+'。'],
+  intro:['These terms describe the use of TensorDrill, a free AI coding-practice platform. Questions can be sent to '+publicContactEmail+'.','本条款适用于 TensorDrill 免费 AI 编程练习平台。相关问题请发送至 '+publicContactEmail+'。'],
   sections:[
    section('Educational purpose','教学用途',[
     ['Exercises and reference solutions support learning and research practice. They are not a professional qualification, a verified contest result or production-ready model software. Published tests check the stated exercise contract and do not prove that a larger system is correct or safe.','题目和参考实现用于学习及研究练习，不代表专业资格、经过认证的比赛成绩或可直接用于生产的模型软件。公开测试用于检查题目的约定，不能证明更大系统的正确性或安全性。']
@@ -115,32 +115,31 @@ export const policyPages = [
   path:'/about/',title:['About TensorDrill','关于 TensorDrill'],
   description:['About TensorDrill, an independent library of original AI coding exercises, tested Python solutions and bilingual learning resources.','了解 TensorDrill：提供原创 AI 编程练习、经测试的 Python 题解与中英文学习资源的独立项目。'],
   heading:['Learn AI by implementing it.','通过亲手实现学习 AI。'],
-  intro:['TensorDrill is an independent practice project maintained by GitHub user ymping666. It serves university students, researchers and engineers who want to understand AI components by writing and testing code.','TensorDrill 是由 GitHub 用户 ymping666 维护的独立练习项目，面向希望通过编写与测试代码理解 AI 组件的大学生、研究人员和工程师。'],
+  intro:['TensorDrill is a free AI coding-practice platform. Build a deeper understanding of AI by implementing and testing its core ideas.','TensorDrill 是免费的 AI 编程练习平台，通过亲手实现与测试，帮助你理解 AI 的核心原理。'],
   sections:[
-   section('Original, practical exercises','原创、可实践的练习',[
-    ['The library covers mathematical foundations, CNNs, Transformers, generative models, LLM systems, agents and world models. Each published exercise has a precise function contract, repeatable tests, a reference implementation and a free explanation.','题库覆盖数学基础、CNN、Transformer、生成模型、LLM 系统、智能体和世界模型。每道已发布练习都有明确函数约定、可重复测试、参考实现和免费题解。'],
-    ['Python runs locally in your browser. No account or model API key is required. Progress is a personal learning record stored on your device, not a secure competition score.','Python 在浏览器本地运行，无需账号或模型 API 密钥。进度是保存在你设备上的个人学习记录，并非安全认证的竞赛成绩。']
+   section('Hands-on AI practice','动手练习 AI',[
+    ['Practice foundations, Transformers, generative models, LLM systems, agents and world models with original Python exercises, repeatable tests and free explanations.','通过原创 Python 练习、可重复测试和免费题解，学习数学基础、Transformer、生成模型、LLM 系统、智能体和世界模型。'],
+    ['Run Python in your browser without an account or model API key. Your practice progress stays on your device.','无需账号或模型 API 密钥，即可在浏览器运行 Python。练习进度保存在你的设备上。']
    ],[link('Browse AI coding challenges','浏览 AI 编程题库','/problems/'),link('Editorial standards','内容标准','/standards/')]),
-   section('Maintenance and transparency','维护与透明度',[
-    ['The source repository and issue history are public. Corrections are checked against the exercise contract and regression tests. Reports and suggestions help decide what to improve next.','源码仓库和问题记录公开可查。内容修正会根据题目约定与回归测试核验。反馈与建议帮助我们决定后续改进方向。'],
-    ['The production site includes Google AdSense code to help support the free library. Our advertising and privacy policies explain ad placement boundaries, data processing and privacy choices.','正式站已接入 Google AdSense 代码，以支持免费题库。广告与隐私政策说明广告展示边界、数据处理和隐私选择。']
-   ],[link('Project repository','项目仓库','https://github.com/ymping666/website'),link('Advertising policy','广告政策','/advertising/'),contact])
+   section('Ongoing updates','持续更新',[
+    ['We maintain the exercises, check corrections against their tests and expand the library over time. Send us feedback to help improve TensorDrill.','我们持续维护题目、验证修正并逐步扩充题库。欢迎反馈问题和建议，帮助 TensorDrill 不断改进。']
+   ],[contact])
   ]
  },
  {
   path:'/contact/',title:['Contact & Report a Problem','联系与问题反馈'],
-  description:['Contact the TensorDrill maintainer about exercise errors, privacy, copyright, accessibility or advertising concerns.','联系 TensorDrill 维护者，反馈题目错误、隐私、版权、无障碍访问或广告相关问题。'],
+  description:['Contact TensorDrill about exercise errors, privacy, copyright, accessibility or advertising concerns.','联系 TensorDrill，反馈题目错误、隐私、版权、无障碍访问或广告相关问题。'],
   heading:['Contact TensorDrill','联系 TensorDrill'],
-  intro:['For privacy, copyright, advertising and other enquiries, email '+publicContactEmail+'. For public exercise bugs, you can also use GitHub Issues.','隐私、版权、广告及其他咨询，请发送邮件至 '+publicContactEmail+'。公开的题目问题也可以通过 GitHub Issues 反馈。'],
+  intro:['For exercise feedback, privacy, copyright, advertising and other enquiries, email '+publicContactEmail+'.','题目反馈、隐私、版权、广告及其他咨询，请发送邮件至 '+publicContactEmail+'。'],
   sections:[
-   section('Email and public reports','邮件与公开反馈',[
+   section('Email enquiries','邮件咨询',[
     ['The maintainer receives enquiries at the email address above. Include a clear subject and only the information needed to address your request. Do not send passwords, identity documents or confidential code.','维护者通过上述邮箱接收咨询。请填写清晰的主题，并仅提供处理请求所需的信息，不要发送密码、身份证件或保密代码。'],
-    ['GitHub Issues are public and require a GitHub account. Keep personal information out of public reports; use email for privacy or copyright enquiries. Reading and practicing on TensorDrill require no account.','GitHub Issues 是公开的，需要 GitHub 账号。请勿在公开反馈中填写个人资料；隐私或版权问题请使用邮件。阅读与练习 TensorDrill 无需账号。']
-   ],[contact,link('Report a public exercise bug','反馈公开题目问题','https://github.com/ymping666/website/issues/new')]),
+    ['Reading and practicing on TensorDrill require no account. Only include the information needed to investigate your enquiry.','阅读与练习 TensorDrill 无需账号。咨询时请仅提供调查问题所需的信息。']
+   ],[contact]),
    section('What helps us investigate','有助于排查的信息',[
     ['For a test or explanation error, include the exercise URL, a minimal input, the expected and actual result, and your browser. For a copyright concern, identify the material and your relationship to the rights holder, with enough information for us to review the claim.','反馈测试或题解错误时，请提供题目网址、最小输入、预期及实际结果和浏览器信息。反馈版权问题时，请指出相关材料及你与权利人的关系，并提供足够的信息供我们核查。'],
     ['We review reports as project maintenance time allows and do not promise a fixed response time. If you include a screenshot or backup, remove personal or confidential data first.','我们会根据项目维护时间安排核查反馈，不承诺固定回复时限。如附截图或备份，请先移除个人或保密数据。']
-   ],[privacy,link('Project repository','项目仓库','https://github.com/ymping666/website')])
+   ],[privacy])
   ]
  }
 ];
