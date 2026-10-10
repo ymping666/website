@@ -16,7 +16,7 @@ export const policyPages = [
   intro:['This policy covers tensordrill.com and its English and Chinese pages. TensorDrill is maintained by the project maintainer, GitHub user ymping666. Contact: '+publicContactEmail+'.','本政策适用于 tensordrill.com 及其中英文页面。TensorDrill 由项目维护者（GitHub 用户 ymping666）维护。联系邮箱：'+publicContactEmail+'。'],
   sections:[
    section('What is active today','目前启用的功能',[
-    ['The application has no account registration, cloud progress database, analytics tags or advertising scripts. Google AdSense advertising and an advertising consent platform have not been activated in this release. The advertising sections below describe what will apply if ads are introduced.','目前应用没有账号注册、云端进度数据库、分析追踪标签或广告脚本。本版本尚未启用 Google AdSense 广告和广告同意管理平台。下方广告章节说明未来启用广告时适用的处理方式。']
+    ['The application has no account registration, cloud progress database or analytics tags. The production site includes the Google AdSense script. Loading that script sends a request to Google, which can include your IP address, browser information and page URL. Whether ads appear depends on Google approval, account settings and applicable privacy choices.','应用没有账号注册、云端进度数据库或分析追踪标签。正式站已接入 Google AdSense 脚本。加载脚本会向 Google 发出请求，可能包含你的 IP 地址、浏览器信息及页面网址。广告是否展示取决于 Google 审核、账号设置及适用的隐私选择。']
    ]),
    section('Code, drafts and practice history','代码、草稿与练习记录',[
     ['Your code runs in your browser through a Pyodide Worker. The application does not send your editor contents, tests, solved marks or practice history to our server or a model API. Code you choose to run can itself make network requests; avoid running untrusted code or including secrets.','代码通过 Pyodide Worker 在浏览器运行。应用不会将编辑器内容、测试、完成标记或练习历史发送到我们的服务器或模型 API。你主动运行的代码本身可能发起网络请求，请勿运行不可信代码或填写秘密信息。'],
@@ -34,7 +34,7 @@ export const policyPages = [
    ],[googleData,googleAds,adChoices]),
    section('Consent and regional privacy choices','同意管理与地区隐私选择',[
     ['Before advertising is enabled where consent is required, an appropriate consent flow must be in place. For personalized Google ads in the EEA, the UK and Switzerland, we will use a Google-certified consent management platform integrated with the IAB Transparency and Consent Framework. A policy page or a general notice is not a substitute for that consent flow.','在依法需要同意的地区启用广告前，需要具备适用的同意流程。向欧洲经济区、英国和瑞士用户投放 Google 个性化广告时，我们将使用通过 Google 认证并集成 IAB 透明度与同意框架的同意管理平台。政策页面或一般提示不能替代该同意流程。'],
-    ['When that platform is active, you will be able to review and change your choices through its privacy controls. Applicable US-state sale, sharing or targeted-advertising choices and supported browser opt-out signals will need to be handled by the active advertising integration. No such advertising processing is active in this release.','启用同意管理平台后，你可以通过其隐私控制重新查看和修改选择。适用的美国州个人信息出售、共享或定向广告选择，以及受支持的浏览器退出信号，需要由实际广告集成处理。本版本尚未启用这类广告处理。']
+    ['Where an advertising consent message is displayed, use its controls to review or change your choices. Applicable US-state sale, sharing or targeted-advertising choices and supported browser opt-out signals must be handled by the advertising integration. This policy page does not collect or record advertising consent.','如页面显示广告同意消息，请通过其中的控件查看或修改选择。适用的美国州个人信息出售、共享或定向广告选择，以及受支持的浏览器退出信号，必须由广告集成处理。本政策页不收集或记录广告同意。']
    ],[cookies]),
    section('Enquiries, rights and children','咨询、权利与未成年人',[
     ['If you email us, we receive the address and information you choose to include and use them to address your request. Please send only what is necessary. Avoid passwords, identity documents, confidential research code and other sensitive material. Correspondence is kept only as needed for the request and applicable obligations.','如果你发送邮件，我们会收到邮箱地址及你主动提供的信息，并用于处理请求。请仅提供必要信息，不要发送密码、身份证件、保密研究代码或其他敏感材料。通信内容仅在处理请求及履行适用义务所需的范围内保留。'],
@@ -48,7 +48,7 @@ export const policyPages = [
   path:'/cookies/',title:['Cookies & Local Storage','Cookie 与本地存储'],
   description:['Understand TensorDrill browser storage, security cookies, possible advertising cookies and your available choices.','了解 TensorDrill 的浏览器存储、安全 Cookie、可能的广告 Cookie 以及可用选择。'],
   heading:['Cookies & Local Storage','Cookie 与本地存储'],
-  intro:['This page explains the technologies used for practice progress and those that may be used by service providers or future advertising.','本页说明练习进度使用的存储技术，以及服务提供方或未来广告可能使用的技术。'],
+  intro:['This page explains the technologies used for practice progress and those that may be used by service providers or advertising.','本页说明练习进度使用的存储技术，以及服务提供方或广告可能使用的技术。'],
   sections:[
    section('Practice storage','练习记录存储',[
     ['The application uses localStorage for code drafts, solved marks, daily goals and practice history. It is stored on your device and has no automatic expiry set by TensorDrill. It is separate from advertising consent. Refusing advertising must not prevent access to the free exercises.','应用使用 localStorage 保存代码草稿、完成标记、每日目标与练习历史。数据保存在你的设备上，TensorDrill 不设置自动到期时间。它与广告同意相互独立，拒绝广告不得妨碍访问免费练习。'],
@@ -58,7 +58,7 @@ export const policyPages = [
     ['Cloudflare and other delivery or security providers may use cookies or browser checks to serve the site and reduce abuse. Their policies explain their processing. Clearing or blocking those cookies can trigger additional security checks.','Cloudflare 等交付或安全提供方可能使用 Cookie 或浏览器验证，以提供网站服务并减少滥用。其政策说明具体处理方式。清除或阻止这些 Cookie 可能触发额外安全验证。']
    ],[link('Cloudflare privacy policy','Cloudflare 隐私政策','https://www.cloudflare.com/privacypolicy/')]),
    section('Advertising preferences','广告偏好',[
-    ['No advertising scripts or advertising consent cookies are set by this release of the application. If AdSense is introduced, the active consent interface will explain advertising vendors, storage purposes and choices. This page currently records no advertising consent.','本版本应用未加载广告脚本，也未设置广告同意 Cookie。未来引入 AdSense 时，实际同意界面将说明广告供应商、存储用途与选择。本页目前不记录任何广告同意。'],
+    ['The production site loads the Google AdSense script. Google and participating vendors may use advertising cookies or similar technologies when ads are served, subject to applicable settings and privacy choices. Use any displayed advertising consent message to review vendors, storage purposes and choices. This page does not record advertising consent or act as a consent platform.','正式站会加载 Google AdSense 脚本。在广告投放时，Google 和参与的供应商可能使用广告 Cookie 或类似技术，具体取决于适用设置和隐私选择。如页面显示广告同意消息，请通过其中的界面查看供应商、存储用途和选择。本页不记录广告同意，也不是同意管理平台。'],
     ['Where consent is required, eligible advertising storage and processing must follow your choice. A non-personalized ad is not automatically free of cookies or consent obligations. An active consent platform must also provide a way to revisit your decision.','在需要同意的地区，相关广告存储与处理必须遵循你的选择。非个性化广告并不自动免除 Cookie 或同意义务。启用同意管理平台后，还必须提供重新修改决定的入口。'],
     ['You can also use Google advertising settings or the controls offered by participating third-party vendors. Browser cookie controls may remove saved preferences as well as advertising identifiers.','你也可以使用 Google 广告设置或参与的第三方供应商提供的控制选项。浏览器 Cookie 控制可能同时移除已保存的偏好和广告标识符。']
    ],[googleAds,adChoices,privacy,contact])
@@ -94,7 +94,7 @@ export const policyPages = [
   path:'/advertising/',title:['Advertising & Editorial Independence','广告与编辑独立性'],
   description:['TensorDrill advertising disclosures, editorial independence, safe ad placement and privacy choices.','TensorDrill 的广告披露、编辑独立性、广告展示位置与隐私选择。'],
   heading:['Advertising & Editorial Independence','广告与编辑独立性'],
-  intro:['TensorDrill is preparing for advertising to help support a free practice library. No advertising scripts, paid placements or affiliate links are active in this release.','TensorDrill 正在为引入广告做准备，以支持免费的练习题库。本版本尚未启用广告脚本、付费展示或联盟营销链接。'],
+  intro:['TensorDrill has integrated the Google AdSense script on its production site to help support a free practice library. Ad display depends on Google approval, account settings and applicable privacy choices. This release includes no paid editorial placements or affiliate links.','TensorDrill 已在正式站接入 Google AdSense 脚本，以支持免费的练习题库。广告展示取决于 Google 审核、账号设置及适用的隐私选择。本版本没有付费软文展示或联盟营销链接。'],
   sections:[
    section('Clear placement and labels','清晰的展示位置与标识',[
     ['If advertising is activated, ad areas will be clearly labelled Advertisement and kept distinct from question links, learning recommendations and controls. We will keep ads out of the code editor, test results and Run or Submit controls, and out of the personal progress dashboard.','未来启用广告时，广告区域会明确标注“广告”，并与题目链接、学习推荐及操作控件区分。广告不会放在代码编辑器、测试结果、运行或提交控件区域，也不会放在个人进度面板。'],
@@ -123,7 +123,7 @@ export const policyPages = [
    ],[link('Browse AI coding challenges','浏览 AI 编程题库','/problems/'),link('Editorial standards','内容标准','/standards/')]),
    section('Maintenance and transparency','维护与透明度',[
     ['The source repository and issue history are public. Corrections are checked against the exercise contract and regression tests. Reports and suggestions help decide what to improve next.','源码仓库和问题记录公开可查。内容修正会根据题目约定与回归测试核验。反馈与建议帮助我们决定后续改进方向。'],
-    ['Advertising is being prepared to support the free library. Advertising has not been activated in this release; our policies explain the planned boundaries and privacy choices.','网站正在为通过广告支持免费题库做准备。本版本尚未启用广告；相关政策说明拟采用的展示边界和隐私选择。']
+    ['The production site includes Google AdSense code to help support the free library. Our advertising and privacy policies explain ad placement boundaries, data processing and privacy choices.','正式站已接入 Google AdSense 代码，以支持免费题库。广告与隐私政策说明广告展示边界、数据处理和隐私选择。']
    ],[link('Project repository','项目仓库','https://github.com/ymping666/website'),link('Advertising policy','广告政策','/advertising/'),contact])
   ]
  },
@@ -148,7 +148,7 @@ export const policyPages = [
 export const additionalPolicyPaths = policyPages.map(page=>page.path).filter(path=>!['/privacy/','/about/','/contact/'].includes(path));
 const translations={
  'Site policies':'网站政策',
- 'Last updated: October 9, 2026':'更新日期：2026 年 10 月 9 日',
+ 'Last updated: October 10, 2026':'更新日期：2026 年 10 月 10 日',
  'Privacy policy':'隐私政策','Terms of use':'使用条款','Cookie choices':'Cookie 选择','Advertising policy':'广告政策'
 };
 const collect=value=>{

@@ -1,6 +1,6 @@
 # TensorDrill 的 AdSense 接入准备
 
-核对日期：2026-10-09。当前版本只准备网站说明和可选所有权验证，**没有加载广告或同意管理脚本**。网站页面齐全不等于 AdSense 已批准，也不代表所有地区的法律义务都已履行。
+核对日期：2026-10-10。正式站已接入站主提供的 AdSense 脚本，发布商 ID 为 `ca-pub-5973138354533758`。这不代表站点已通过审核，也不会自动开启账号中的自动广告或配置同意管理消息。
 
 ## 已补齐的网站内容
 
@@ -18,17 +18,18 @@
 
 ## 1. 在 AdSense 中添加正式域名并验证
 
-在账号的网站列表添加 `tensordrill.com`，取得账号提供的真实发布商 ID。构建支持可选环境变量 `ADSENSE_PUBLISHER_ID`，接受 `pub-` 或 `ca-pub-` 后跟 16 位数字。
+在账号的网站列表添加 `tensordrill.com`。仓库已保存站主提供的真实发布商 ID，无需为本次接入另设环境变量。`ADSENSE_PUBLISHER_ID` 可覆盖默认值，接受 `pub-` 或 `ca-pub-` 后跟 16 位数字；显式设为空可停止构建广告代码与验证记录。
 
-配置在 Cloudflare 正式站的构建环境，而非仅本地终端。设置后重新构建会：
+正式构建须使用 `SITE_ORIGIN=https://tensordrill.com`、`SITE_BASE=/`，重新构建会：
 
 - 在 HTML 头部加入 `google-adsense-account` 验证元标签。
 - 在站点根目录生成 `ads.txt`，使用该 ID 和 Google 的授权记录格式。
-- **不会加载广告代码，也不会启用自动广告或同意弹窗。**
+- 在每个中英文 HTML 页面的 `<head>` 中加入一次站主提供的异步 AdSense 脚本，使用 `crossorigin="anonymous"`。
+- 不会替站主更改 AdSense 账号中的自动广告开关，也不会自行创建同意管理弹窗。
 
-不设置 ID 时，不生成元标签或 `ads.txt`；错误格式使构建失败。没有部署占位发布商 ID。将来接入其他卖方时，需要维护 `ads.txt` 的全部真实授权记录。
+本地构建、Cloudflare 预览域名、GitHub Pages 预览不加载广告脚本，也不生成广告验证记录，以免测试流量产生广告请求。正式构建中的错误 ID 格式使构建失败。将来接入其他卖方时，需要维护 `ads.txt` 的全部真实授权记录。
 
-[Google 支持元标签、ads.txt 或广告代码验证](https://support.google.com/adsense/answer/12169212?hl=en)。当前采用验证与广告投放分开的方式。[ads.txt 是 Google 推荐的做法，并非加入 AdSense 的强制前提](https://support.google.com/adsense/answer/12171612?hl=en)。这里的支持以正式站根域为目标；GitHub `/website/` 预览路径上的文件不是 `tensordrill.com/ads.txt`。
+[Google 要求把 AdSense 代码放在页面 head 中](https://support.google.com/adsense/answer/9274516?hl=en)，并支持[元标签、ads.txt 或广告代码验证](https://support.google.com/adsense/answer/12169212?hl=en)。[ads.txt 是 Google 推荐的做法，并非加入 AdSense 的强制前提](https://support.google.com/adsense/answer/12171612?hl=en)。本次生成的是正式站根目录的 `https://tensordrill.com/ads.txt`。
 
 账号里仍需完成站点审核、付款资料等实际流程。这里只修改网站，不创建虚构账号、身份或付款资料。
 
@@ -40,7 +41,7 @@
 
 根据实际访问地区配置[美国州隐私消息](https://support.google.com/adsense/answer/10960771?hl=en)及适用的出售、共享、定向广告退出处理，并验证广告集成支持的浏览器退出信号。[受限数据处理的官方说明](https://support.google.com/adsense/answer/9560818?hl=en)用于核对相应行为。
 
-当前 Cookie 页面如实说明尚未启用广告，也不假装已经记录广告同意。启用时必须同步更新隐私、Cookie、广告、关于页面中的现状文字，并把页脚选择入口接到真实可重新打开的 CMP 控件。
+隐私、Cookie、广告、关于页面已同步说明正式站加载 AdSense 脚本及相关请求信息。本次代码接入未配置或验证账号中的 CMP，Cookie 页面不记录广告同意。启用广告前仍需在账号中完成适用的消息设置、发布并测试真实可重新打开的隐私控件。
 
 ## 3. 广告位置与内容
 
@@ -52,7 +53,7 @@
 
 1. 正式站中英文页面、元标签、`ads.txt` 均应能通过 HTTPS 直接访问；确认没有构建时遗留的预览域名 canonical。
 2. 确保 Cloudflare 的规则和 robots.txt 允许 `Mediapartners-Google` 与 `Google-Display-Ads-Bot`，通过 AdSense 的实际抓取诊断或 Cloudflare 日志确认。普通浏览器返回 200 不证明广告爬虫可访问；脚本请求遭遇 403 也不能单独证明 Google 爬虫被阻止。
-3. 审核前提交站点审核；获得批准后，再把广告脚本、真实 CMP 和最新说明一起接入并验证。
+3. 在 AdSense 中检查代码识别与站点审核状态；获得批准并完成适用的 CMP 配置后，再启用自动广告并验证实际展示。
 4. 在受影响地区测试同意前后、拒绝、撤回、无痕浏览、中英文切换以及广告请求；复核 mobile 控件没有被覆盖。
 
 本次新增页面已进入 sitemap；Google 会在后续抓取时发现它们，通常无需重新提交同一 sitemap 地址。
