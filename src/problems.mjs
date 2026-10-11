@@ -259,11 +259,11 @@ export const problems = [
     id:'stable-softmax',number:9,track:'AI Foundations',difficulty:'Easy',
     title:'Implement Numerically Stable Softmax',duration:'12 min',
     tags:['Numerical Computing','Inference','Math'],
-    description:'Convert logits to probabilities using softmax without overflowing on large logits. Implement the max-subtraction trick in pure Python.',
+    description:'Convert logits to probabilities using Softmax in pure Python. Your implementation must remain stable for large positive and negative inputs.',
     requirements:[
       'Input logits is a nonempty list of finite real numbers whose magnitudes are <= 10000; temperature is a finite real number in [0.001, 1000].',
-      'Compute scaled logits = [value / temperature for value in logits].',
-      'Subtract the maximum scaled logit before exponentiation, then normalize weights to sum to one.',
+      'Probabilities are proportional to exp(value / temperature). Avoid numeric overflow across the stated input range.',
+      'Normalize the weights so the probabilities sum to one within floating-point tolerance.',
       'Return a list of floating-point probabilities in the same order as logits.'
     ],
     signature:'stable_softmax(logits, temperature)',
@@ -280,9 +280,11 @@ def stable_softmax(logits, temperature):
     total = sum(weights)
     return [w / total for w in weights]`,
     explanation:[
-      'Softmax is invariant to adding the same constant to every scaled logit. Subtracting the maximum makes exponentials no greater than one.',
-      'Temperature changes the sharpness of the distribution: lower positive values generally concentrate mass on larger logits.',
-      'The normalization makes probabilities sum to one.'
+      'Let z_i = logits_i / temperature. Softmax(z)_i = exp(z_i) / sum_j exp(z_j). In attention, these probabilities weight the value vectors; in decoding, they turn token scores into sampling probabilities.',
+      'For any constant c, exp(z_i - c) / sum_j exp(z_j - c) = [exp(z_i) * exp(-c)] / [sum_j exp(z_j) * exp(-c)]. The common factor cancels, so shifting every logit leaves the probabilities unchanged.',
+      'Choose c = max(z). Every shifted value is <= 0, so every exponential is <= 1, and at least one is exactly 1. This prevents exponential overflow and a zero denominator.',
+      'For logits [1000, 1001] at temperature 1, shift to [-1, 0]. The weights are approximately [0.367879, 1], giving probabilities [0.268941, 0.731059].',
+      'For logits [0, 1], temperature 0.5 gives approximately [0.119203, 0.880797], while temperature 2 gives [0.377541, 0.622459]. Lower positive temperature makes this distribution sharper; equal logits remain uniform at any valid temperature.'
     ],
     complexity:'Time O(n), extra space O(n).',
     pitfall:'Directly evaluating math.exp(1000) will overflow even though the resulting softmax probabilities are well defined.',

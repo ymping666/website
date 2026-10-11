@@ -1,5 +1,6 @@
 import { emptyJourney, normalizeJourney, localDay, shiftDay, summarize } from './progress.mjs';
 import { locale } from './i18n.js';
+import { nextPractice, practiceContext, practicePath } from './practice.mjs';
 
 const $ = selector => document.querySelector(selector);
 const text = (selector, value) => { const element = $(selector); if (element) element.textContent = value; };
@@ -8,7 +9,7 @@ const node = (tag, value, cls) => { const element = document.createElement(tag);
 export async function mountProgressUI(store) {
   const response = await fetch(new URL(locale === 'zh' ? './catalog-zh.json' : './catalog.json', import.meta.url));
   if (!response.ok) throw new Error('Unable to load the practice index.');
-  const { problems, sets } = await response.json();
+  const { problems, sets, concepts } = await response.json();
   const ids = problems.map(p => p.id);
   const byId = new Map(problems.map(p => [p.id, p]));
   const href = path => new URL('../' + (locale === 'zh' ? 'zh/' : '') + path, import.meta.url).href;
@@ -18,11 +19,21 @@ export async function mountProgressUI(store) {
     return Object.fromEntries(ids.filter(id => raw?.[id] === true).map(id => [id, true]));
   };
   const state = () => normalizeJourney(store.get('journey', emptyJourney()));
-  const dailyProblem = today => {
-    const pool = problems.filter(p => p.difficulty === 'Easy' && ['AI Foundations', 'Transformer & Vision'].includes(p.track));
-    const seed = [...today].reduce((value, character) => (value * 31 + character.charCodeAt(0)) >>> 0, 0);
-    return pool[seed % pool.length];
-  };
+  const currentId = $('[data-problem-id]')?.dataset.problemId;
+  const query = new URLSearchParams(location.search);
+  const requested = query.has('set') || query.has('concept')
+    ? { set: query.get('set'), concept: query.get('concept') } : store.get('practice-context', {});
+  const context = practiceContext(currentId || state().lastProblem, sets, concepts, requested);
+  if (currentId) store.set('practice-context', context);
+  // Keep an explicitly chosen practice sequence while opening its editorial or changing language.
+  if (query.has('set') || query.has('concept')) {
+    for (const element of document.querySelectorAll('.language-switch a, .panel-tabs a, .editorial-callout a, .button-row a, .success-actions a')) {
+      const url = new URL(element.href);
+      if (!/\/(problems|editorials)\//.test(url.pathname)) continue;
+      for (const [key, value] of Object.entries(context)) url.searchParams.set(key, value);
+      element.href = url.href;
+    }
+  }
   const setProgress = (element, value, total) => { if (element) { element.max = total; element.value = value; } };
   function downloadBackup() {
     const data = store.backup(ids);
@@ -43,17 +54,28 @@ export async function mountProgressUI(store) {
     text('#today-status', summary.todayAccepted >= summary.goal ? 'Daily goal complete. Nice work!' : summary.todayRuns ? 'Practice recorded today. Keep working toward your goal.' : 'Run tests on any problem to record a practice day.');
     setProgress($('#today-goal-bar'), Math.min(summary.todayAccepted, summary.goal), summary.goal);
     if ($('#daily-goal')) $('#daily-goal').value = String(journey.goal);
-    const daily = dailyProblem(today);
-    const resume = byId.get(journey.lastProblem) || problems.find(p => !solved[p.id]) || problems[0];
+    const last = byId.get(journey.lastProblem);
+    const suggestion = nextPractice(problems, sets, concepts, last?.id, solved, context);
+    const resume = last && !solved[last.id] ? last : suggestion?.problem || problems[0];
+    const resumeContext = practiceContext(resume.id, sets, concepts, last && !solved[last.id] ? context : suggestion?.context);
+    const daily = resume;
     for (const selector of ['#daily-challenge', '#home-daily-challenge']) {
       const element = $(selector); if (!element) continue;
-      element.href = href(`problems/${daily.id}/`);
+      element.href = href(practicePath(daily.id, resumeContext));
       element.textContent = daily.title + (solved[daily.id] ? ' · Review' : ' →');
     }
     for (const selector of ['#resume-practice', '#home-resume-practice']) {
       const element = $(selector); if (!element) continue;
-      element.href = href(`problems/${resume.id}/`);
-      element.textContent = journey.lastProblem ? `Continue: ${resume.title} →` : 'Start your first exercise →';
+      element.href = href(practicePath(resume.id, resumeContext));
+      element.textContent = solved[resume.id] ? `${resume.title} · Review`
+        : journey.lastProblem || summary.solved ? `Continue: ${resume.title} →` : 'Start your first exercise →';
+    }
+    if (currentId) {
+      const next = nextPractice(problems, sets, concepts, currentId, solved, context);
+      for (const element of document.querySelectorAll('[data-next-practice]')) {
+        element.href = href(next ? practicePath(next.problem.id, next.context) : 'progress/');
+        element.textContent = next ? `Next: ${next.problem.title} →` : 'View milestones →';
+      }
     }
     text('#home-progress-summary', summary.solved ? `${summary.solved}/${problems.length} solved · ${summary.streak} day practice streak · ${summary.weekDays} active days this week` : 'Build a small daily habit. Your drafts and progress save on this browser.');
     for (const element of document.querySelectorAll('[data-solved]')) {
@@ -103,7 +125,7 @@ export async function mountProgressUI(store) {
         const bar = node('progress'); bar.setAttribute('aria-label', set.title + ' progress'); setProgress(bar, done, set.ids.length);
         card.append(bar);
         const next = set.ids.find(id => !solved[id]);
-        card.append(next ? link('Next: ' + byId.get(next).title + ' →', `problems/${next}/`, 'plan-next') : node('strong', '✓ Practice set completed', 'plan-complete'));
+        card.append(next ? link('Next: ' + byId.get(next).title + ' →', practicePath(next, { set: set.slug }), 'plan-next') : node('strong', '✓ Practice set completed', 'plan-complete'));
         container.append(card);
       }
     }

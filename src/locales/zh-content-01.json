@@ -2,17 +2,19 @@
   {
     "id": "stable-softmax",
     "title": "实现数值稳定的 Softmax",
-    "description": "用 Softmax 将 logits 转换为概率，避免大数值导致溢出。请用纯 Python 实现减去最大值的技巧。",
+    "description": "用纯 Python 实现 Softmax，将 logits 转换为概率。面对较大的正数和负数输入，实现仍须保持数值稳定。",
     "requirements": [
       "logits 是非空列表，元素均为有限实数，绝对值不超过 10000；temperature 是 [0.001, 1000] 内的有限实数。",
-      "计算 scaled logits = [value / temperature for value in logits]。",
-      "在求指数前减去缩放后 logits 的最大值，再将权重归一化，使其和为 1。",
+      "概率与 exp(value / temperature) 成正比。在规定的输入范围内避免数值溢出。",
+      "将权重归一化，使概率之和在浮点误差范围内为 1。",
       "返回浮点概率列表，顺序与 logits 一致。"
     ],
     "explanation": [
-      "给所有缩放后的 logit 加同一常数不会改变 Softmax。减去最大值后，每个指数值都不超过 1。",
-      "温度控制分布的集中程度：较小的正温度通常使概率更集中在较大的 logits 上。",
-      "归一化使所有概率之和为 1。"
+      "记 z_i = logits_i / temperature，则 Softmax(z)_i = exp(z_i) / sum_j exp(z_j)。在 Attention 中，这些概率用于对 value 向量加权；在解码中，它们将 token 得分转换为采样概率。",
+      "对于任意常数 c，exp(z_i - c) / sum_j exp(z_j - c) = [exp(z_i) * exp(-c)] / [sum_j exp(z_j) * exp(-c)]。分子分母的共同因子抵消，因此所有 logit 平移相同的量不会改变概率。",
+      "选择 c = max(z)，平移后的值全部 <= 0，指数值全部 <= 1，且至少有一个恰好为 1。因此既避免指数溢出，也保证分母不为零。",
+      "对于 logits [1000, 1001]、temperature = 1，平移后为 [-1, 0]。权重约为 [0.367879, 1]，归一化后概率约为 [0.268941, 0.731059]。",
+      "对于 logits [0, 1]，temperature = 0.5 时概率约为 [0.119203, 0.880797]，temperature = 2 时约为 [0.377541, 0.622459]。这个例子中较小的正温度使分布更集中；相同 logits 在任意合法温度下都保持均匀分布。"
     ],
     "complexity": "时间 O(n)，额外空间 O(n)。",
     "pitfall": "直接计算 math.exp(1000) 会溢出，即使对应的 Softmax 概率本身有明确定义。",

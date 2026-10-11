@@ -1,0 +1,1402 @@
+{
+  "stable-softmax": [
+    [
+      {
+        "input": "stable_softmax(logits=[0, 0], temperature=1)",
+        "output": "[0.5, 0.5]"
+      }
+    ],
+    [
+      {
+        "input": "stable_softmax(logits=[1000, 1001], temperature=1)",
+        "output": "[0.2689414213699951, 0.7310585786300049]"
+      }
+    ]
+  ],
+  "tool-call-parser": [
+    [
+      {
+        "input": "parse_tool_call(raw='{\"tool\":\"search\",\"arguments\":{\"q\":\"world model\"}}')",
+        "output": "{'tool': 'search', 'arguments': {'q': 'world model'}}"
+      }
+    ],
+    [
+      {
+        "input": "parse_tool_call(raw='{oops')",
+        "output": "None"
+      }
+    ]
+  ],
+  "agent-retry-guard": [
+    [
+      {
+        "input": "should_stop(history=['ok', 'ok', 'ok'], max_attempts=3)",
+        "output": "True"
+      }
+    ],
+    [
+      {
+        "input": "should_stop(history=['ok', 'error', 'error', 'error'], max_attempts=10)",
+        "output": "True"
+      }
+    ]
+  ],
+  "agent-memory-window": [
+    [
+      {
+        "input": "memory_window(messages=[{'role': 'system', 'content': 'rules', 'tokens': 2}, {'role': 'user', 'content': 'old', 'tokens': 5}, {'role': 'assistant', 'content': 'new', 'tokens': 2}], budget=4)",
+        "output": "[{'role': 'system', 'content': 'rules', 'tokens': 2}, {'role': 'assistant', 'content': 'new', 'tokens': 2}]"
+      }
+    ],
+    [
+      {
+        "input": "memory_window(messages=[{'role': 'user', 'content': 'a', 'tokens': 1}, {'role': 'assistant', 'content': 'b', 'tokens': 2}], budget=3)",
+        "output": "[{'role': 'user', 'content': 'a', 'tokens': 1}, {'role': 'assistant', 'content': 'b', 'tokens': 2}]"
+      }
+    ]
+  ],
+  "rag-recall-k": [
+    [
+      {
+        "input": "recall_at_k(retrieved_ids=['a', 'b', 'x'], relevant_ids=['a', 'b', 'c'], k=3)",
+        "output": "0.6666666666666666"
+      }
+    ],
+    [
+      {
+        "input": "recall_at_k(retrieved_ids=['x', 'a', 'b'], relevant_ids=['a', 'b'], k=1)",
+        "output": "0.0"
+      }
+    ]
+  ],
+  "kalman-scalar-update": [
+    [
+      {
+        "input": "kalman_update(mean=0, variance=1, observation=10, measurement_variance=1)",
+        "output": "(5.0, 0.5)"
+      }
+    ],
+    [
+      {
+        "input": "kalman_update(mean=0, variance=1, observation=10, measurement_variance=9)",
+        "output": "(1.0, 0.9)"
+      }
+    ]
+  ],
+  "linear-dynamics-rollout": [
+    [
+      {
+        "input": "rollout_linear(x0=0, actions=[2, 3], a=1, b=1)",
+        "output": "[0, 2, 5]"
+      }
+    ],
+    [
+      {
+        "input": "rollout_linear(x0=7, actions=[], a=0.5, b=4)",
+        "output": "[7]"
+      }
+    ]
+  ],
+  "world-model-action": [
+    [
+      {
+        "input": "choose_action(predictions={'left': [1, 100], 'right': [5, 1]}, gamma=1.0)",
+        "output": "'right'"
+      }
+    ],
+    [
+      {
+        "input": "choose_action(predictions={'a': [2, 10], 'b': [5, 0]}, gamma=0.1)",
+        "output": "'a'"
+      }
+    ]
+  ],
+  "world-model-evaluation": [
+    [
+      {
+        "input": "planning_regret(predicted={'a': 1, 'b': 3}, true_costs={'a': 2, 'b': 4})",
+        "output": "{'action': 'a', 'regret': 0.0}"
+      }
+    ],
+    [
+      {
+        "input": "planning_regret(predicted={'a': 1, 'b': 2}, true_costs={'a': 100, 'b': 0})",
+        "output": "{'action': 'a', 'regret': 100.0}"
+      }
+    ]
+  ],
+  "react-trace-validator": [
+    [
+      {
+        "input": "valid_react_trace(events=['thought', 'finish'])",
+        "output": "True"
+      }
+    ],
+    [
+      {
+        "input": "valid_react_trace(events=['thought', 'action', 'observation', 'thought', 'action', 'observation', 'finish'])",
+        "output": "True"
+      }
+    ]
+  ],
+  "agent-plan-ready": [
+    [
+      {
+        "input": "ready_tasks(tasks={'draft': [], 'research': [], 'publish': ['draft', 'research']}, completed=[])",
+        "output": "['draft', 'research']"
+      }
+    ],
+    [
+      {
+        "input": "ready_tasks(tasks={'a': [], 'b': [], 'c': ['a', 'b']}, completed=['a'])",
+        "output": "['b']"
+      }
+    ]
+  ],
+  "agent-reflection-controller": [
+    [
+      {
+        "input": "reflection_decision(scores=[0.4, 0.9], max_rounds=2, target=0.9, min_improvement=0.1)",
+        "output": "'target_reached'"
+      }
+    ],
+    [
+      {
+        "input": "reflection_decision(scores=[0.3, 0.5], max_rounds=2, target=0.9, min_improvement=0.1)",
+        "output": "'budget_exhausted'"
+      }
+    ]
+  ],
+  "tool-schema-enforcer": [
+    [
+      {
+        "input": "validate_tool_request(request={'tool': 'search', 'arguments': {'query': 'ai', 'limit': 3}}, registry={'search': {'query': 'str', 'limit': 'int'}})",
+        "output": "'ok'"
+      }
+    ],
+    [
+      {
+        "input": "validate_tool_request(request={'tool': 'shell', 'arguments': {}}, registry={'search': {}})",
+        "output": "'unknown_tool'"
+      }
+    ]
+  ],
+  "mpc-first-action": [
+    [
+      {
+        "input": "mpc_first_action(state=0, candidates=[[1, 5], [2, 0]], transition=lambda s, a: s + a, cost=lambda s: s * s)",
+        "output": "2"
+      }
+    ],
+    [
+      {
+        "input": "mpc_first_action(state=0, candidates=[[10], [1]], transition=lambda s, a: s + a, cost=lambda s: abs(s))",
+        "output": "1"
+      }
+    ]
+  ],
+  "cem-categorical-update": [
+    [
+      {
+        "input": "cem_elite_frequencies(candidates=[[0, 1], [1, 1], [1, 0]], costs=[2, 1, 3], elite_count=2, n_actions=2)",
+        "output": "[[0.5, 0.5], [0.0, 1.0]]"
+      }
+    ],
+    [
+      {
+        "input": "cem_elite_frequencies(candidates=[[0, 0], [1, 1]], costs=[10, 1], elite_count=1, n_actions=2)",
+        "output": "[[0.0, 1.0], [0.0, 1.0]]"
+      }
+    ]
+  ],
+  "prediction-vs-decision": [
+    [
+      {
+        "input": "compare_forecasts(pred_a={'a': 2, 'b': 1, 'c': 100}, pred_b={'a': 0, 'b': 3, 'c': 94}, true_costs={'a': 0, 'b': 1, 'c': 100})",
+        "output": "{'mse_a': 1.3333333333333333, 'mse_b': 13.333333333333334, 'regret_a': 1, 'regret_b': 0, 'lower_mse': 'A', 'lower_regret': 'B'}"
+      }
+    ],
+    [
+      {
+        "input": "compare_forecasts(pred_a={'a': 0, 'b': 5}, pred_b={'a': 0, 'b': 5}, true_costs={'a': 0, 'b': 5})",
+        "output": "{'mse_a': 0.0, 'mse_b': 0.0, 'regret_a': 0, 'regret_b': 0, 'lower_mse': 'tie', 'lower_regret': 'tie'}"
+      }
+    ]
+  ],
+  "risk-sensitive-planner": [
+    [
+      {
+        "input": "risk_sensitive_action(means={'risky': 0, 'safe': 2}, variances={'risky': 16, 'safe': 0}, risk_weight=1.0)",
+        "output": "'safe'"
+      }
+    ],
+    [
+      {
+        "input": "risk_sensitive_action(means={'a': 1, 'b': 2}, variances={'a': 100, 'b': 0}, risk_weight=0.0)",
+        "output": "'a'"
+      }
+    ]
+  ],
+  "agent-topological-schedule": [
+    [
+      {
+        "input": "schedule_plan(tasks={'write': ['research'], 'research': []})",
+        "output": "['research', 'write']"
+      }
+    ],
+    [
+      {
+        "input": "schedule_plan(tasks={'z': [], 'a': [], 'b': []})",
+        "output": "['a', 'b', 'z']"
+      }
+    ]
+  ],
+  "agent-merge-tool-results": [
+    [
+      {
+        "input": "merge_results(call_ids=['a', 'b'], responses=[('b', 2), ('a', 1)])",
+        "output": "[('a', 1), ('b', 2)]"
+      }
+    ],
+    [
+      {
+        "input": "merge_results(call_ids=['a', 'b'], responses=[('b', 2)])",
+        "output": "[('a', None), ('b', 2)]"
+      }
+    ]
+  ],
+  "agent-exponential-backoff": [
+    [
+      {
+        "input": "retry_delays(outcomes=[False, False, False], base_delay=1, max_delay=10)",
+        "output": "[1.0, 2.0, 4.0]"
+      }
+    ],
+    [
+      {
+        "input": "retry_delays(outcomes=[False, False, False, False, False, False], base_delay=1, max_delay=5)",
+        "output": "[1.0, 2.0, 4.0, 5.0, 5.0, 5.0]"
+      }
+    ]
+  ],
+  "agent-jsonrpc-response": [
+    [
+      {
+        "input": "classify_rpc_response(message={'jsonrpc': '2.0', 'id': 1, 'result': {'ok': True}}, expected_id=1)",
+        "output": "'success'"
+      }
+    ],
+    [
+      {
+        "input": "classify_rpc_response(message={'jsonrpc': '2.0', 'id': 'a', 'result': None}, expected_id='a')",
+        "output": "'success'"
+      }
+    ]
+  ],
+  "world-discrete-bayes-filter": [
+    [
+      {
+        "input": "belief_update(belief=[0.5, 0.5], transition=[[1, 0], [0, 1]], likelihood=[0.8, 0.2])",
+        "output": "[0.8, 0.2]"
+      }
+    ],
+    [
+      {
+        "input": "belief_update(belief=[1, 0], transition=[[0, 1], [1, 0]], likelihood=[0.2, 0.9])",
+        "output": "[0.0, 1.0]"
+      }
+    ]
+  ],
+  "world-belief-propagation": [
+    [
+      {
+        "input": "propagate_belief(mean=0, variance=1, a=1, process_var=0.5, controls=[2, 3])",
+        "output": "[(2, 1.5), (5, 2.0)]"
+      }
+    ],
+    [
+      {
+        "input": "propagate_belief(mean=1, variance=2, a=-2, process_var=1, controls=[0])",
+        "output": "[(-2, 9)]"
+      }
+    ]
+  ],
+  "world-rollout-error-curve": [
+    [
+      {
+        "input": "rollout_mse_curve(predicted=[[1], [3]], target=[[0], [1]])",
+        "output": "[1.0, 2.5]"
+      }
+    ],
+    [
+      {
+        "input": "rollout_mse_curve(predicted=[[1, 1], [2, 2]], target=[[0, 0], [1, 1]])",
+        "output": "[1.0, 1.0]"
+      }
+    ]
+  ],
+  "world-diagonal-gaussian-kl": [
+    [
+      {
+        "input": "diagonal_gaussian_kl(q_mean=[0, 1], q_var=[1, 2], p_mean=[0, 1], p_var=[1, 2])",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "diagonal_gaussian_kl(q_mean=[2], q_var=[1], p_mean=[0], p_var=[1])",
+        "output": "2.0"
+      }
+    ]
+  ],
+  "llm-mean-reciprocal-rank": [
+    [
+      {
+        "input": "mean_reciprocal_rank(ranked_lists=[['x', 'a']], relevant_per_query=[['a']])",
+        "output": "0.5"
+      }
+    ],
+    [
+      {
+        "input": "mean_reciprocal_rank(ranked_lists=[['a'], ['x', 'b'], ['z']], relevant_per_query=[['a'], ['b'], ['c']])",
+        "output": "0.5"
+      }
+    ]
+  ],
+  "llm-topk-softmax": [
+    [
+      {
+        "input": "top_k_probabilities(logits=[1, 3, 2], k=1)",
+        "output": "[0.0, 1.0, 0.0]"
+      }
+    ],
+    [
+      {
+        "input": "top_k_probabilities(logits=[1, 1, 1], k=2)",
+        "output": "[0.5, 0.5, 0.0]"
+      }
+    ]
+  ],
+  "llm-evidence-context-pack": [
+    [
+      {
+        "input": "pack_context(chunks=['a', 'b', 'c'], token_counts=[3, 4, 2], budget=7)",
+        "output": "['a', 'b']"
+      }
+    ],
+    [
+      {
+        "input": "pack_context(chunks=['a', 'b', 'c'], token_counts=[3, 8, 1], budget=5)",
+        "output": "['a']"
+      }
+    ]
+  ],
+  "foundation-epsilon-greedy": [
+    [
+      {
+        "input": "epsilon_greedy(q_values=[1, 5, 3], epsilon=0, uniform_draw=0.1, random_index=0)",
+        "output": "1"
+      }
+    ],
+    [
+      {
+        "input": "epsilon_greedy(q_values=[1, 5, 3], epsilon=1, uniform_draw=0.9, random_index=2)",
+        "output": "2"
+      }
+    ]
+  ],
+  "foundation-nstep-return": [
+    [
+      {
+        "input": "discounted_return(rewards=[1, 2], terminals=[False, False], gamma=0.5, bootstrap_value=4)",
+        "output": "3.0"
+      }
+    ],
+    [
+      {
+        "input": "discounted_return(rewards=[1, 2, 50], terminals=[False, True, False], gamma=0.5, bootstrap_value=100)",
+        "output": "2.0"
+      }
+    ]
+  ],
+  "video-frame-mse": [
+    [
+      {
+        "input": "video_reconstruction_mse(pred=[[0, 1], [2, 3]], target=[[0, 0], [2, 5]])",
+        "output": "1.25"
+      }
+    ],
+    [
+      {
+        "input": "video_reconstruction_mse(pred=[[5]], target=[[2]])",
+        "output": "9.0"
+      }
+    ]
+  ],
+  "video-temporal-velocity": [
+    [
+      {
+        "input": "frame_deltas(frames=[[1, 2], [4, 0]])",
+        "output": "[[3, -2]]"
+      }
+    ],
+    [
+      {
+        "input": "frame_deltas(frames=[[1], [3], [8]])",
+        "output": "[[2], [5]]"
+      }
+    ]
+  ],
+  "vae-reparameterization": [
+    [
+      {
+        "input": "vae_sample(mean=[1, 2], logvar=[0, 0], epsilon=[3, -2])",
+        "output": "[4.0, 0.0]"
+      }
+    ],
+    [
+      {
+        "input": "vae_sample(mean=[0], logvar=[1.3862943611198906], epsilon=[1])",
+        "output": "[2.0]"
+      }
+    ]
+  ],
+  "vae-standard-normal-kl": [
+    [
+      {
+        "input": "vae_kl_standard_normal(mu=[0, 0], logvar=[0, 0])",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "vae_kl_standard_normal(mu=[2], logvar=[0])",
+        "output": "2.0"
+      }
+    ]
+  ],
+  "vae-beta-objective": [
+    [
+      {
+        "input": "beta_vae_loss(reconstruction=[1, 3], kl_per_dim=[0.5, 0.25], beta=2)",
+        "output": "3.5"
+      }
+    ],
+    [
+      {
+        "input": "beta_vae_loss(reconstruction=[4, 0], kl_per_dim=[7], beta=0)",
+        "output": "2.0"
+      }
+    ]
+  ],
+  "vqvae-nearest-code": [
+    [
+      {
+        "input": "nearest_code_index(vector=[2, 0], codebook=[[0, 0], [3, 1], [10, 0]])",
+        "output": "1"
+      }
+    ],
+    [
+      {
+        "input": "nearest_code_index(vector=[-2], codebook=[[1]])",
+        "output": "0"
+      }
+    ]
+  ],
+  "vqvae-codebook-perplexity": [
+    [
+      {
+        "input": "codebook_perplexity(indices=[0, 1, 0, 1], n_codes=2)",
+        "output": "2.0"
+      }
+    ],
+    [
+      {
+        "input": "codebook_perplexity(indices=[1, 1, 1], n_codes=4)",
+        "output": "1.0"
+      }
+    ]
+  ],
+  "vqvae-quantization-error": [
+    [
+      {
+        "input": "quantization_mse(encoder=[[0, 2], [2, 2]], quantized=[[1, 0], [2, 4]])",
+        "output": "2.25"
+      }
+    ],
+    [
+      {
+        "input": "quantization_mse(encoder=[[1, 2]], quantized=[[1, 2]])",
+        "output": "0.0"
+      }
+    ]
+  ],
+  "video-latent-sequence": [
+    [
+      {
+        "input": "flatten_video_codes(codes=[[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "[1, 2, 3, 4, 5, 6, 7, 8]"
+      }
+    ],
+    [
+      {
+        "input": "flatten_video_codes(codes=[[[7]]])",
+        "output": "[7]"
+      }
+    ]
+  ],
+  "video-temporal-patchify": [
+    [
+      {
+        "input": "temporal_patchify(frames=[[1, 2], [3, 4], [5, 6], [7, 8]], patch_size=2)",
+        "output": "[[1, 2, 3, 4], [5, 6, 7, 8]]"
+      }
+    ],
+    [
+      {
+        "input": "temporal_patchify(frames=[[1], [2], [3]], patch_size=2)",
+        "output": "[[1, 2]]"
+      }
+    ]
+  ],
+  "flow-linear-interpolation": [
+    [
+      {
+        "input": "linear_flow_path(x0=[0, 2], x1=[2, 4], t=0.5)",
+        "output": "[1.0, 3.0]"
+      }
+    ],
+    [
+      {
+        "input": "linear_flow_path(x0=[1, -2], x1=[3, 5], t=0)",
+        "output": "[1, -2]"
+      }
+    ]
+  ],
+  "flow-conditional-velocity": [
+    [
+      {
+        "input": "linear_flow_velocity(x0=[1, 2], x1=[5, 5])",
+        "output": "[4, 3]"
+      }
+    ],
+    [
+      {
+        "input": "linear_flow_velocity(x0=[3, 1], x1=[1, -2])",
+        "output": "[-2, -3]"
+      }
+    ]
+  ],
+  "flow-velocity-regression": [
+    [
+      {
+        "input": "flow_velocity_mse(prediction=[2, -1], x0=[1, 4], x1=[3, 3])",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "flow_velocity_mse(prediction=[0, 0], x0=[0, 0], x1=[2, 4])",
+        "output": "10.0"
+      }
+    ]
+  ],
+  "flow-euler-integration": [
+    [
+      {
+        "input": "euler_flow(x0=2, velocity=lambda x, t: 3, steps=4)",
+        "output": "5.0"
+      }
+    ],
+    [
+      {
+        "input": "euler_flow(x0=0, velocity=lambda x, t: t, steps=4)",
+        "output": "0.375"
+      }
+    ]
+  ],
+  "flow-heun-integration": [
+    [
+      {
+        "input": "heun_flow(x0=1, velocity=lambda x, t: 4, steps=5)",
+        "output": "5.0"
+      }
+    ],
+    [
+      {
+        "input": "heun_flow(x0=0, velocity=lambda x, t: t, steps=4)",
+        "output": "0.5"
+      }
+    ]
+  ],
+  "flow-cfg-velocity": [
+    [
+      {
+        "input": "guided_velocity(unconditional=[1, 2], conditional=[4, 8], guidance_scale=0)",
+        "output": "[1, 2]"
+      }
+    ],
+    [
+      {
+        "input": "guided_velocity(unconditional=[1, 2], conditional=[4, 8], guidance_scale=1)",
+        "output": "[4, 8]"
+      }
+    ]
+  ],
+  "video-action-conditioned-rollout": [
+    [
+      {
+        "input": "action_latent_rollout(initial_state=0, actions=[1, 2, 3], transition=lambda s, a: s + a)",
+        "output": "[0, 1, 3, 6]"
+      }
+    ],
+    [
+      {
+        "input": "action_latent_rollout(initial_state=1, actions=[0, 0], transition=lambda s, a: 2 * s + a)",
+        "output": "[1, 2, 4]"
+      }
+    ]
+  ],
+  "video-temporal-difference-loss": [
+    [
+      {
+        "input": "temporal_difference_mse(predicted=[[0], [2]], target=[[10], [12]])",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "temporal_difference_mse(predicted=[[0], [4]], target=[[0], [2]])",
+        "output": "4.0"
+      }
+    ]
+  ],
+  "video-causal-token-context": [
+    [
+      {
+        "input": "causal_token_contexts(tokens=[1, 2, 3, 4], context_size=2)",
+        "output": "[[], [1], [1, 2], [2, 3]]"
+      }
+    ],
+    [
+      {
+        "input": "causal_token_contexts(tokens=[1, 2], context_size=0)",
+        "output": "[[], []]"
+      }
+    ]
+  ],
+  "video-token-cross-entropy": [
+    [
+      {
+        "input": "video_token_nll(probabilities=[[1, 0], [0, 1]], targets=[0, 1])",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "video_token_nll(probabilities=[[0.5, 0.5], [0.5, 0.5]], targets=[0, 1])",
+        "output": "0.6931471805599453"
+      }
+    ]
+  ],
+  "foundation-matmul": [
+    [
+      {
+        "input": "matmul(a=[[1, 2], [3, 4]], b=[[5, 6], [7, 8]])",
+        "output": "[[19, 22], [43, 50]]"
+      }
+    ],
+    [
+      {
+        "input": "matmul(a=[[1, 2, 3]], b=[[1], [2], [3]])",
+        "output": "[[14]]"
+      }
+    ]
+  ],
+  "foundation-layer-normalization": [
+    [
+      {
+        "input": "layer_norm(x=[1.0, 3.0], eps=1e-12)",
+        "output": "[-0.9999999999995, 0.9999999999995]"
+      }
+    ],
+    [
+      {
+        "input": "layer_norm(x=[5.0, 5.0, 5.0], eps=1e-05)",
+        "output": "[0.0, 0.0, 0.0]"
+      }
+    ]
+  ],
+  "foundation-gelu": [
+    [
+      {
+        "input": "gelu(x=0.0)",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "gelu(x=1.0)",
+        "output": "0.8413447460685428"
+      }
+    ]
+  ],
+  "foundation-sinusoidal-positions": [
+    [
+      {
+        "input": "position_encoding(position=0, d_model=4)",
+        "output": "[0.0, 1.0, 0.0, 1.0]"
+      }
+    ],
+    [
+      {
+        "input": "position_encoding(position=1, d_model=2)",
+        "output": "[0.8414709848078965, 0.5403023058681398]"
+      }
+    ]
+  ],
+  "attention-scaled-dot-product": [
+    [
+      {
+        "input": "scaled_attention(q=[0, 0], keys=[[1, 0], [0, 1]], values=[[2, 4], [6, 8]])",
+        "output": "[4.0, 6.0]"
+      }
+    ],
+    [
+      {
+        "input": "scaled_attention(q=[99], keys=[[7]], values=[[3, 5]])",
+        "output": "[3.0, 5.0]"
+      }
+    ]
+  ],
+  "attention-causal-mask": [
+    [
+      {
+        "input": "causal_mask(logits=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "output": "[[1, -inf, -inf], [4, 5, -inf], [7, 8, 9]]"
+      }
+    ],
+    [
+      {
+        "input": "causal_mask(logits=[[3]])",
+        "output": "[[3]]"
+      }
+    ]
+  ],
+  "attention-split-heads": [
+    [
+      {
+        "input": "split_heads(tokens=[[1, 2, 3, 4], [5, 6, 7, 8]], n_heads=2)",
+        "output": "[[[1, 2], [5, 6]], [[3, 4], [7, 8]]]"
+      }
+    ],
+    [
+      {
+        "input": "split_heads(tokens=[[1, 2]], n_heads=1)",
+        "output": "[[[1, 2]]]"
+      }
+    ]
+  ],
+  "attention-merge-heads": [
+    [
+      {
+        "input": "merge_heads(heads=[[[1, 2], [5, 6]], [[3, 4], [7, 8]]])",
+        "output": "[[1, 2, 3, 4], [5, 6, 7, 8]]"
+      }
+    ],
+    [
+      {
+        "input": "merge_heads(heads=[[[3, 4]]])",
+        "output": "[[3, 4]]"
+      }
+    ]
+  ],
+  "transformer-cross-attention": [
+    [
+      {
+        "input": "cross_attention(queries=[[0]], keys=[[1], [2]], values=[[1, 3], [5, 7]])",
+        "output": "[[3.0, 5.0]]"
+      }
+    ],
+    [
+      {
+        "input": "cross_attention(queries=[[1], [-1]], keys=[[1], [-1]], values=[[10], [0]])",
+        "output": "[[8.807970779778824], [1.1920292202211755]]"
+      }
+    ]
+  ],
+  "vit-patchify": [
+    [
+      {
+        "input": "patchify(image=[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], patch_size=2)",
+        "output": "[[1, 2, 5, 6], [3, 4, 7, 8], [9, 10, 13, 14], [11, 12, 15, 16]]"
+      }
+    ],
+    [
+      {
+        "input": "patchify(image=[[1, 2, 3, 4], [5, 6, 7, 8]], patch_size=2)",
+        "output": "[[1, 2, 5, 6], [3, 4, 7, 8]]"
+      }
+    ]
+  ],
+  "vit-class-token": [
+    [
+      {
+        "input": "prepare_vit_tokens(patches=[[3, 4]], cls_token=[1, 2], positions=[[10, 20], [30, 40]])",
+        "output": "[[11, 22], [33, 44]]"
+      }
+    ],
+    [
+      {
+        "input": "prepare_vit_tokens(patches=[], cls_token=[1, 2], positions=[[3, 4]])",
+        "output": "[[4, 6]]"
+      }
+    ]
+  ],
+  "transformer-prenorm-residual": [
+    [
+      {
+        "input": "pre_norm_residual(x=[1, 2], normalize=lambda z: z, sublayer=lambda z: z)",
+        "output": "[2, 4]"
+      }
+    ],
+    [
+      {
+        "input": "pre_norm_residual(x=[1, 3], normalize=lambda z: [v - 2 for v in z], sublayer=lambda z: [2 * v for v in z])",
+        "output": "[-1, 5]"
+      }
+    ]
+  ],
+  "gan-discriminator-bce": [
+    [
+      {
+        "input": "discriminator_loss(real_logits=[0], fake_logits=[0])",
+        "output": "1.3862943611198906"
+      }
+    ],
+    [
+      {
+        "input": "discriminator_loss(real_logits=[10], fake_logits=[-10])",
+        "output": "9.07977984337293e-05"
+      }
+    ]
+  ],
+  "gan-generator-nonsaturating": [
+    [
+      {
+        "input": "generator_loss(fake_logits=[0])",
+        "output": "0.6931471805599453"
+      }
+    ],
+    [
+      {
+        "input": "generator_loss(fake_logits=[10])",
+        "output": "4.539889921686465e-05"
+      }
+    ]
+  ],
+  "gan-gradient-penalty": [
+    [
+      {
+        "input": "gradient_penalty(gradients=[[0.6, 0.8]], penalty_weight=10)",
+        "output": "0.0"
+      }
+    ],
+    [
+      {
+        "input": "gradient_penalty(gradients=[[0, 0]], penalty_weight=10)",
+        "output": "10.0"
+      }
+    ]
+  ],
+  "diffusion-linear-beta": [
+    [
+      {
+        "input": "linear_beta_schedule(steps=5, beta_start=0.1, beta_end=0.5)",
+        "output": "[0.1, 0.2, 0.30000000000000004, 0.4, 0.5]"
+      }
+    ],
+    [
+      {
+        "input": "linear_beta_schedule(steps=1, beta_start=0.01, beta_end=0.1)",
+        "output": "[0.01]"
+      }
+    ]
+  ],
+  "diffusion-alpha-bar": [
+    [
+      {
+        "input": "cumulative_alphas(betas=[0.1, 0.2])",
+        "output": "[0.9, 0.7200000000000001]"
+      }
+    ],
+    [
+      {
+        "input": "cumulative_alphas(betas=[])",
+        "output": "[]"
+      }
+    ]
+  ],
+  "diffusion-forward-sampling": [
+    [
+      {
+        "input": "q_sample(x0=[1, 2], noise=[9, 8], alpha_bar=1)",
+        "output": "[1.0, 2.0]"
+      }
+    ],
+    [
+      {
+        "input": "q_sample(x0=[1, 2], noise=[9, 8], alpha_bar=0)",
+        "output": "[9.0, 8.0]"
+      }
+    ]
+  ],
+  "diffusion-noise-mse": [
+    [
+      {
+        "input": "epsilon_prediction_mse(predicted=[0, 2], target=[1, 0])",
+        "output": "2.5"
+      }
+    ],
+    [
+      {
+        "input": "epsilon_prediction_mse(predicted=[1, 2], target=[1, 2])",
+        "output": "0.0"
+      }
+    ]
+  ],
+  "diffusion-reconstruct-x0": [
+    [
+      {
+        "input": "predict_x0_from_eps(xt=[4.464101615137754], eps=[4], alpha_bar=0.25)",
+        "output": "[2.0]"
+      }
+    ],
+    [
+      {
+        "input": "predict_x0_from_eps(xt=[2, 3], eps=[1, 9], alpha_bar=1)",
+        "output": "[2.0, 3.0]"
+      }
+    ]
+  ],
+  "diffusion-ddpm-posterior": [
+    [
+      {
+        "input": "ddpm_posterior_mean(xt=[0], x0=[0], alpha_t=0.9, alpha_bar_prev=0.8)",
+        "output": "[0.0]"
+      }
+    ],
+    [
+      {
+        "input": "ddpm_posterior_mean(xt=[2], x0=[4], alpha_t=0.9, alpha_bar_prev=0.8)",
+        "output": "[2.633014984357757]"
+      }
+    ]
+  ],
+  "diffusion-cfg-epsilon": [
+    [
+      {
+        "input": "cfg_epsilon(eps_uncond=[1, 2], eps_cond=[3, 4], guidance_scale=0)",
+        "output": "[1, 2]"
+      }
+    ],
+    [
+      {
+        "input": "cfg_epsilon(eps_uncond=[1, 2], eps_cond=[3, 4], guidance_scale=1)",
+        "output": "[3, 4]"
+      }
+    ]
+  ],
+  "diffusion-classifier-guidance": [
+    [
+      {
+        "input": "classifier_guided_mean(mean=[1, 2], variance=[2, 3], log_prob_gradient=[3, 4], scale=0)",
+        "output": "[1, 2]"
+      }
+    ],
+    [
+      {
+        "input": "classifier_guided_mean(mean=[1, 2], variance=[2, 3], log_prob_gradient=[3, 4], scale=1)",
+        "output": "[7, 14]"
+      }
+    ]
+  ],
+  "diffusion-ddim-deterministic": [
+    [
+      {
+        "input": "ddim_step(xt=[4.464101615137754], eps_hat=[4], alpha_bar_t=0.25, alpha_bar_prev=1)",
+        "output": "[2.0]"
+      }
+    ],
+    [
+      {
+        "input": "ddim_step(xt=[1, 2], eps_hat=[0, 3], alpha_bar_t=0.5, alpha_bar_prev=0.5)",
+        "output": "[1.0, 2.0]"
+      }
+    ]
+  ],
+  "dit-adaln-modulation": [
+    [
+      {
+        "input": "adaptive_layer_norm(x=[2, 2], shift=[3, 4], scale=[8, 9], eps=1e-05)",
+        "output": "[3.0, 4.0]"
+      }
+    ],
+    [
+      {
+        "input": "adaptive_layer_norm(x=[1, 3], shift=[0, 0], scale=[0, 0], eps=1e-12)",
+        "output": "[-0.9999999999995, 0.9999999999995]"
+      }
+    ]
+  ],
+  "dit-adaln-zero-gate": [
+    [
+      {
+        "input": "gated_adaln_residual(x=[1, 2], block_output=[100, 100], gate=[0, 0])",
+        "output": "[1, 2]"
+      }
+    ],
+    [
+      {
+        "input": "gated_adaln_residual(x=[1, 2], block_output=[3, 4], gate=[1, 1])",
+        "output": "[4, 6]"
+      }
+    ]
+  ],
+  "cnn-valid-convolution": [
+    [
+      {
+        "input": "conv2d_valid(image=[[1, 2], [3, 4]], kernel=[[2]])",
+        "output": "[[2, 4], [6, 8]]"
+      }
+    ],
+    [
+      {
+        "input": "conv2d_valid(image=[[1, 2, 3], [4, 5, 6], [7, 8, 9]], kernel=[[1, 1], [1, 1]])",
+        "output": "[[12, 16], [24, 28]]"
+      }
+    ]
+  ],
+  "cnn-zero-padded-convolution": [
+    [
+      {
+        "input": "conv2d_same(image=[[1, 2], [3, 4]], kernel=[[1]])",
+        "output": "[[1, 2], [3, 4]]"
+      }
+    ],
+    [
+      {
+        "input": "conv2d_same(image=[[1, 2], [3, 4]], kernel=[[0, 1, 0], [1, 0, 1], [0, 1, 0]])",
+        "output": "[[5, 5], [5, 5]]"
+      }
+    ]
+  ],
+  "cnn-pointwise-projection": [
+    [
+      {
+        "input": "pointwise_conv(channels=[[[1, 2]]], weights=[[3]], biases=[1])",
+        "output": "[[[4, 7]]]"
+      }
+    ],
+    [
+      {
+        "input": "pointwise_conv(channels=[[[1, 2]], [[3, 4]]], weights=[[1, 2]], biases=[0])",
+        "output": "[[[7, 10]]]"
+      }
+    ]
+  ],
+  "cnn-max-pooling": [
+    [
+      {
+        "input": "max_pool2d(image=[[1, 3], [2, 4]])",
+        "output": "[[4]]"
+      }
+    ],
+    [
+      {
+        "input": "max_pool2d(image=[[1, 2, 9, 1], [8, 3, 2, 7], [4, 9, 0, 5], [0, 2, 6, 1]])",
+        "output": "[[8, 9], [9, 6]]"
+      }
+    ]
+  ],
+  "cnn-average-pooling": [
+    [
+      {
+        "input": "avg_pool2d(image=[[1, 2], [3, 4]])",
+        "output": "[[2.5]]"
+      }
+    ],
+    [
+      {
+        "input": "avg_pool2d(image=[[-2, 2], [-4, 4]])",
+        "output": "[[0.0]]"
+      }
+    ]
+  ],
+  "norm-batch-training": [
+    [
+      {
+        "input": "batch_norm_train(batch=[[1], [3]], gamma=[1], beta=[0], eps=1e-12)",
+        "output": "[[-0.9999999999995], [0.9999999999995]]"
+      }
+    ],
+    [
+      {
+        "input": "batch_norm_train(batch=[[5, 10]], gamma=[2, 3], beta=[7, 8], eps=1e-05)",
+        "output": "[[7.0, 8.0]]"
+      }
+    ]
+  ],
+  "norm-batch-inference": [
+    [
+      {
+        "input": "batch_norm_eval(batch=[[11]], running_mean=[10], running_var=[1], gamma=[1], beta=[0], eps=1e-12)",
+        "output": "[[0.9999999999995]]"
+      }
+    ],
+    [
+      {
+        "input": "batch_norm_eval(batch=[[2, 8]], running_mean=[0, 4], running_var=[4, 4], gamma=[2, 3], beta=[1, -1], eps=1e-12)",
+        "output": "[[2.99999999999975, 4.99999999999925]]"
+      }
+    ]
+  ],
+  "norm-rmsnorm": [
+    [
+      {
+        "input": "rms_norm(x=[3, 3], eps=1e-12)",
+        "output": "[0.9999999999999445, 0.9999999999999445]"
+      }
+    ],
+    [
+      {
+        "input": "rms_norm(x=[3, -4], eps=1e-12)",
+        "output": "[0.8485281374238232, -1.1313708498984307]"
+      }
+    ]
+  ],
+  "norm-rmsnorm-gain": [
+    [
+      {
+        "input": "rms_norm_gain(x=[1, 2], gain=[0, 0], eps=1e-06)",
+        "output": "[0.0, 0.0]"
+      }
+    ],
+    [
+      {
+        "input": "rms_norm_gain(x=[3, 3], gain=[2, -1], eps=1e-12)",
+        "output": "[1.999999999999889, -0.9999999999999445]"
+      }
+    ]
+  ],
+  "autograd-relu-backward": [
+    [
+      {
+        "input": "relu_backward(x=[-1, 0, 2], upstream=[3, 4, 5])",
+        "output": "[0, 0, 5]"
+      }
+    ],
+    [
+      {
+        "input": "relu_backward(x=[1, 3], upstream=[-7, 2])",
+        "output": "[-7, 2]"
+      }
+    ]
+  ],
+  "autograd-linear-forward": [
+    [
+      {
+        "input": "linear_forward(x=[2, 3], weights=[[1, 0], [0, 1]], biases=[0, 0])",
+        "output": "[2, 3]"
+      }
+    ],
+    [
+      {
+        "input": "linear_forward(x=[1, 2], weights=[[2, 3], [1, -1]], biases=[4, 1])",
+        "output": "[12, 0]"
+      }
+    ]
+  ],
+  "autograd-mse-gradient": [
+    [
+      {
+        "input": "mse_gradient(predictions=[3], targets=[1])",
+        "output": "[4.0]"
+      }
+    ],
+    [
+      {
+        "input": "mse_gradient(predictions=[2, 4], targets=[1, 2])",
+        "output": "[1.0, 2.0]"
+      }
+    ]
+  ],
+  "autograd-linear-backward": [
+    [
+      {
+        "input": "linear_backward(x=[2, 3], weights=[[4, 5]], upstream=[6])",
+        "output": "([24, 30], [[12, 18]], [6])"
+      }
+    ],
+    [
+      {
+        "input": "linear_backward(x=[1, 2], weights=[[1, 0], [0, 3]], upstream=[4, 5])",
+        "output": "([4, 15], [[4, 8], [5, 10]], [4, 5])"
+      }
+    ]
+  ],
+  "autograd-central-difference": [
+    [
+      {
+        "input": "central_difference(f=lambda v: v * v, x=3, h=0.0001)",
+        "output": "6.000000000012662"
+      }
+    ],
+    [
+      {
+        "input": "central_difference(f=lambda v: 7 * v + 2, x=-4, h=0.1)",
+        "output": "6.999999999999975"
+      }
+    ]
+  ],
+  "optimizer-sgd-momentum": [
+    [
+      {
+        "input": "sgd_momentum(param=3, grad=2, velocity=0, lr=0.1, momentum=0.9)",
+        "output": "(2.8, 2.0)"
+      }
+    ],
+    [
+      {
+        "input": "sgd_momentum(param=4, grad=3, velocity=2, lr=0.2, momentum=0.5)",
+        "output": "(3.2, 4.0)"
+      }
+    ]
+  ],
+  "optimizer-adam-bias-correction": [
+    [
+      {
+        "input": "adam_bias_correction(m=0.2, v=0.03, beta1=0.8, beta2=0.7, step=1)",
+        "output": "(1.0000000000000002, 0.09999999999999998)"
+      }
+    ],
+    [
+      {
+        "input": "adam_bias_correction(m=0.19, v=0.04, beta1=0.9, beta2=0.8, step=2)",
+        "output": "(1.0000000000000002, 0.11111111111111115)"
+      }
+    ]
+  ],
+  "optimizer-adamw-update": [
+    [
+      {
+        "input": "adamw_step(p=1, g=2, m=0, v=0, step=1, lr=0.1, beta1=0.9, beta2=0.999, eps=1e-08, weight_decay=0)",
+        "output": "(0.9000000005, 0.19999999999999996, 0.0040000000000000036)"
+      }
+    ],
+    [
+      {
+        "input": "adamw_step(p=2, g=0, m=0, v=0, step=1, lr=0.1, beta1=0.9, beta2=0.999, eps=1e-08, weight_decay=0.5)",
+        "output": "(1.9, 0.0, 0.0)"
+      }
+    ]
+  ],
+  "optimizer-global-norm-clipping": [
+    [
+      {
+        "input": "clip_global_norm(grad=[3, 4], max_norm=2.5)",
+        "output": "[1.5, 2.0]"
+      }
+    ],
+    [
+      {
+        "input": "clip_global_norm(grad=[1, 2], max_norm=4)",
+        "output": "[1.0, 2.0]"
+      }
+    ]
+  ],
+  "rope-rotate-pair": [
+    [
+      {
+        "input": "rope_pair(x=3, y=4, angle=0)",
+        "output": "[3.0, 4.0]"
+      }
+    ],
+    [
+      {
+        "input": "rope_pair(x=1, y=0, angle=1.5707963267948966)",
+        "output": "[6.123233995736766e-17, 1.0]"
+      }
+    ]
+  ],
+  "rope-position-encoding": [
+    [
+      {
+        "input": "apply_rope(tokens=[[3.0, 4.0, 5.0, 6.0]], base=10000)",
+        "output": "[[3.0, 4.0, 5.0, 6.0]]"
+      }
+    ],
+    [
+      {
+        "input": "apply_rope(tokens=[[1, 0], [1, 0]], base=10000)",
+        "output": "[[1.0, 0.0], [0.5403023058681398, 0.8414709848078965]]"
+      }
+    ]
+  ],
+  "transformer-swiglu": [
+    [
+      {
+        "input": "swiglu_gate(x=[1, 3], gate=[0, 0])",
+        "output": "[0.0, 0.0]"
+      }
+    ],
+    [
+      {
+        "input": "swiglu_gate(x=[2], gate=[1])",
+        "output": "[1.4621171572600098]"
+      }
+    ]
+  ],
+  "attention-key-padding-mask": [
+    [
+      {
+        "input": "mask_key_padding(scores=[1, 2, 3], valid_keys=[True, False, True])",
+        "output": "[1, -inf, 3]"
+      }
+    ],
+    [
+      {
+        "input": "mask_key_padding(scores=[-1, 0], valid_keys=[True, True])",
+        "output": "[-1, 0]"
+      }
+    ]
+  ],
+  "diffusion-ddpm-stochastic-step": [
+    [
+      {
+        "input": "ddpm_reverse_step(mean=3, variance=9, noise=20, timestep=0)",
+        "output": "3"
+      }
+    ],
+    [
+      {
+        "input": "ddpm_reverse_step(mean=2, variance=4, noise=0.5, timestep=3)",
+        "output": "3.0"
+      }
+    ]
+  ],
+  "gan-discriminator-logit-gradients": [
+    [
+      {
+        "input": "discriminator_logit_grads(real_logit=0, fake_logit=0)",
+        "output": "(-0.5, 0.5)"
+      }
+    ],
+    [
+      {
+        "input": "discriminator_logit_grads(real_logit=10, fake_logit=-10)",
+        "output": "(-4.5397868702390376e-05, 4.5397868702434395e-05)"
+      }
+    ]
+  ]
+}

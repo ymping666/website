@@ -45,6 +45,8 @@ if ($('#challenge-json')) {
   const submit = $('#submit-solution');
   const stop = $('#stop-execution');
   const completed = $('#completion-indicator');
+  const success = $('#success-panel');
+  const metrics = $('#runtime-metrics');
   const sampleCount = Math.min(2, problem.tests.length);
   let worker = null;
   let loadingTimer = null;
@@ -61,7 +63,7 @@ if ($('#challenge-json')) {
   updateCompletion();
   window.addEventListener('storage', updateCompletion);
   window.addEventListener('fc-progress-change', updateCompletion);
-  editor.addEventListener('input', () => { const ok = store.set('draft:' + problem.id, editor.value); saved.textContent = ok ? 'Draft saved on this browser' : 'Draft not saved · Download a backup'; });
+  editor.addEventListener('input', () => { success.hidden = true; const ok = store.set('draft:' + problem.id, editor.value); saved.textContent = ok ? 'Draft saved on this browser' : 'Draft not saved · Download a backup'; });
   editor.addEventListener('keydown', event => {
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -76,6 +78,7 @@ if ($('#challenge-json')) {
   $('#reset-code').addEventListener('click', () => {
     if (editor.value !== problem.starter && !confirmLocalized('Restore the original starter code? Your current draft will be replaced.')) return;
     editor.value = problem.starter;
+    success.hidden = true;
     const ok = store.set('draft:' + problem.id, problem.starter);
     saved.textContent = ok ? 'Starter restored and saved' : 'Starter restored · Not saved · Download a backup';
     editor.focus();
@@ -130,6 +133,8 @@ if ($('#challenge-json')) {
   }
   function renderResults(rows, mode, tests, elapsedMs) {
     const passing = rows.filter(item => item.pass).length;
+    const previouslySolved = store.get('completed', {})?.[problem.id] === true;
+    const firstImplementation = !Object.values(store.get('completed', {}) || {}).includes(true);
     store.set('journey', recordPractice(store.get('journey', null), { id: problem.id, day: localDay(), accepted: rows.length > 0 && passing === rows.length && mode === 'submit' }));
     results.replaceChildren();
     const intro = document.createElement('div');
@@ -154,6 +159,16 @@ if ($('#challenge-json')) {
         const error = document.createElement('p'); error.className = 'case-error';
         error.textContent = `${result.error_type || 'Error'}${result.location ? ' at ' + result.location : ''}\n${result.error || 'Test failed'}`;
         body.append(error);
+        const guidance = {
+          OverflowError: problem.id === 'stable-softmax' ? 'A numeric operation overflowed. For Softmax, subtract the largest scaled logit before exponentiation.'
+            : 'A numeric operation overflowed. Check input scales and use a numerically stable formula.',
+          SyntaxError: 'Python could not parse this code. Check the indicated line, punctuation and indentation.',
+          IndentationError: 'Check indentation: use four spaces for each block and avoid mixing tabs with spaces.',
+          TypeError: 'Check the function return type and argument types. A missing return produces None.',
+          NameError: 'Check spelling and imports for the name mentioned in the error.',
+          IndexError: 'An index is outside the sequence. Check shapes and loop boundaries.'
+        }[result.error_type];
+        if (guidance) { const help = document.createElement('p'); help.className = 'error-guidance'; help.textContent = guidance; body.append(help); }
       }
       if (result.stdout) {
         const output = document.createElement('strong'); output.textContent = 'Program output'; body.append(output);
@@ -167,6 +182,9 @@ if ($('#challenge-json')) {
       solved[problem.id] = true;
       store.set('completed', solved);
       updateCompletion();
+      success.hidden = false;
+      $('#success-title').textContent = firstImplementation ? 'First implementation unlocked!' : previouslySolved ? 'Review complete' : 'Implementation complete';
+      $('#success-message').textContent = 'All published tests passed. Explore the reasoning, then try the next related exercise.';
       note.textContent = 'Accepted by the complete local test suite. This is not a secure server-side submission.';
     } else if (passing === rows.length) {
       note.textContent = 'Samples passed. Press Submit to check all published tests and save a solved mark.';
@@ -182,8 +200,12 @@ if ($('#challenge-json')) {
       if (!active || data.requestId !== active.id) return;
       if (data.type === 'loading') {
         status.textContent = 'Downloading Python runtime…';
-        note.textContent = 'First run needs Pyodide from an external CDN. Subsequent runs on this page reuse it.';
+        note.textContent = 'Step 1 of 2: downloading and preparing Python. Your tests have not started. Later runs on this page reuse the environment.';
       } else if (data.type === 'ready' || data.type === 'running') {
+        if (data.type === 'running') {
+          active.runningAt = performance.now();
+          note.textContent = 'Step 2 of 2: running your tests locally. No code is sent to our server.';
+        }
         clearTimeout(loadingTimer);
         status.textContent = 'Running ' + (active.mode === 'submit' ? 'full suite' : 'samples') + '…';
         // Enforce a wall-clock limit even for Python code that never yields.
@@ -196,7 +218,11 @@ if ($('#challenge-json')) {
       } else if (data.type === 'error') {
         fail('Python runtime error: ' + data.error + '. Check your network and retry.', 'Runtime error');
       } else if (data.type === 'results') {
-        renderResults(data.results, active.mode, active.tests, performance.now() - active.startedAt);
+        const finishedAt = performance.now();
+        const runningAt = active.runningAt || active.startedAt;
+        metrics.hidden = false;
+        metrics.textContent = `Python setup: ${((runningAt - active.startedAt) / 1000).toFixed(2)}s · Tests: ${((finishedAt - runningAt) / 1000).toFixed(2)}s`;
+        renderResults(data.results, active.mode, active.tests, finishedAt - runningAt);
         finish();
       }
     };
@@ -208,6 +234,8 @@ if ($('#challenge-json')) {
     const tests = mode === 'submit' ? problem.tests : problem.tests.slice(0, sampleCount);
     const requestId = ++sequence;
     const code = editor.value;
+    success.hidden = true;
+    metrics.hidden = true;
     store.set('draft:' + problem.id, code);
     resetResults(mode, tests);
     active = { id: requestId, tests, mode, startedAt: performance.now() };

@@ -1,5 +1,19 @@
 // English is the default. Technical identifiers and executable code are unchanged.
 export const zhUI = {
+  'Input':'输入', 'Expected output':'预期输出', 'View test assertion':'查看测试断言',
+  'Floating-point outputs are approximate; the assertion defines the tolerance.':'浮点输出为近似值，允许的误差以测试断言为准。',
+  'Implementation complete':'本题实现完成', 'First implementation unlocked!':'已解锁首次实现！', 'Review complete':'复习完成',
+  'All published tests passed. Explore the reasoning, then try the next related exercise.':'全部公开测试通过。读懂原理后，继续下一道关联练习。',
+  'Continue learning →':'继续学习 →', 'Understand the solution →':'理解解题思路 →', 'View milestones →':'查看成长里程碑 →',
+  'Step 1 of 2: downloading and preparing Python. Your tests have not started. Later runs on this page reuse the environment.':'第 1/2 步：下载并准备 Python，测试尚未开始。当前页面的后续运行会复用环境。',
+  'Step 2 of 2: running your tests locally. No code is sent to our server.':'第 2/2 步：在本地执行测试，代码不会发送到本站服务器。',
+  'A numeric operation overflowed. For Softmax, subtract the largest scaled logit before exponentiation.':'数值运算溢出。如果正在实现 Softmax，请在求指数前减去缩放后 logits 的最大值。',
+  'A numeric operation overflowed. Check input scales and use a numerically stable formula.':'数值运算溢出，请检查输入量级，并使用数值稳定的计算公式。',
+  'Python could not parse this code. Check the indicated line, punctuation and indentation.':'Python 无法解析代码，请检查错误行的标点与缩进。',
+  'Check indentation: use four spaces for each block and avoid mixing tabs with spaces.':'请检查缩进：每层使用四个空格，避免混用制表符与空格。',
+  'Check the function return type and argument types. A missing return produces None.':'请检查函数返回类型和参数类型；遗漏 return 会返回 None。',
+  'Check spelling and imports for the name mentioned in the error.':'请检查错误中提到的名称是否拼写正确，以及是否缺少导入。',
+  'An index is outside the sequence. Check shapes and loop boundaries.':'索引超出序列范围，请检查数据形状和循环边界。',
   'Problems':'题库', 'Topics':'知识主题', 'Concepts':'知识点', 'Practice sets':'专题题单', 'Progress':'练习进度',
   'About':'关于本站', 'Editorial standards':'内容标准', 'Privacy':'隐私', 'Contact':'联系反馈',
   'Free · No sign-up':'免费 · 无需注册', 'Primary':'主导航', 'Language':'语言',
@@ -97,6 +111,7 @@ export function translate(text, dictionary = zhUI) {
   if (result === undefined) {
     const translated = part => translate(part, dictionary);
     const patterns = [
+      [/^Python setup: ([\d.]+)s · Tests: ([\d.]+)s$/, (_, setup, tests) => `Python 环境准备：${setup} 秒 · 测试执行：${tests} 秒`],
       [/^(\d+) min$/, (_, n) => `${n} 分钟`],
       [/^Original, verified coding exercises covering (.+)\.$/, (_, description) => `原创、独立验证的编程练习，覆盖${translated(description)}。`],
       [/^(.+) Download here before reloading or leaving this page\.$/, (_, error) => `${translated(error)} 请在当前页下载备份，再刷新或离开。`],

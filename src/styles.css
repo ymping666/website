@@ -59,3 +59,32 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .practice-entry-nav{margin:22px 0 26px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;background:#f7faf8}.practice-entry-nav>strong{display:block;font-size:13px;margin-bottom:9px}.practice-entry-links{display:flex;flex-wrap:wrap;gap:8px 18px}.practice-entry-links a{color:var(--primary);font-size:12px;line-height:1.8;text-decoration:underline;text-underline-offset:3px}
 
 .footer-links{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}.footer-links a{text-decoration:underline;text-underline-offset:3px}.policy-page{overflow-wrap:anywhere}.policy-page .lede{max-width:730px}
+
+/* One page scroll for reading and results; only long code scrolls within the editor. */
+.bench-split{height:auto;align-items:start}
+.problem-panel,.editor-panel{overflow:visible;height:auto;min-height:0}
+.panel-content{overflow:visible}
+.editor-panel{position:sticky;top:76px}
+.code-editor{flex:none;height:360px;min-height:260px;max-height:70vh;resize:vertical;border-radius:0;font-size:14px}
+.editor-actions{position:sticky;top:62px;z-index:2;background:#fff;flex-wrap:wrap}
+.results-pane{height:auto;overflow:visible;min-height:150px}
+.results-pane .fineprint{font-size:12px}
+.results-pane #status{font-size:12px}
+.example-block section{padding:14px 16px;font-size:13px;border:1px solid var(--line)}
+.example-block pre{font-size:12px;line-height:1.8}
+.example-io{margin:10px 0 14px}
+.example-io dt{font-weight:650;color:#53606c;margin:8px 0 4px}
+.example-io dd{margin:0;padding:8px 10px;background:white;border-radius:5px}
+.example-assertion{border-top:1px solid var(--line);padding-top:9px}
+.example-assertion summary{color:var(--primary);cursor:pointer;font-size:12px}
+.example-assertion pre{margin-top:10px}
+.success-panel{padding:17px;background:#edf9f2;border-bottom:1px solid #c8e6d8}
+.success-panel h2{font-size:17px;color:#116748;margin-bottom:7px}
+.success-panel p{font-size:13px;margin-bottom:10px}
+.success-actions{display:flex;gap:10px 18px;flex-wrap:wrap}
+.success-actions a{color:var(--primary);text-decoration:underline;font-size:13px;font-weight:650}
+.success-actions a:first-child{flex-basis:100%}
+.error-guidance{padding:10px 12px;border-radius:5px;background:#fff3df;color:#75531f;font-size:13px}
+@media(max-width:960px){.editor-panel{position:static}.code-editor{height:330px}.editor-actions{top:62px}}
+@media(min-width:651px) and (max-width:960px){.header-inner{gap:16px}.top-nav{margin-left:0;gap:14px;font-size:12px}.header-note{display:none}}
+@media(max-width:650px){.code-editor{font-size:13px}.panel-content{padding:17px 15px}.bench-topline h1{overflow-wrap:anywhere}.bench-below{flex-wrap:wrap}.bench-below a{overflow-wrap:anywhere}.success-panel{padding:14px}}

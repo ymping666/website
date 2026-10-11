@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { problems } from '../src/problems.mjs';
 import { siteBase } from './config.mjs';
+import { checkPracticeUX } from './browser-practice.mjs';
 
 // Test a real browser, actual served files and the CDN Python runtime. No mocked Worker.
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -214,6 +215,8 @@ try {
   await page.screenshot({ path: 'artifacts/home-zh-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
   pass('375px mobile layout and no uncaught page errors');
+  await checkPracticeUX(browser, base);
+  pass('Practice UX regression suite with real Python and both languages');
   await writeFile('artifacts/browser-report.json', JSON.stringify({ base, checks, problems: verdicts.length,
     assertions: verdicts.reduce((n, p) => n + p.results.length, 0) }, null, 2));
 } finally {
