@@ -1,5 +1,16 @@
 // English is the default. Technical identifiers and executable code are unchanged.
 export const zhUI = {
+  'Search':'搜索', 'Site search':'站内搜索', 'Search TensorDrill':'搜索 TensorDrill',
+  'Search AI problems and solutions':'搜索 AI 题目与题解',
+  'Search TensorDrill coding problems, worked solutions, concepts, practice sets and topics in English or Chinese.':'用中英文搜索 TensorDrill 的编程题目、完整题解、知识点、专题题单和知识主题。',
+  'FIND YOUR NEXT EXERCISE':'找到下一道想练习的题目',
+  'Find problems, solutions, concepts and practice sets in English or Chinese.':'用中英文搜索题目、题解、知识点和专题题单。',
+  'Search all content':'搜索全站内容', 'Try Attention, 扩散, RoPE…':'试试 Attention、扩散、RoPE…',
+  'Content type':'内容类型', 'All content':'全部内容', 'Solutions':'题解', 'Clear':'清空',
+  'Example searches':'搜索示例', 'Try:':'试试：',
+  'Enter a keyword to find something to practice.':'输入关键词，寻找想练习的内容。',
+  'Show more results':'显示更多结果', 'Try again':'重试',
+  'Enable JavaScript to search, or browse the links below.':'启用 JavaScript 即可搜索，也可以通过下面的链接浏览内容。',
   'New to AI implementation?':'第一次动手实现 AI？',
   'Prerequisites: Python lists, loops and functions. Start with numerical basics, then build attention.':'先修要求：掌握 Python 列表、循环与函数。先练数值基础，再实现注意力。',
   'Outcome: implement the numerical core of attention and explain its shapes and stability.':'学习目标：实现注意力的数值核心，理解数据形状与数值稳定性。',

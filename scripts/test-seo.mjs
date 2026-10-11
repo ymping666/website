@@ -63,12 +63,12 @@ for(const [path] of entryPoints.slice(4)) {
   assert.ok(home.includes(`href="${base+prefix+path.slice(1)}"`),'Crawlable search entry from homepage');
  }
 }
-for(const path of ['/progress/','/zh/progress/'])assert.ok((await read(path)).includes('name="robots" content="noindex"'));
+for(const path of ['/progress/','/zh/progress/','/search/','/zh/search/'])assert.ok((await read(path)).includes('name="robots" content="noindex"'));
 if(origin) {
  const sitemap=await readFile(join(siteRoot,'sitemap.xml'),'utf8');
  const urls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>decodeHtml(match[1]));
  assert.equal(new Set(urls).size,urls.length,'No repeated sitemap entries');
- assert.equal(urls.length,total-2,'Only public routes in sitemap');
+ assert.equal(urls.length,total-4,'Only public content routes in sitemap');
  assert.ok(urls.every(url=>url.startsWith(origin+base) && !url.endsWith('/progress/')));
  for(const [path] of entryPoints)for(const prefix of ['', 'zh/'])assert.ok(urls.includes(origin+base+prefix+path.slice(1)));
  for(const html of [enHome,zhHome]) {
