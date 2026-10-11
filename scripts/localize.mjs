@@ -5,6 +5,7 @@ import { concepts } from '../src/concepts.mjs';
 import { practiceSets } from '../src/practice-sets.mjs';
 import { searchTranslations } from '../src/search-pages.mjs';
 import { policyTranslations } from '../src/policy-pages.mjs';
+import { lessonTranslations } from '../src/visual-lessons.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const decodeHtml = text => text.replace(/&(amp|lt|gt|quot|nbsp|#39|#\d+);/g, (_, entity) =>
@@ -39,7 +40,7 @@ export async function loadChinese() {
       original.segments.forEach((segment, i) => add(segment.note, chinese.notes[i], key + '.notes'));
     }
   }
-  Object.assign(dictionary, searchTranslations, policyTranslations);
+  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 
