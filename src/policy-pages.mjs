@@ -113,12 +113,12 @@ export const policyPages = [
  },
  {
   path:'/about/',title:['About TensorDrill','关于 TensorDrill'],
-  description:['About TensorDrill, an independent library of original AI coding exercises, tested Python solutions and bilingual learning resources.','了解 TensorDrill：提供原创 AI 编程练习、经测试的 Python 题解与中英文学习资源的独立项目。'],
-  heading:['Learn AI by implementing it.','通过亲手实现学习 AI。'],
-  intro:['TensorDrill is a free AI coding-practice platform. Build a deeper understanding of AI by implementing and testing its core ideas.','TensorDrill 是免费的 AI 编程练习平台，通过亲手实现与测试，帮助你理解 AI 的核心原理。'],
+  description:['TensorDrill is a coding-practice platform for agents, world models, Flow Matching and more, with tested Python exercises and bilingual learning resources.','TensorDrill 专注 Agent、世界模型、Flow Matching 等前沿 AI 编程练习，提供经测试的 Python 题目、完整题解与中英文学习资源，并持续维护与拓展题库。'],
+  heading:['Understand frontier AI by implementing it.','通过亲手实现理解前沿 AI。'],
+  intro:['TensorDrill is a coding-practice platform for agents, world models and more. Implement and test focused components to understand the ideas behind modern AI systems.','TensorDrill 是面向 Agent、世界模型等前沿方向的 AI 编程练习平台，通过亲手实现与测试核心组件，帮助你理解现代 AI 系统背后的原理。'],
   sections:[
    section('Hands-on AI practice','动手练习 AI',[
-    ['Practice foundations, Transformers, generative models, LLM systems, agents and world models with original Python exercises, repeatable tests and free explanations.','通过原创 Python 练习、可重复测试和免费题解，学习数学基础、Transformer、生成模型、LLM 系统、智能体和世界模型。'],
+    ['Practice agent control and tool use, world model dynamics and planning, Flow Matching, diffusion, Transformers and more with original Python exercises, repeatable tests and complete explanations. Supporting foundations are available when you need them.','通过原创 Python 练习、可重复测试与完整题解，练习 Agent 控制与工具调用、世界模型动力学与规划、Flow Matching、Diffusion、Transformer 等内容，并按需补充相关基础。'],
     ['Run Python in your browser without an account or model API key. Your practice progress stays on your device.','无需账号或模型 API 密钥，即可在浏览器运行 Python。练习进度保存在你的设备上。']
    ],[link('Browse AI coding challenges','浏览 AI 编程题库','/problems/'),link('Editorial standards','内容标准','/standards/')]),
    section('Ongoing updates','持续更新',[

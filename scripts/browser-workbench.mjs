@@ -13,7 +13,10 @@ export async function checkWorkbenchUX(browser, base) {
   try {
     await page.goto(base);
     assert.equal(await page.locator('.beginner-path li').count(), 4);
-    assert.equal(await page.locator('.problem-list .difficulty.easy').count(), 4);
+    assert.equal(await page.locator('.problem-list .problem-row').count(), 4);
+    for (const id of ['tool-call-parser','react-trace-validator','linear-dynamics-rollout','flow-linear-interpolation']) {
+      assert.equal(await page.locator(`.problem-list a[href*="/problems/${id}/"]`).count(), 1);
+    }
     await page.goto(base + 'problems/attention-scaled-dot-product/?set=attention-from-scratch');
     await page.waitForFunction(() => document.querySelector('.route-position')?.textContent === 'Step 4 of 8');
     await page.locator('#practice-route summary').click();

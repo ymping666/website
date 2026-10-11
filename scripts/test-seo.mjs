@@ -11,15 +11,21 @@ const title=html=>decodeHtml(html.match(/<title>(.*?)<\/title>/)?.[1] || '');
 const main=html=>decodeHtml(html.match(/<main[\s\S]*?<\/main>/)?.[0] || '');
 // Check search intent in the rendered document, independently of its copy configuration.
 const entryPoints=[
- ['/', 'AI coding challenges', 'AI 编程刷题'],
- ['/problems/', 'AI Coding Challenges', 'AI 编程刷题'],
+ ['/', 'AI coding challenges', 'AI 编程练习'],
+ ['/problems/', 'AI Coding Challenge Library', 'AI 编程题库'],
  ['/tracks/ai-foundations/', 'Machine Learning', '机器学习编程练习'],
  ['/tracks/llm-systems/', 'LLM Engineering Practice', 'LLM 工程编程练习'],
  ['/tracks/transformer-vision/', 'Transformer Coding Exercises', 'Transformer 编程练习题'],
  ['/concepts/attention-fundamentals/', 'Attention Mechanism Code Implementation', 'Attention 机制代码实现'],
  ['/concepts/flow-matching/', 'Flow Matching Coding Exercises', 'Flow Matching 编程练习'],
  ['/practice-sets/diffusion-core-and-sampling/', 'Diffusion Model Coding Practice', 'Diffusion 扩散模型编程练习'],
- ['/concepts/agent-control/', 'ReAct Agent Implementation Exercises', 'ReAct 智能体实现练习']
+ ['/concepts/agent-control/', 'ReAct Agent Implementation Exercises', 'ReAct 智能体实现练习'],
+ ['/tracks/', 'AI Coding Topics', 'AI 编程'],
+ ['/concepts/', 'AI Implementation Guides', '实现指南'],
+ ['/practice-sets/', 'AI Coding Practice Paths', 'AI 编程'],
+ ['/tracks/agent-engineering/', 'Agent Coding Challenges', 'Agent 编程练习'],
+ ['/tracks/world-models/', 'World Model Coding Challenges', '世界模型编程练习'],
+ ['/tracks/video-world-models/', 'Video World Model Coding Practice', '视频世界模型编程练习']
 ];
 for (const [path,english,chinese] of entryPoints) {
  for (const [locale,phrase] of [['en',english],['zh',chinese]]) {
@@ -58,10 +64,17 @@ async function walk(directory) {
 }
 await walk(siteRoot);
 const enHome=await read('/'), zhHome=await read('/zh/');
-for(const [path] of entryPoints.slice(4)) {
+for(const path of ['/tracks/agent-engineering/','/tracks/world-models/','/tracks/video-world-models/','/tracks/transformer-vision/','/concepts/attention-fundamentals/','/concepts/flow-matching/','/practice-sets/diffusion-core-and-sampling/']) {
  for(const [home,prefix] of [[enHome,''],[zhHome,'zh/']]) {
   assert.ok(home.includes(`href="${base+prefix+path.slice(1)}"`),'Crawlable search entry from homepage');
  }
+}
+for(const path of ['/','/problems/','/tracks/','/concepts/','/practice-sets/','/about/'])for(const prefix of ['','/zh']) {
+ const html=await read(prefix+path);
+ assert.doesNotMatch(title(html),/\bfree\b|免费|Machine Learning|机器学习/i,'Primary titles foreground the implementation focus');
+ assert.match(meta(html,'description'),/agents?|Agent/,'Agent scope in primary descriptions');
+ assert.match(meta(html,'description'),/world models?|世界模型/i,'World model scope in primary descriptions');
+ assert.match(meta(html,'description'),/and more|等/i,'Primary descriptions leave room for broader coverage');
 }
 for(const path of ['/progress/','/zh/progress/','/search/','/zh/search/'])assert.ok((await read(path)).includes('name="robots" content="noindex"'));
 if(origin) {
