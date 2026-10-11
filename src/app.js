@@ -1,6 +1,7 @@
 import { createStore, recordPractice, localDay } from './progress.mjs';
 import { mountProgressUI } from './progress-ui.js';
 import { initLanguage, confirmLocalized } from './i18n.js';
+import { mountEditor } from './editor.js';
 initLanguage();
 const $ = selector => document.querySelector(selector);
 const $$ = selector => Array.from(document.querySelectorAll(selector));
@@ -47,6 +48,9 @@ if ($('#challenge-json')) {
   const completed = $('#completion-indicator');
   const success = $('#success-panel');
   const metrics = $('#runtime-metrics');
+  const runCustom = $('#run-custom');
+  const customCall = $('#custom-call');
+  const customResult = $('#custom-result');
   const sampleCount = Math.min(2, problem.tests.length);
   let worker = null;
   let loadingTimer = null;
@@ -56,6 +60,9 @@ if ($('#challenge-json')) {
   let hintIndex = 0;
 
   editor.value = store.get('draft:' + problem.id, problem.starter);
+  const editorUI = mountEditor(editor);
+  customCall.value = store.get('custom:' + problem.id, problem.customCall);
+  customCall.addEventListener('input', () => store.set('custom:' + problem.id, customCall.value));
   const updateCompletion = () => {
     completed.hidden = !store.get('completed', {})?.[problem.id];
     if (!completed.hidden) completed.textContent = '✓ Solved locally';
@@ -65,11 +72,6 @@ if ($('#challenge-json')) {
   window.addEventListener('fc-progress-change', updateCompletion);
   editor.addEventListener('input', () => { success.hidden = true; const ok = store.set('draft:' + problem.id, editor.value); saved.textContent = ok ? 'Draft saved on this browser' : 'Draft not saved · Download a backup'; });
   editor.addEventListener('keydown', event => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      editor.setRangeText('    ', editor.selectionStart, editor.selectionEnd, 'end');
-      editor.dispatchEvent(new Event('input'));
-    }
     if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
       event.preventDefault();
       (event.shiftKey ? submit : runSamples).click();
@@ -78,6 +80,7 @@ if ($('#challenge-json')) {
   $('#reset-code').addEventListener('click', () => {
     if (editor.value !== problem.starter && !confirmLocalized('Restore the original starter code? Your current draft will be replaced.')) return;
     editor.value = problem.starter;
+    editorUI.refresh();
     success.hidden = true;
     const ok = store.set('draft:' + problem.id, problem.starter);
     saved.textContent = ok ? 'Starter restored and saved' : 'Starter restored · Not saved · Download a backup';
@@ -95,6 +98,7 @@ if ($('#challenge-json')) {
   function setBusy(isBusy) {
     runSamples.disabled = isBusy;
     submit.disabled = isBusy;
+    runCustom.disabled = isBusy;
     stop.hidden = !isBusy;
   }
   function clearTimers() {
@@ -111,6 +115,7 @@ if ($('#challenge-json')) {
     setBusy(false);
   }
   function fail(message, title = 'Unable to run') {
+    if (active?.mode === 'custom') customResult.textContent = title;
     terminate(); finish();
     status.textContent = title;
     note.textContent = message;
@@ -159,6 +164,18 @@ if ($('#challenge-json')) {
         const error = document.createElement('p'); error.className = 'case-error';
         error.textContent = `${result.error_type || 'Error'}${result.location ? ' at ' + result.location : ''}\n${result.error || 'Test failed'}`;
         body.append(error);
+        if (result.observations?.length) {
+          const heading = document.createElement('strong'); heading.textContent = 'Values at failure'; body.append(heading);
+          const table = document.createElement('dl'); table.className = 'failure-values';
+          for (const observation of result.observations) {
+            const label = document.createElement('dt');
+            const expression = document.createElement('code'); expression.textContent = observation.expression; label.append(expression);
+            const value = document.createElement('dd');
+            const output = document.createElement('pre'); output.textContent = observation.value; value.append(output);
+            table.append(label, value);
+          }
+          body.append(table);
+        }
         const guidance = {
           OverflowError: problem.id === 'stable-softmax' ? 'A numeric operation overflowed. For Softmax, subtract the largest scaled logit before exponentiation.'
             : 'A numeric operation overflowed. Check input scales and use a numerically stable formula.',
@@ -207,7 +224,7 @@ if ($('#challenge-json')) {
           note.textContent = 'Step 2 of 2: running your tests locally. No code is sent to our server.';
         }
         clearTimeout(loadingTimer);
-        status.textContent = 'Running ' + (active.mode === 'submit' ? 'full suite' : 'samples') + '…';
+        status.textContent = active.mode === 'custom' ? 'Running custom input…' : 'Running ' + (active.mode === 'submit' ? 'full suite' : 'samples') + '…';
         // Enforce a wall-clock limit even for Python code that never yields.
         clearTimeout(executionTimer);
         executionTimer = setTimeout(() => fail('Your code or tests exceeded the 15-second execution limit. The Python worker was stopped; try a bounded implementation.', 'Time limit exceeded'), 15000);
@@ -217,6 +234,18 @@ if ($('#challenge-json')) {
         executionTimer = setTimeout(() => fail('No test completed within 15 seconds. The Python worker was stopped.', 'Time limit exceeded'), 15000);
       } else if (data.type === 'error') {
         fail('Python runtime error: ' + data.error + '. Check your network and retry.', 'Runtime error');
+      } else if (data.type === 'custom-result') {
+        const result = data.result;
+        customResult.replaceChildren();
+        const caption = document.createElement('strong'); caption.textContent = result.pass ? 'Returned value' : 'Experiment error'; customResult.append(caption);
+        const output = document.createElement('pre'); output.textContent = result.pass ? result.value : `${result.error_type}: ${result.error}`; customResult.append(output);
+        if (result.stdout) {
+          const label = document.createElement('strong'); label.textContent = 'Program output'; customResult.append(label);
+          const stdout = document.createElement('pre'); stdout.textContent = result.stdout; customResult.append(stdout);
+        }
+        status.textContent = result.pass ? 'Experiment complete' : 'Experiment error';
+        note.textContent = 'Custom experiments do not change your solved marks. Submit to check the full suite.';
+        finish();
       } else if (data.type === 'results') {
         const finishedAt = performance.now();
         const runningAt = active.runningAt || active.startedAt;
@@ -231,23 +260,26 @@ if ($('#challenge-json')) {
   }
   function execute(mode) {
     if (active) return;
-    const tests = mode === 'submit' ? problem.tests : problem.tests.slice(0, sampleCount);
+    const tests = mode === 'custom' ? [] : mode === 'submit' ? problem.tests : problem.tests.slice(0, sampleCount);
+    if (mode === 'custom' && !customCall.value.trim()) { customCall.focus(); return; }
     const requestId = ++sequence;
     const code = editor.value;
     success.hidden = true;
     metrics.hidden = true;
     store.set('draft:' + problem.id, code);
-    resetResults(mode, tests);
+    if (mode === 'custom') { customResult.textContent = 'Running custom input…'; note.classList.remove('run-warning'); }
+    else resetResults(mode, tests);
     active = { id: requestId, tests, mode, startedAt: performance.now() };
     setBusy(true);
     status.textContent = 'Preparing Python…';
     note.textContent = 'Local execution in your browser · No code sent to our server.';
     loadingTimer = setTimeout(() => fail('Could not load Python within 90 seconds. Check your internet connection or CDN access.', 'Load timeout'), 90000);
-    try { ensureWorker().postMessage({ type: 'run', requestId, code, tests }); }
+    try { ensureWorker().postMessage({ type: 'run', requestId, code, tests, mode, call: customCall.value, functionName: problem.functionName }); }
     catch (error) { fail('Unable to start Python: ' + error.message, 'Runtime blocked'); }
   }
   runSamples.addEventListener('click', () => execute('samples'));
   submit.addEventListener('click', () => execute('submit'));
-  stop.addEventListener('click', () => { if (!active) return; terminate(); finish(); status.textContent = 'Stopped'; note.textContent = 'Execution stopped; the Python runtime will reload on the next run.'; });
+  runCustom.addEventListener('click', () => execute('custom'));
+  stop.addEventListener('click', () => { if (!active) return; if (active.mode === 'custom') customResult.textContent = 'Stopped'; terminate(); finish(); status.textContent = 'Stopped'; note.textContent = 'Execution stopped; the Python runtime will reload on the next run.'; });
   window.addEventListener('pagehide', terminate, { once: true });
 }

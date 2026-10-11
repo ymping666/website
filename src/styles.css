@@ -85,6 +85,28 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .success-actions a{color:var(--primary);text-decoration:underline;font-size:13px;font-weight:650}
 .success-actions a:first-child{flex-basis:100%}
 .error-guidance{padding:10px 12px;border-radius:5px;background:#fff3df;color:#75531f;font-size:13px}
+.beginner-path{padding:22px;border:1px solid #cbded5;border-radius:9px;margin:20px 0;background:#f6fbf8}
+.beginner-path p{margin:10px 0;color:var(--soft)}.beginner-path .habit-link{display:inline-block;margin:12px}
+.practice-route{padding:14px 18px;border:1px solid #dbe7df;background:#f5faf7;border-radius:7px;margin:15px 0;font-size:13px}
+.route-title{font-weight:700;color:var(--primary)}.route-position{display:block;color:var(--soft)}.practice-route summary{cursor:pointer;margin-top:7px}.practice-route ol{padding-left:25px;margin-bottom:4px}.practice-route li{padding:4px 0}.practice-route [aria-current]{font-weight:750;text-decoration:underline}.practice-route a{overflow-wrap:anywhere}
+.workbench-jumps{display:flex;gap:20px;margin:14px 0;font-size:13px;color:var(--primary)}
+#problem-description,#editor-section,#results-section{scroll-margin-top:80px}
+.code-surface{position:relative;background:#1e232b;height:360px;min-height:260px;max-height:70vh;resize:vertical;overflow:hidden;color:#e6edf3}
+.code-surface .code-editor,.code-paint,.code-lines{font:14px/24px Consolas,"Liberation Mono",monospace;letter-spacing:0;tab-size:4;margin:0;border:0;border-radius:0;padding:16px;white-space:pre;word-break:normal;overflow-wrap:normal;text-align:left}
+.code-surface .code-editor{position:absolute;inset:0 0 0 48px;width:calc(100% - 48px);height:100%;min-height:0;max-height:none;resize:none;background:transparent;color:#e6edf3;z-index:1;overflow:auto;outline-offset:-2px}
+.code-paint-clip{position:absolute;inset:0 0 0 48px;overflow:hidden;pointer-events:none}
+.code-paint{color:#e6edf3;min-width:100%;width:max-content;min-height:100%;background:transparent}
+.code-lines{position:absolute;top:0;left:0;width:48px;padding-left:4px;padding-right:9px;text-align:right;color:#85909b;background:transparent;border-right:1px solid #414951;pointer-events:none;user-select:none}
+.highlight-ready .code-editor{color:transparent;caret-color:#fff;-webkit-text-fill-color:transparent}.highlight-ready .code-editor::selection{background:#42759c75}
+.py-keyword{color:#cba5ff}.py-string{color:#a9d6a4}.py-comment{color:#90a59a}.py-number{color:#ffcb8b}
+.editor-keyboard-help{font-size:11px;padding:7px 12px;margin:0;color:var(--soft);background:#f7f8fa}
+.custom-experiment{padding:14px;border-bottom:1px solid var(--line);font-size:13px;background:#fbfcfd}.custom-experiment summary{cursor:pointer;font-weight:650}.custom-experiment p{margin-top:9px;color:var(--soft)}.custom-experiment label{display:block;font-weight:600;margin-top:10px}
+#custom-call{width:100%;min-height:100px;resize:vertical;padding:10px;font:13px/1.7 Consolas,monospace;border:1px solid #b8c9c2;border-radius:5px;margin:7px 0;overflow:auto}
+#custom-result{margin-top:12px}#custom-result pre,.failure-values pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+.failure-values{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;background:#fff8ee}.failure-values dt{min-width:0;overflow-wrap:anywhere}.failure-values dd{margin:0;min-width:0}.failure-values pre{margin:0}
+@media(max-width:960px){.code-surface{height:330px}}
+@media(max-width:650px){.code-surface .code-editor,.code-paint,.code-lines{font-size:13px}.beginner-path{padding:16px}.failure-values{grid-template-columns:1fr}.editor-keyboard-help{font-size:10px}}
+@media(forced-colors:active){.code-paint-clip{display:none}.highlight-ready .code-editor{color:CanvasText;-webkit-text-fill-color:CanvasText;caret-color:CanvasText}}
 @media(max-width:960px){.editor-panel{position:static}.code-editor{height:330px}.editor-actions{top:62px}}
 @media(min-width:651px) and (max-width:960px){.header-inner{gap:16px}.top-nav{margin-left:0;gap:14px;font-size:12px}.header-note{display:none}}
 @media(max-width:650px){.code-editor{font-size:13px}.panel-content{padding:17px 15px}.bench-topline h1{overflow-wrap:anywhere}.bench-below{flex-wrap:wrap}.bench-below a{overflow-wrap:anywhere}.success-panel{padding:14px}}

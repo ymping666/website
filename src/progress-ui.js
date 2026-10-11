@@ -71,6 +71,24 @@ export async function mountProgressUI(store) {
         : journey.lastProblem || summary.solved ? `Continue: ${resume.title} →` : 'Start your first exercise →';
     }
     if (currentId) {
+      const group = context.set ? sets.find(set => set.slug === context.set) : concepts.find(concept => concept.slug === context.concept);
+      const route = $('#practice-route');
+      if (route && group) {
+        const expanded = route.querySelector('details')?.open || false;
+        route.hidden = false; route.replaceChildren();
+        const position = group.ids.indexOf(currentId) + 1;
+        route.append(link(group.title, `${context.set ? 'practice-sets' : 'concepts'}/${group.slug}/`, 'route-title'));
+        route.append(node('span', `Step ${position} of ${group.ids.length}`, 'route-position'));
+        const directory = node('details'); directory.open = expanded; directory.append(node('summary', 'All steps'));
+        const list = node('ol');
+        for (const id of group.ids) {
+          const item = node('li');
+          const anchor = link(byId.get(id).title, practicePath(id, context));
+          if (id === currentId) anchor.setAttribute('aria-current', 'step');
+          item.append(node('span', solved[id] ? '✓ ' : '○ '), anchor); list.append(item);
+        }
+        directory.append(list); route.append(directory);
+      }
       const next = nextPractice(problems, sets, concepts, currentId, solved, context);
       for (const element of document.querySelectorAll('[data-next-practice]')) {
         element.href = href(next ? practicePath(next.problem.id, next.context) : 'progress/');
@@ -124,8 +142,11 @@ export async function mountProgressUI(store) {
         card.append(link(set.title, `practice-sets/${set.slug}/`), node('span', `${done}/${set.ids.length} solved`));
         const bar = node('progress'); bar.setAttribute('aria-label', set.title + ' progress'); setProgress(bar, done, set.ids.length);
         card.append(bar);
-        const next = set.ids.find(id => !solved[id]);
-        card.append(next ? link('Next: ' + byId.get(next).title + ' →', practicePath(next, { set: set.slug }), 'plan-next') : node('strong', '✓ Practice set completed', 'plan-complete'));
+        const firstPending = set.ids.find(id => !solved[id]);
+        const isActive = context.set === set.slug && set.ids.includes(resume.id) && firstPending;
+        if (isActive) card.append(link('Continue: ' + resume.title + ' →', practicePath(resume.id, { set: set.slug }), 'plan-next'));
+        if (firstPending && (!isActive || firstPending !== resume.id)) card.append(link('First unfinished: ' + byId.get(firstPending).title + ' →', practicePath(firstPending, { set: set.slug }), 'plan-next'));
+        if (!firstPending) card.append(node('strong', '✓ Practice set completed', 'plan-complete'));
         container.append(card);
       }
     }

@@ -1,5 +1,17 @@
 // English is the default. Technical identifiers and executable code are unchanged.
 export const zhUI = {
+  'New to AI implementation?':'第一次动手实现 AI？',
+  'Prerequisites: Python lists, loops and functions. Start with numerical basics, then build attention.':'先修要求：掌握 Python 列表、循环与函数。先练数值基础，再实现注意力。',
+  'Outcome: implement the numerical core of attention and explain its shapes and stability.':'学习目标：实现注意力的数值核心，理解数据形状与数值稳定性。',
+  'Start the guided attention path →':'开始注意力入门路线 →',
+  'View prerequisites and all steps →':'查看先修要求与完整步骤 →',
+  'Workbench navigation':'刷题页面导航', 'All steps':'完整步骤',
+  'Tab / Shift+Tab: indent · Enter: auto-indent · Ctrl/Cmd+Z: undo':'Tab / Shift+Tab：调整缩进 · Enter：自动缩进 · Ctrl/Cmd+Z：撤销',
+  'Custom experiment':'自定义试验', 'Function call':'函数调用', 'Run custom input':'运行自定义输入',
+  'Change the arguments in one Python function call. Uses your current code; does not mark the problem solved.':'修改一次 Python 函数调用中的参数，使用当前代码运行；不会标记本题已完成。',
+  'Running custom input…':'正在运行自定义输入…', 'Returned value':'返回值', 'Experiment error':'试验出错', 'Experiment complete':'试验运行完成',
+  'Custom experiments do not change your solved marks. Submit to check the full suite.':'自定义试验不改变完成标记。请提交以检查完整测试。',
+  'Values at failure':'失败时的数值',
   'Input':'输入', 'Expected output':'预期输出', 'View test assertion':'查看测试断言',
   'Floating-point outputs are approximate; the assertion defines the tolerance.':'浮点输出为近似值，允许的误差以测试断言为准。',
   'Implementation complete':'本题实现完成', 'First implementation unlocked!':'已解锁首次实现！', 'Review complete':'复习完成',
@@ -111,6 +123,8 @@ export function translate(text, dictionary = zhUI) {
   if (result === undefined) {
     const translated = part => translate(part, dictionary);
     const patterns = [
+      [/^Step (\d+) of (\d+)$/, (_, position, count) => `第 ${position}/${count} 步`],
+      [/^First unfinished: (.+) →$/, (_, title) => `最早未完成：${translated(title)} →`],
       [/^Python setup: ([\d.]+)s · Tests: ([\d.]+)s$/, (_, setup, tests) => `Python 环境准备：${setup} 秒 · 测试执行：${tests} 秒`],
       [/^(\d+) min$/, (_, n) => `${n} 分钟`],
       [/^Original, verified coding exercises covering (.+)\.$/, (_, description) => `原创、独立验证的编程练习，覆盖${translated(description)}。`],

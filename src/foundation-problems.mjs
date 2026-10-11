@@ -279,8 +279,8 @@ export const foundationProblems = [
         "code": "r=scaled_attention([0,0],[[1,0],[0,1]],[[2,4],[6,8]]); assert all(abs(a-b)<1e-9 for a,b in zip(r,[4,6]))"
       },
       {
-        "name": "Single key",
-        "code": "assert scaled_attention([99],[[7]],[[3,5]])==[3.0,5.0]"
+        "name": "Correct scaling",
+        "code": "import math; r=scaled_attention([1,1],[[1,1],[0,0]],[[1],[0]])[0]; e=math.exp(math.sqrt(2));assert abs(r-e/(e+1))<1e-9"
       },
       {
         "name": "High scores stable",
@@ -291,8 +291,8 @@ export const foundationProblems = [
         "code": "r=scaled_attention([0],[[1],[2]],[[1,2,3],[3,4,5]]);assert r==[2.,3.,4.]"
       },
       {
-        "name": "Correct scaling",
-        "code": "import math; r=scaled_attention([1,1],[[1,1],[0,0]],[[1],[0]])[0]; e=math.exp(math.sqrt(2));assert abs(r-e/(e+1))<1e-9"
+        "name": "Single key",
+        "code": "assert scaled_attention([99],[[7]],[[3,5]])==[3.0,5.0]"
       }
     ]
   },

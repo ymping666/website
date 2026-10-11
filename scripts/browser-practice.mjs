@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { problems } from '../src/problems.mjs';
+import { checkWorkbenchUX } from './browser-workbench.mjs';
 
 export async function checkPracticeUX(browser, base) {
   const context = await browser.newContext({ viewport: { width: 1366, height: 900 } });
@@ -89,4 +90,5 @@ export async function checkPracticeUX(browser, base) {
     assert.deepEqual(errors, []);
     console.log('PASS real Softmax failure/pass, bilingual guidance/timing, first milestone, resume/daily ordering, sequence through language/editorial, responsive scroll and all-solved review');
   } finally { await context.close(); }
+  await checkWorkbenchUX(browser, base);
 }

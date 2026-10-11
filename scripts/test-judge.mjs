@@ -32,8 +32,31 @@ syntax=json.loads(fc_run_one('def bad(:',"assert 1 == 1"))
 assert syntax['pass'] is False and syntax['error_type']=='SyntaxError'
 printed=json.loads(fc_run_one('def f():\\n    print(\\"hello\\")\\n    return 1',"assert f() == 1"))
 assert printed['pass'] is True and 'hello' in printed['stdout']
+floating=json.loads(fc_run_one('', 'r=0.5; expected=0.8; assert abs(r-expected)<1e-9'))
+observed={row['expression']:row['value'] for row in floating['observations']}
+assert observed['r']=='0.5' and observed['expected']=='0.8'
+assert float(observed['abs(r - expected)'])>0.29 and observed['1e-09']=='1e-09'
+bounds=json.loads(fc_run_one('', 'r=[5]; assert 9<r[0]<=10'))
+assert bounds['observations']==[{'expression':'9','value':'9'},{'expression':'r[0]','value':'5'}]
+# A failed first comparison must not evaluate the remaining chained operand.
+short=json.loads(fc_run_one('', 'assert 2 < 1 < (1/0)'))
+assert short['error_type']=='FCAssertionError'
+single=json.loads(fc_run_one('', 'calls=[]\\ndef f():\\n    calls.append(1)\\n    return len(calls)\\nassert 0 < f() < 2\\nassert len(calls)==1'))
+assert single['pass'] is True
+late=json.loads(fc_run_one('', 'assert all(i<30 for i in range(40))'))
+assert len(late['observations'])<=24 and any(row['expression']=='i' and row['value']=='30' for row in late['observations'])
+custom=json.loads(fc_run_custom('def f(x):\\n    print("debug")\\n    return x*2','f(x=7)','f'))
+assert custom['pass'] and custom['value']=='14' and 'debug' in custom['stdout']
+assert not json.loads(fc_run_custom('def f(): return 1','other()','f'))['pass']
+assert not json.loads(fc_run_custom('def f(): return 1','f(); f()','f'))['pass']
+assert not json.loads(fc_run_custom('def f(): return 1/0','f()','f'))['pass']
+# The published samples must reject attention that ignores query/key weights.
+attention=next(p for p in items if p['id']=='attention-scaled-dot-product')
+average='def scaled_attention(q, keys, values):\\n    return [sum(v[j] for v in values)/len(values) for j in range(len(values[0]))]'
+assert not all(json.loads(fc_run_one(average,test['code']))['pass'] for test in attention['tests'][:2])
 print('PASS',count,'browser-worker-instrumented reference checks')
 print('PASS failure details (expected/actual), syntax errors, captured stdout')
+print('PASS tolerance/range observations, short-circuit and single evaluation, custom calls, nondegenerate attention samples')
 `;
 const response = spawnSync(pythonCommand, ['-c', suite], { input: JSON.stringify(payload), encoding: 'utf8' });
 if (response.stdout) process.stdout.write(response.stdout);
