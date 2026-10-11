@@ -1,4 +1,6 @@
 import { softmaxTrace, attentionTrace, formatNumber as f, formatVector as vector } from './lesson-math.mjs';
+import { mountAdditionalLesson } from './lesson-ui-extra.js';
+import { mathText } from './lesson-notation.mjs';
 
 const root = document.querySelector('[data-lesson]');
 const zh = document.documentElement.lang === 'zh-CN';
@@ -19,7 +21,7 @@ function updateBars(selector, probabilities) {
 }
 
 if (root) {
-  for (const control of root.querySelectorAll('input,button')) control.disabled = false;
+  for (const control of root.querySelectorAll('input,button,select')) control.disabled = false;
   if (root.dataset.lesson === 'softmax') {
     const update = () => {
       const offset = Number($('#soft-offset').value), temperature = Number($('#soft-temperature').value);
@@ -43,7 +45,7 @@ if (root) {
     for (const control of root.querySelectorAll('input')) control.addEventListener('input', update);
     $('[data-reset-lesson]').addEventListener('click', () => { $('#soft-offset').value = '1000'; $('#soft-temperature').value = '1'; update(); });
     update();
-  } else {
+  } else if (root.dataset.lesson === 'attention') {
     let activeStep = 1;
     const notes = [
       text('Dot products: q · [1, 0] = q₁ and q · [0, 1] = q₂. Changing a query component changes how it matches each key.', '点积：q · [1, 0] = q₁，q · [0, 1] = q₂。改变 query 的分量，就会改变它与每个 key 的匹配分数。'),
@@ -55,7 +57,7 @@ if (root) {
       activeStep = step;
       $('.attention-trace').dataset.activeStep = step;
       for (const button of root.querySelectorAll('[data-attention-step]')) button.setAttribute('aria-pressed', String(Number(button.dataset.attentionStep) === step));
-      set('#attention-step-note', notes[step - 1]);
+      $('#attention-step-note').innerHTML = mathText(notes[step - 1]);
       if (reveal) {
         const table = $('.attention-trace'), container = table.parentElement;
         if (container.scrollWidth > container.clientWidth) {
@@ -88,5 +90,5 @@ if (root) {
     for (const button of root.querySelectorAll('[data-attention-step]')) button.addEventListener('click', () => selectStep(Number(button.dataset.attentionStep), true));
     $('[data-reset-lesson]').addEventListener('click', () => { activeStep = 1; setQuery([2, 0]); selectStep(1, true); });
     update();
-  }
+  } else mountAdditionalLesson(root);
 }

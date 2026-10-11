@@ -53,7 +53,7 @@ export function localizeHtml(html, path, { base, origin, dictionary }) {
       const tag = /^<\/?([a-z0-9]+)/i.exec(token)?.[1]?.toLowerCase();
       if (/^<\//.test(token) && tag === skip) { skip = null; return token; }
       if (skip) return token;
-      if (['script','style','pre','code','textarea'].includes(tag) && !/^<\//.test(token)) skip = tag;
+      if (['script','style','pre','code','textarea','math'].includes(tag) && !/^<\//.test(token)) skip = tag;
       if (tag === 'html') token = token.replace('lang="en"', 'lang="zh-CN"');
       if (tag === 'a' && !token.includes('data-language=')) token = token.replace(/href="([^"#]+)"/, (whole, url) => {
         if (!url.startsWith(base) || url.startsWith(base + 'assets/') || url.startsWith(base + 'zh/')) return whole;

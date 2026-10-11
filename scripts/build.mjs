@@ -10,6 +10,7 @@ import {policyPages,additionalPolicyPaths} from '../src/policy-pages.mjs';
 import {siteAdsense} from './adsense.mjs';
 import {nextPractice, practicePath as nextPracticePath} from '../src/practice.mjs';
 import {renderVisualLesson,renderLessonResources} from '../src/visual-lessons.mjs';
+import {typesetVisualLesson} from '../src/lesson-notation.mjs';
 const readableExamples = JSON.parse(await readFile(new URL('../src/examples.json', import.meta.url), 'utf8'));
 const catalogSets = practiceSets.map(({slug,title,segments})=>({slug,title,ids:segments.map(x=>x.id)}));
 const catalogConcepts = concepts.map(({slug,title,ids})=>({slug,title,ids}));
@@ -60,8 +61,8 @@ const focusedEntries=(compact=false)=>compact ? `<nav class="practice-entry-nav"
 const relatedEntries=path=>searchPages[path]?.related ? `<section>${sectionTitle('Related practice','Explore the next component or follow a guided exercise sequence.')}<div class="topic-grid">${searchPages[path].related.map(target=>{const item=routeInfo(target);return `<a class="topic-card" href="${pathHref(target)}"><strong>${e(item.title)}</strong><p>${e(item.description)}</p></a>`}).join('')}</div></section>` : '';
 const verifiedNotice=`<p class="fineprint">All ${problems.length} published exercises have original contracts, editorial explanations and reference implementations checked against their stated tests. Planned topics are not counted as published problems.</p>`;
 async function output(path,html){
- const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,decorate(html,path,{base,origin}));
- const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary}));
+ const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,typesetVisualLesson(decorate(html,path,{base,origin})));
+ const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,typesetVisualLesson(localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary})));
 }
 await rm(out,{recursive:true,force:true});await mkdir(join(out,'assets'),{recursive:true});
 const agent=problems.filter(p=>p.track==='Agent Engineering'),world=problems.filter(p=>p.track==='World Models');
@@ -129,7 +130,7 @@ for(const name of ['icon.svg','favicon-32.png','apple-touch-icon.png']){
 await copyFile(new URL('../src/styles.css',import.meta.url),join(out,'assets/styles.css'));
 await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'));
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));
-for (const name of ['lesson-ui.js','lesson-math.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
+for (const name of ['lesson-ui.js','lesson-math.mjs','lesson-ui-extra.js','lesson-diagrams.mjs','lesson-notation.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/i18n.js',import.meta.url),join(out,'assets/i18n.js'));
 await mkdir(join(out,'assets/locales'),{recursive:true});
 await copyFile(new URL('../src/locales/zh-ui.mjs',import.meta.url),join(out,'assets/locales/zh-ui.mjs'));

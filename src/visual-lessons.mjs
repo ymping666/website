@@ -1,7 +1,9 @@
 import { softmaxTrace, attentionTrace, formatNumber as f, formatVector as vector } from './lesson-math.mjs';
+import { additionalLessonTranslations, renderAdditionalLesson, renderAdditionalResources } from './visual-lessons-extra.mjs';
+import { lessonEquations } from './lesson-notation.mjs';
 
 // Bilingual original explanations. External material is linked, never embedded/copied.
-export const lessonTranslations = {};
+export const lessonTranslations = { ...additionalLessonTranslations };
 const t = (en, zh) => { lessonTranslations[en] = zh; return en; };
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const external = (label, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
@@ -20,7 +22,7 @@ const softmax = `<section class="visual-lesson" data-lesson="softmax" aria-label
 <p>${t('A model gives three candidates scores, not probabilities. Softmax converts their relative scores into nonnegative weights that sum to one. A larger score receives more weight, but Softmax does not tell us whether a prediction is correct.', '模型给三个候选项打出的分数并不是概率。Softmax 根据分数的相对大小生成非负权重，使总和为 1。分数越大，权重越大；但 Softmax 本身不能说明预测是否正确。')}</p>
 <ol class="lesson-flow" aria-label="${t('Softmax computation steps', 'Softmax 计算步骤')}"><li>${t('1 · Scale by temperature', '1 · 按温度缩放')}<code>z = logits / T</code></li><li>${t('2 · Shift every score', '2 · 所有分数统一平移')}<code>u = z − max(z)</code></li><li>${t('3 · Exponentiate', '3 · 求指数')}<code>w = exp(u)</code></li><li>${t('4 · Normalize', '4 · 归一化')}<code>p = w / sum(w)</code></li></ol>
 <h3>${t('Why subtracting the maximum works', '为什么减去最大值不改变结果')}</h3>
-<div class="lesson-formula"><code>exp(zᵢ − c) / Σⱼ exp(zⱼ − c)<br>= exp(zᵢ) · exp(−c) / [Σⱼ exp(zⱼ) · exp(−c)]<br>= exp(zᵢ) / Σⱼ exp(zⱼ)</code></div>
+${lessonEquations.softmax}
 <p>${t('In exact arithmetic the shared factor cancels. Choosing c = max(z) makes every exponent nonpositive and at least one exponential equal to 1. Small weights can still round to zero through underflow; the maximum term keeps the denominator nonzero. This applies to the finite inputs and positive temperatures specified by this problem.', '在精确算术中，分子分母的公共因子会约掉。取 c = max(z)，所有指数都不大于 0，至少一个指数项等于 1。很小的权重仍可能因下溢舍入为 0，但最大项保证分母非零。这里的结论适用于本题约定的有限输入与正温度。')}</p>
 <div class="lesson-experiment"><h3>${experiment}</h3><p>${t('Use logits [0, 1, 2] plus a common offset. At T = 1, move the offset to 1000: directly exponentiating the scaled scores overflows, while the shifted calculation keeps the same probabilities. Change the temperature to see a different distribution.', '使用 [0, 1, 2] 加上共同偏移量作为 logits。在 T = 1 时将偏移量移到 1000：直接对缩放后的分数求指数会溢出，平移后的计算仍保持同样的概率。改变温度则会得到不同的分布。')}</p>
 <div class="lesson-controls"><label for="soft-offset">${t('Common offset', '共同偏移量')} <output id="soft-offset-value">1000</output><input id="soft-offset" type="range" min="0" max="1000" step="100" value="1000" disabled></label><label for="soft-temperature">${t('Temperature T', '温度 T')} <output id="soft-temperature-value">1</output><input id="soft-temperature" type="range" min="0.5" max="2" step="0.25" value="1" disabled></label><button class="button outline small" data-reset-lesson type="button" disabled>${reset}</button></div>
@@ -37,7 +39,7 @@ const att = attentionTrace([2, 0]);
 const stepTitles = [t('1 · Dot products', '1 · 点积匹配'), t('2 · Scale scores', '2 · 缩放分数'), t('3 · Softmax weights', '3 · Softmax 权重'), t('4 · Mix the values', '4 · 加权汇总值向量')];
 const attention = `<section class="visual-lesson" data-lesson="attention" aria-labelledby="lesson-title"><div class="lesson-heading"><span>${t('VISUAL WALKTHROUGH', '可视化讲解')}</span><h2 id="lesson-title">${t('Attention: from one query to a weighted mixture', 'Attention：从一个 query 到值向量的加权组合')}</h2></div>
 <p>${t('This exercise receives q, keys and values directly. It does not train projection matrices or implement an entire Transformer. The query and each key have dₖ components; every value has dᵥ components. There is one weight per key/value pair, and the output has dᵥ components.', '本题直接接收 q、keys 与 values，不训练投影矩阵，也不实现完整 Transformer。query 与每个 key 都有 dₖ 个分量；每个 value 有 dᵥ 个分量。每对 key/value 对应一个权重，输出有 dᵥ 个分量。')}</p>
-<div class="lesson-formula"><code>sᵢ = dot(q, kᵢ) / √dₖ<br>a = softmax(s)<br>outputⱼ = Σᵢ aᵢ · vᵢⱼ</code></div>
+${lessonEquations.attention}
 <div class="lesson-shapes"><code>q: [dₖ]</code><code>K: [n, dₖ]</code><code>V: [n, dᵥ]</code><code>a: [n]</code><code>output: [dᵥ]</code></div>
 <p>${t('Queries and keys determine the mixing weights; values provide the numbers being mixed. The toy vectors below are chosen to expose the arithmetic, not to represent real words or prove what a model understands.', 'query 与 key 决定组合权重；value 提供被组合的数值。下方人为选择的向量用于展示算术过程，不代表真实词义，也不能证明模型理解了什么。')}</p>
 <div class="lesson-experiment"><h3>${experiment}</h3><p>${t('Keep K = [[1, 0], [0, 1]] and V = [[2, 0], [0, 4]] fixed. Change the query: observe scores first, then weights, then both output components.', '固定 K = [[1, 0], [0, 1]] 与 V = [[2, 0], [0, 4]]。改变 query：先观察分数，再看权重，最后看输出的两个分量。')}</p>
@@ -56,10 +58,10 @@ const attention = `<section class="visual-lesson" data-lesson="attention" aria-l
 const attentionResources = `<section class="lesson-resources"><h3>${resourcesTitle}</h3><ul><li>${external('Vaswani et al. · Attention Is All You Need · §3.2.1', 'https://arxiv.org/html/1706.03762v7#S3.SS2.SSS1')}<p>${t('English paper · Check the formula, dₖ/dᵥ notation and the assumptions behind the scaling argument.', '英文论文 · 核对公式、dₖ/dᵥ 记号与缩放论证的前提。')}</p></li><li>${external('Jay Alammar · The Illustrated Transformer', 'https://jalammar.github.io/illustrated-transformer/')}<p>${t('English illustrated blog · Follow the score → Softmax → weighted values calculation, then explore multiple heads.', '英文图解博客 · 顺着分数 → Softmax → value 加权计算阅读，再了解多头结构。')}</p></li><li>${external('3Blue1Brown · Attention in transformers, step-by-step', 'https://www.3blue1brown.com/lessons/attention/')} · ${external(t('Watch the original video', '观看原视频'), 'https://www.youtube.com/watch?v=eMlx5fFNoYc')}<p>${t('English video and text · Useful for geometric intuition. Its vectors are arranged as columns; this exercise follows the paper’s row-oriented QKᵀ convention. Transpose the layout when comparing diagrams.', '英文视频与文字版 · 适合建立几何直觉。视频把向量排成列；本题采用原论文以行为向量的 QKᵀ 约定。对照图示时要留意转置关系。')}</p></li></ul><p class="fineprint">${sourceNote}</p></section>`;
 
 export function renderVisualLesson(id, base = '/') {
-  const markup = { 'stable-softmax': softmax, 'attention-scaled-dot-product': attention }[id];
+  const markup = { 'stable-softmax': softmax, 'attention-scaled-dot-product': attention }[id] || renderAdditionalLesson(id);
   return markup ? markup + `<script type="module" src="${escape(base)}assets/lesson-ui.js"></script>` : '';
 }
 
 export function renderLessonResources(id) {
-  return { 'stable-softmax': softmaxResources, 'attention-scaled-dot-product': attentionResources }[id] || '';
+  return { 'stable-softmax': softmaxResources, 'attention-scaled-dot-product': attentionResources }[id] || renderAdditionalResources(id);
 }
