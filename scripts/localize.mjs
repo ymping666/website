@@ -6,6 +6,7 @@ import { practiceSets } from '../src/practice-sets.mjs';
 import { searchTranslations } from '../src/search-pages.mjs';
 import { policyTranslations } from '../src/policy-pages.mjs';
 import { lessonTranslations } from '../src/visual-lessons.mjs';
+import { metaDescription } from '../src/meta-descriptions.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const decodeHtml = text => text.replace(/&(amp|lt|gt|quot|nbsp|#39|#\d+);/g, (_, entity) =>
@@ -85,6 +86,7 @@ export function decorate(html, path, { base, origin, locale = 'en' }) {
   const alternatives = origin ? ['en','zh'].map(language => `<link rel="alternate" hreflang="${language === 'zh' ? 'zh-CN' : 'en'}" href="${origin + href(language)}">`).join('') + `<link rel="alternate" hreflang="x-default" href="${origin + href('en')}">` : '';
   html = html.replace('</head>', alternatives + '</head>');
   const title = decodeHtml(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] || 'TensorDrill');
+  html = html.replace(/(<meta name="description" content=")([^"]*)(")/, (_,start,value,end) => start + escapeHtml(metaDescription(path,locale,decodeHtml(value))) + end);
   const description = decodeHtml(html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '');
   const social = `<meta property="og:type" content="website"><meta property="og:site_name" content="TensorDrill"><meta property="og:locale" content="${locale === 'zh' ? 'zh_CN' : 'en_US'}"><meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}">${origin ? `<meta property="og:url" content="${escapeHtml(origin + href(locale))}">` : ''}<meta name="twitter:card" content="summary"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}">`;
   const website = origin && path === '/' ? `<script type="application/ld+json">${JSON.stringify({'@context':'https://schema.org','@type':'WebSite',name:'TensorDrill',url:origin + base,inLanguage:['en','zh-CN']}).replace(/</g,'\\u003c')}</script>` : '';
