@@ -1,7 +1,7 @@
 // Metadata-only copy. Exercise statements, translations and page bodies stay separate.
 // English rewrites target 120–155 Unicode characters; all pages allow 25–160.
 export const descriptionOverrides = {
-  '/': {en:'Implement agents, world models, Flow Matching and more in Python. Run browser tests and learn with complete solutions and selected visual guides.'},
+  '/': {en:'Practice Softmax, Attention, agents, world models and more frontier AI in Python, with browser tests, complete solutions and selected visual guides.'},
   '/problems/agent-plan-ready/': {en:'Implement dependency-aware task selection for plan-and-execute agents in Python. Find ready tasks without rerunning completed work.'},
   '/problems/agent-reflection-controller/': {en:'Build a deterministic reflection controller in Python. Use evaluator feedback and retry limits to decide when an agent should attempt a task again.'},
   '/problems/agent-retry-guard/': {en:'Implement an agent retry guard in Python. Stop tool loops when attempts reach the budget or the last three outcomes are consecutive errors.'},

@@ -1,10 +1,10 @@
 // Search entry points reuse published routes and accurately describe their exercise scope.
 export const searchPages = {
   '/': {
-    title: ['AI Coding Challenges: Agents, World Models & More', 'Agent、世界模型等前沿 AI 编程练习'],
-    description: ['Implement agents, world models, Flow Matching and more through Python coding challenges. Run browser tests and learn with worked solutions and selected visual guides.', '通过 Python 编程练习，动手实现 Agent、世界模型、Flow Matching、Diffusion、Transformer 等前沿 AI 组件。支持浏览器内运行与提交、逐项测试反馈、中英文完整题解及部分交互式可视化讲解，题库持续维护与拓展。'],
-    heading: ['Code agents, world models & more.', '动手实现 Agent、世界模型等前沿 AI。'],
-    intro: ['AI coding challenges for agents, world models, Flow Matching, diffusion, Transformers and more. Implement focused Python components, run and submit in your browser, and learn from complete solutions and selected interactive visual explanations. The library is maintained and expanded over time.', '围绕 Agent、世界模型、Flow Matching、Diffusion、Transformer 等前沿 AI 方向，逐个实现 Python 核心组件。在浏览器运行与提交，结合逐项测试反馈、完整题解和部分交互式可视化讲解理解原理。题库持续维护与拓展。']
+    title: ['AI Coding Challenges — Foundations to Frontier AI', 'AI 编程练习：从基础到 Agent、世界模型等前沿方向'],
+    description: ['Practice Softmax, Attention, agents, world models and more frontier AI in Python, with browser tests, complete solutions and selected visual guides.', '从 Softmax、Attention 等基础与核心组件，到 Flow Matching、Agent、世界模型等前沿 AI 方向，通过 Python 编程练习理解原理。支持浏览器内测试、完整题解与部分交互式可视化讲解，题库持续维护与拓展。'],
+    heading: ['Code AI, from foundations to the frontier.', '从基础到前沿，动手实现 AI。'],
+    intro: ['AI coding challenges from Softmax and Attention to diffusion, Flow Matching, agents, world models and more frontier AI components. Run Python in your browser, check your work with tests, and learn with complete solutions and selected visual explanations.', '通过 AI 编程练习，从 Softmax、Attention 等基础与核心组件入手，逐步探索 Diffusion、Flow Matching、Agent、世界模型等前沿 AI 方向。在浏览器编写与测试 Python，结合完整题解和部分交互式可视化讲解理解原理。题库持续维护与拓展。']
   },
   '/problems/': {
     title: ['AI Coding Challenge Library — Agents, World Models & More', 'AI 编程题库：Agent、世界模型等前沿方向'],

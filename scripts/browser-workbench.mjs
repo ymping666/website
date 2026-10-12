@@ -12,9 +12,9 @@ export async function checkWorkbenchUX(browser, base) {
   const waitStatus = expected => page.waitForFunction(value => document.querySelector('#status').textContent === value, expected, { timeout: 120000 });
   try {
     await page.goto(base);
-    assert.equal(await page.locator('.beginner-path li').count(), 4);
-    assert.equal(await page.locator('.problem-list .problem-row').count(), 4);
-    for (const id of ['tool-call-parser','react-trace-validator','linear-dynamics-rollout','flow-linear-interpolation']) {
+    assert.equal(await page.locator('.learning-path-card').count(), 3);
+    assert.equal(await page.locator('.problem-list .problem-row').count(), 6);
+    for (const id of ['stable-softmax','attention-scaled-dot-product','diffusion-forward-sampling','flow-linear-interpolation','react-trace-validator','mpc-first-action']) {
       assert.equal(await page.locator(`.problem-list a[href*="/problems/${id}/"]`).count(), 1);
     }
     await page.goto(base + 'problems/attention-scaled-dot-product/?set=attention-from-scratch');
