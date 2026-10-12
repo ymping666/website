@@ -25,6 +25,17 @@ const kj = sub(mi('k'), mi('i')), ai = sub(mi('a'), mi('i'));
 const kh = sub(mi('K'), mi('h')), kw = sub(mi('K'), mi('w'));
 const primeX = mi('x′'), primeY = mi('y′');
 export const lessonEquations = {
+  mpc: block([
+    row(sub(mi('s'),mi('k')),equals,sub(mi('s'),row(mi('k'),minus,mn(1))),plus,sub(mi('a'),row(mi('k'),minus,mn(1)))),
+    row(sub(mi('c'),mi('k')),equals,square(parentheses(row(sub(mi('s'),mi('k')),minus,mi('g'))))),
+    row(mi('J'),equals,`<munderover>${mo('∑')}${row(mi('k'),equals,mn(1))}${mi('H')}</munderover>`,sub(mi('c'),mi('k')))
+  ]),
+  bayes: block([
+    row(sub(mi('p'),mi('j')),equals,sum('i'),sub(mi('b'),mi('i')),times,sub(mi('T'),row(mi('i'),mo(','),mi('j')))),
+    row(sub(mi('w'),mi('j')),equals,sub(mi('p'),mi('j')),times,sub(mi('L'),mi('j'))),
+    row(mi('Z'),equals,sum('k'),sub(mi('w'),mi('k'))),
+    row(sub(mi('q'),mi('j')),equals,frac(sub(mi('w'),mi('j')),mi('Z')))
+  ]),
   softmax: block([
     frac(shifted(zi), row(sum('j'), shifted(zj))),
     row(equals, frac(row(fn('exp',zi), times, commonFactor), row(mo('['), sum('j'), fn('exp',zj), mo(']'), times, commonFactor))),

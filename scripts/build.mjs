@@ -137,7 +137,7 @@ await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));
 for (const name of ['site-search.mjs','site-search-ui.js']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await writeFile(join(out,'assets/search-index.json'),JSON.stringify(buildSearchIndex({problems,concepts,practiceSets,tracks,translate:chinese.translate})));
-for (const name of ['lesson-ui.js','lesson-math.mjs','lesson-ui-extra.js','lesson-diagrams.mjs','lesson-notation.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
+for (const name of ['lesson-ui.js','lesson-math.mjs','lesson-ui-extra.js','lesson-diagrams.mjs','lesson-notation.mjs','lesson-ui-frontier.js','lesson-frontier-math.mjs','lesson-frontier-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/i18n.js',import.meta.url),join(out,'assets/i18n.js'));
 await mkdir(join(out,'assets/locales'),{recursive:true});
 await copyFile(new URL('../src/locales/zh-ui.mjs',import.meta.url),join(out,'assets/locales/zh-ui.mjs'));

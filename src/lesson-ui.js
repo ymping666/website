@@ -1,5 +1,6 @@
 import { softmaxTrace, attentionTrace, formatNumber as f, formatVector as vector } from './lesson-math.mjs';
 import { mountAdditionalLesson } from './lesson-ui-extra.js';
+import { mountFrontierLesson } from './lesson-ui-frontier.js';
 import { mathText } from './lesson-notation.mjs';
 
 const root = document.querySelector('[data-lesson]');
@@ -90,5 +91,8 @@ if (root) {
     for (const button of root.querySelectorAll('[data-attention-step]')) button.addEventListener('click', () => selectStep(Number(button.dataset.attentionStep), true));
     $('[data-reset-lesson]').addEventListener('click', () => { activeStep = 1; setQuery([2, 0]); selectStep(1, true); });
     update();
-  } else mountAdditionalLesson(root);
+  } else {
+    mountAdditionalLesson(root);
+    mountFrontierLesson(root);
+  }
 }
