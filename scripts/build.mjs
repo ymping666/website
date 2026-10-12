@@ -12,6 +12,8 @@ import {nextPractice, practicePath as nextPracticePath} from '../src/practice.mj
 import {renderVisualLesson,renderLessonResources} from '../src/visual-lessons.mjs';
 import {typesetVisualLesson} from '../src/lesson-notation.mjs';
 import {buildSearchIndex} from './build-search.mjs';
+import {buildLabs,labPaths} from './build-labs.mjs';
+import {withLabEntry} from '../src/labs/home-entry.mjs';
 const readableExamples = JSON.parse(await readFile(new URL('../src/examples.json', import.meta.url), 'utf8'));
 const catalogSets = practiceSets.map(({slug,title,segments})=>({slug,title,ids:segments.map(x=>x.id)}));
 const catalogConcepts = concepts.map(({slug,title,ids})=>({slug,title,ids}));
@@ -64,8 +66,8 @@ const focusedEntries=(compact=false)=>compact ? `<nav class="practice-entry-nav"
 const relatedEntries=path=>searchPages[path]?.related ? `<section>${sectionTitle('Related practice','Explore the next component or follow a guided exercise sequence.')}<div class="topic-grid">${searchPages[path].related.map(target=>{const item=routeInfo(target);return `<a class="topic-card" href="${pathHref(target)}"><strong>${e(item.title)}</strong><p>${e(item.description)}</p></a>`}).join('')}</div></section>` : '';
 const verifiedNotice=`<p class="fineprint">All ${problems.length} published exercises have original contracts, editorial explanations and reference implementations checked against their stated tests. Planned topics are not counted as published problems.</p>`;
 async function output(path,html){
- const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,typesetVisualLesson(decorate(html,path,{base,origin})));
- const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,typesetVisualLesson(localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary})));
+ const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,typesetVisualLesson(path==='/'?withLabEntry(decorate(html,path,{base,origin}),'en',base):decorate(html,path,{base,origin})));
+ const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,typesetVisualLesson(path==='/'?withLabEntry(localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary}),'zh',base):localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary})));
 }
 await rm(out,{recursive:true,force:true});await mkdir(join(out,'assets'),{recursive:true});
 const agent=problems.filter(p=>p.track==='Agent Engineering'),world=problems.filter(p=>p.track==='World Models');
@@ -160,9 +162,10 @@ await copyFile(new URL('../src/progress-ui.js',import.meta.url),join(out,'assets
 await writeFile(join(out,'assets/catalog.json'),JSON.stringify({problems:frontierFirst.map(({id,title,track,difficulty})=>({id,title,track,difficulty})),sets:catalogSets,concepts:catalogConcepts}));
 await writeFile(join(out,'assets/catalog-zh.json'),JSON.stringify({problems:frontierFirst.map(({id,title,track,difficulty})=>({id,title:chinese.translate(title),track,difficulty})),sets:catalogSets.map(s=>({...s,title:chinese.translate(s.title)})),concepts:catalogConcepts.map(c=>({...c,title:chinese.translate(c.title)}))}));
 await copyFile(new URL('../src/runner.worker.js',import.meta.url),join(out,'assets/runner.worker.js'));
+await buildLabs(out,{base,origin,verification});
 if(origin){
- const pages=[...additionalPolicyPaths,'/','/problems/','/tracks/','/about/','/standards/','/privacy/','/contact/','/practice-sets/',...practiceSets.map(practicePath),...tracks.map(t=>`/tracks/${t.slug}/`),'/concepts/',...concepts.map(conceptPath),...problems.flatMap(p=>[fullPath(p),editorialPath(p)])];
+ const pages=[...labPaths,...additionalPolicyPaths,'/','/problems/','/tracks/','/about/','/standards/','/privacy/','/contact/','/practice-sets/',...practiceSets.map(practicePath),...tracks.map(t=>`/tracks/${t.slug}/`),'/concepts/',...concepts.map(conceptPath),...problems.flatMap(p=>[fullPath(p),editorialPath(p)])];
  await writeFile(join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.flatMap(x=>[x,'/zh'+x]).map(x=>`<url><loc>${e(origin+pathHref(x))}</loc></url>`).join('')}</urlset>`);
  await writeFile(join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${origin+pathHref('/sitemap.xml')}\n`);
 }else{await writeFile(join(out,'robots.txt'),'User-agent: *\nAllow: /\n');}
-console.log(`Built ${2*(11+additionalPolicyPaths.length+practiceSets.length+tracks.length+concepts.length+2*problems.length)} bilingual HTML routes (including ${problems.length} challenge/editorial pairs per language).`);
+console.log(`Built ${2*(11+labPaths.length+additionalPolicyPaths.length+practiceSets.length+tracks.length+concepts.length+2*problems.length)} bilingual HTML routes (including ${problems.length} challenge/editorial pairs per language).`);
