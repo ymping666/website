@@ -1,4 +1,5 @@
 // Original teaching exercises inspired by public, unverified interview accounts.
+import {round2Scenarios,validateRound2Input} from './scenarios-round2.mjs';
 const bi=(en,zh)=>[en,zh];
 const fixture=(id,phase,name,input,expected)=>({id,phase,name,input,expected});
 const mazeReference=`from collections import deque
@@ -192,6 +193,7 @@ export const scenarios=[
     ],
   },
 ];
+scenarios.push(...round2Scenarios);
 export const getScenario=id=>scenarios.find(item=>item.id===id);
 export const textFor=(value,locale)=>Array.isArray(value)?value[locale==='zh'?1:0]:value;
 
@@ -203,7 +205,9 @@ export function parseScenarioInput(item,text) {
   const integer=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max;
   if(!exact(v,item.args))throw new Error('shape');
   let good=false;
-  if(item.mode==='debug') {
+  if(round2Scenarios.some(s=>s.id===item.id)) {
+    good=validateRound2Input(item,v);
+  } else if(item.id==='maze-debugging') {
     const g=v.grid;
     good=Array.isArray(g)&&g.length>=1&&g.length<=8&&g.every(row=>typeof row==='string'&&row.length>=1&&row.length<=8&&row.length===g[0].length&&/^[.#]+$/.test(row));
     if(good){
@@ -211,9 +215,9 @@ export function parseScenarioInput(item,text) {
       const open=p=>point(p)&&g[p[0]][p[1]]==='.';
       good=point(v.start)&&point(v.goal)&&Array.isArray(v.portals)&&v.portals.length<=30&&v.portals.every(p=>Array.isArray(p)&&p.length===2&&p.every(open));
     }
-  } else if(item.mode==='review') {
+  } else if(item.id==='load-balancer-review') {
     good=integer(v.k,1,8)&&Array.isArray(v.requests)&&v.requests.length<=30&&v.requests.every((r,i)=>Array.isArray(r)&&r.length===2&&integer(r[0],0,100)&&integer(r[1],1,20)&&(i===0||r[0]>=v.requests[i-1][0]));
-  } else {
+  } else if(item.id==='canvas-history') {
     const id=s=>typeof s==='string'&&s.length>=1&&s.length<=32;
     const shape=s=>exact(s,['id','x','y','width','height'])&&id(s.id)&&integer(s.x,0,80)&&integer(s.y,0,80)&&integer(s.width,1,20)&&integer(s.height,1,20);
     const cmd=c=>object(c)&&(

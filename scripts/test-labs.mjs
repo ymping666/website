@@ -10,11 +10,12 @@ import {renderHub} from '../src/labs/scenario-view.mjs';
 process.env.LAB_LOGIC_ONLY='1';
 await import('../explorations/ai-review-lab/test.mjs');
 await import('../explorations/ai-review-lab/test-scenarios.mjs');
+await import('../explorations/ai-review-lab/test-round2.mjs');
 delete process.env.LAB_LOGIC_ONLY;
 
-assert.deepEqual(groupPracticeItems().map(g=>[g.id,g.items.length]),[['debug',1],['review',2],['extend',1]]);
+assert.deepEqual(groupPracticeItems().map(g=>[g.id,g.items.length]),[['debug',2],['review',3],['extend',2]]);
 const expanded=groupPracticeItems([...practiceItems,{id:'future-review',mode:'review'}]);
-assert.equal(expanded.find(g=>g.id==='review').items.length,3);
+assert.equal(expanded.find(g=>g.id==='review').items.length,groupPracticeItems().find(g=>g.id==='review').items.length+1);
 assert.throws(()=>groupPracticeItems([...practiceItems,practiceItems[0]]),/Duplicate/);
 assert.throws(()=>groupPracticeItems([{id:'invalid',mode:'unknown'}]),/Unknown/);
 const base=siteBase(),origin=(process.env.SITE_ORIGIN||'').replace(/\/$/,'');
@@ -58,4 +59,4 @@ for(const base of ['/','/website/']){
 }
 const css=await readFile(join(siteRoot,'assets/labs/home-entry.css'),'utf8');
 assert.ok(css.includes('.hub-heading .eyebrow{color:#51418b}'));
-console.log('PASS 10 released lab routes: bilingual categories, portable runtime assets, metadata, policies, preserved draft keys and purple module styling');
+console.log('PASS '+labPaths.length*2+' released lab routes: bilingual categories, portable runtime assets, metadata, policies, preserved draft keys and purple module styling');

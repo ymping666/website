@@ -18,7 +18,7 @@ for(const input of [ {...maze.initialInput,grid:[]},{...maze.initialInput,grid:[
 for(const input of [{k:0,requests:[]},{k:1,requests:[[2,1],[1,1]]},{k:1,requests:[[0,0]]},{k:1,requests:[[1.5,1]]},{k:1,requests:[[0,1,2]]}])assert.throws(()=>parseScenarioInput(balance,JSON.stringify(input)),/contract/);
 for(const input of [{initial:[...canvas.initialInput.initial,...canvas.initialInput.initial],commands:[]},{initial:[],commands:[{op:'zoom'}]},{initial:[],commands:[{op:'undo',extra:true}]},{initial:[],commands:[{op:'move',id:'A',x:Infinity,y:0}]}])assert.throws(()=>parseScenarioInput(canvas,JSON.stringify(input)),/contract/);
 
-const payload=scenarios.map(item=>({id:item.id,mode:item.mode,fn:item.signature.split('(')[0],args:item.args,reference:item.reference,starter:item.starter,partial:item.partial,fixtures:item.fixtures,tests:item.fixtures.map(f=>scenarioTest(item,f)),comparisons:item.fixtures.map(f=>scenarioComparison(item,f.input))}));
+const payload=[maze,balance,canvas].map(item=>({id:item.id,mode:item.mode,fn:item.signature.split('(')[0],args:item.args,reference:item.reference,starter:item.starter,partial:item.partial,fixtures:item.fixtures,tests:item.fixtures.map(f=>scenarioTest(item,f)),comparisons:item.fixtures.map(f=>scenarioComparison(item,f.input))}));
 const python=`import json, sys, random, copy
 ${runner}
 data=json.load(sys.stdin)

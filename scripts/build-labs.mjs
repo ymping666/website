@@ -6,7 +6,7 @@ import {scenarios} from '../src/labs/scenarios.mjs';
 import {decorate,escapeHtml} from './localize.mjs';
 
 export const labPaths=['/labs/',...scenarios.map(s=>`/labs/${s.id}/`),'/review/'];
-export const labAssets=['home-entry.css','lab.css','scenarios.css','lab.js','scenario-ui.js','case.mjs','scenarios.mjs'];
+export const labAssets=['home-entry.css','lab.css','scenarios.css','lab.js','scenario-ui.js','case.mjs','scenarios.mjs','scenarios-round2.mjs'];
 const descriptions={
   '/labs/':[
     'Practice AI-assisted coding interviews: read existing Python code, review suggestions, debug and extend projects with visual inputs and tests.',
@@ -32,6 +32,8 @@ const descriptions={
 
 export function releaseLabHtml(html,path,locale,{base='/',origin='',verification=null}={}) {
   const zh=locale==='zh',prefix=base+(zh?'zh/':'');
+  const description=descriptions[path]||scenarios.find(s=>path===`/labs/${s.id}/`)?.description;
+  if(!description)throw new Error(`Missing lab description: ${path}`);
   html=html.replace(/<meta name="robots" content="noindex,nofollow">/,'')
     .replace(/ · TensorDrill · (?:Local preview|本地预览)<\/title>/,' | TensorDrill</title>')
     .replace(/>LOCAL PREVIEW</g,'>EXPERIMENTAL<').replace(/>本地预览</g,'>实验中<')
@@ -46,7 +48,7 @@ export function releaseLabHtml(html,path,locale,{base='/',origin='',verification
     if(labAssets.includes(target))target='assets/labs/'+target;
     return `${attr}="${base}${target}"`;
   });
-  const metadata=`<meta name="description" content="${escapeHtml(descriptions[path][zh?1:0])}">${origin?`<link rel="canonical" href="${escapeHtml(origin+prefix+path.slice(1))}">`:''}${verification?.meta||''}${verification?.script||''}`;
+  const metadata=`<meta name="description" content="${escapeHtml(description[zh?1:0])}">${origin?`<link rel="canonical" href="${escapeHtml(origin+prefix+path.slice(1))}">`:''}${verification?.meta||''}${verification?.script||''}`;
   html=html.replace('</head>',metadata+'</head>');
   const links=[['Privacy policy','隐私政策','privacy'],['Terms of use','使用条款','terms'],['Cookie choices','Cookie 选择','cookies'],['Advertising policy','广告政策','advertising'],['Contact','联系我们','contact']];
   html=html.replace('</body>',`<footer class="site-footer"><div>TensorDrill · ${zh?'实验模块':'Experimental module'}</div><nav class="footer-links" aria-label="${zh?'网站政策':'Site policies'}">${links.map(([en,cn,route])=>`<a href="${prefix}${route}/">${zh?cn:en}</a>`).join('')}</nav></footer></body>`);

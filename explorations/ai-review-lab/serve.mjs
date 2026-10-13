@@ -8,6 +8,7 @@ import {renderHub,renderScenario} from '../../src/labs/scenario-view.mjs';
 import {getScenario} from '../../src/labs/scenarios.mjs';
 const root = new URL('../../src/labs/', import.meta.url);
 const sources = new Map([
+  ['/assets/labs/scenarios-round2.mjs',new URL('scenarios-round2.mjs',root)],
   ['/assets/labs/lab.js',new URL('lab.js',root)],['/assets/labs/lab.css',new URL('lab.css',root)],['/assets/labs/case.mjs',new URL('case.mjs',root)],
   ['/assets/labs/scenarios.mjs',new URL('scenarios.mjs',root)],['/assets/labs/scenario-ui.js',new URL('scenario-ui.js',root)],['/assets/labs/scenarios.css',new URL('scenarios.css',root)],
   ['/assets/labs/home-entry.css',new URL('home-entry.css',root)],

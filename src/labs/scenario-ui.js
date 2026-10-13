@@ -65,7 +65,27 @@ function canvasView(shapes,host){
 }
 function visualize(input,host,output){
   host.replaceChildren();
-  if(item.mode==='debug'){
+  if(item.id==='template-renderer-debugging'){
+    host.append(element('h3',t('Original template','原始模板')),element('pre',input.template,'template-text'));
+    dataTable(host,[t('Key','键'),t('Input value (JSON)','输入值（JSON）')],Object.entries(input.context).map(([k,v])=>[k,JSON.stringify(v)]));
+    host.append(element('p',t('Values are literal data. Missing keys stay as placeholders; inserted text is never scanned again.','替换值是字面数据。缺失键保留为占位符，插入文本不再次扫描。'),'visual-caption'));
+    if(output!==undefined)host.append(element('h3',t('Returned text','返回文本')),element('pre',typeof output==='string'?output:JSON.stringify(output),'template-text'));
+  }else if(item.id==='transaction-rules-review'){
+    dataTable(host,[t('ID','ID'),t('Amount','金额'),t('Country','国家'),t('Flagged','标记')],input.transactions.map(x=>[x.id,x.amount,x.country,String(x.flagged)]));
+    host.append(element('h3',t('Ordered rules · first match wins','有序规则 · 首条匹配生效')));
+    dataTable(host,['#',t('Action','动作'),t('Condition','条件')],input.rules.map((r,i)=>[i,r.action,r.condition]));
+    host.append(element('p',t('AND binds before OR. No matching rule → ALLOW, index -1.','AND 优先于 OR。没有匹配规则 → ALLOW，下标 -1。'),'visual-caption'));
+    if(output!==undefined){host.append(element('h3',t('Returned decisions','返回决策')));dataTable(host,[t('ID','ID'),t('Action','动作'),t('Rule index','规则下标')],Array.isArray(output)?output.map(x=>[x?.id,x?.action,x?.rule_index]):[[JSON.stringify(output),'?','?']]);}
+  }else if(item.id==='invoice-pagination'){
+    host.append(element('p',`${input.config.currency} · `+t('minimum total: ','最低总额：')+input.config.min_total,'visual-caption'));
+    dataTable(host,[t('Customer ID','客户 ID'),t('Name','名称')],input.customers.map(c=>[c.id,c.name]));
+    for(const [index,p] of input.pages.entries()){
+      host.append(element('h3',t('Page ','第 ')+(index+1)+t(' · customer ',' 页 · 客户 ')+p.customer_id));
+      dataTable(host,[t('Invoice','账单'),t('Amount','金额'),t('Currency','币种'),t('Paid','已付')],p.invoices.map(i=>[i.id,i.amount,i.currency,String(i.paid)]));
+    }
+    host.append(element('p',t('Order follows the supplied pages. IDs are deduplicated separately for each customer, before filtering. Amounts are minor units.','按给定页顺序处理。每个客户独立去重，先去重再筛选；金额为最小货币单位。'),'visual-caption'));
+    if(output!==undefined){host.append(element('h3',t('Returned totals','返回汇总')));dataTable(host,[t('Customer','客户'),t('Name','名称'),t('Total','总额'),t('Included IDs','计入 ID')],Array.isArray(output)?output.map(x=>[x?.customer_id,x?.name,x?.total,JSON.stringify(x?.invoice_ids)]):[[JSON.stringify(output),'?','?','?']]);}
+  }else if(item.id==='maze-debugging'){
     const grid=element('div','','maze-grid');grid.style.gridTemplateColumns=`repeat(${input.grid[0].length},minmax(0,1fr))`;
     for(const [r,row] of input.grid.entries())for(const [c,ch] of [...row].entries()){
       const same=p=>p[0]===r&&p[1]===c,start=same(input.start),goal=same(input.goal),portal=input.portals.some(p=>same(p[0]));
@@ -75,7 +95,7 @@ function visualize(input,host,output){
     host.append(grid,element('p',t('S start · G goal · # wall · purple outline: portal source. Moves and portals each cost one step.','S 起点 · G 终点 · # 墙 · 紫边为传送门入口。普通移动和传送均消耗 1 步。'),'visual-caption'));
     if(input.portals.length)host.append(element('pre',input.portals.map(([a,b])=>`[${a}] → [${b}]`).join('\n'),'portal-list'));
     if(output!==undefined)host.append(element('p',t('Returned distance: ','返回距离：')+JSON.stringify(output),'visual-caption'));
-  }else if(item.mode==='review'){
+  }else if(item.id==='load-balancer-review'){
     host.append(element('p',`k = ${input.k} · `+t('No queuing · lowest available ID','不排队 · 选择最小空闲 ID'),'visual-caption'));
     const table=element('table','','timeline'),head=element('thead'),hr=element('tr');
     const headers=['#',t('Arrival','到达'),t('Duration','时长'),t('Interval / end','占用区间 / 结束')];if(output!==undefined)headers.push(t('Assigned ID','分配 ID'));
@@ -84,13 +104,21 @@ function visualize(input,host,output){
     input.requests.forEach(([a,d],i)=>{const row=element('tr');[i,a,d].forEach(v=>row.append(element('td',String(v))));const period=element('td',`[${a}, ${a+d})`);const track=element('div','','time-track');const bar=element('span','','time-bar');bar.style.width=`${d/end*100}%`;bar.style.marginLeft=`${a/end*100}%`;if(Array.isArray(output)&&output[i]===-1)bar.classList.add('dropped');track.append(bar);period.append(track);row.append(period);if(output!==undefined)row.append(element('td',Array.isArray(output)?String(output[i]??'?'):'?'));body.append(row);});table.append(body);host.append(table);
     if(!input.requests.length)host.append(element('p',t('No requests.','没有请求。'),'visual-caption'));
     host.append(element('p',t('Intervals show the occupied period if accepted. End time itself is available. Dropped requests occupy no interval.','区间表示请求被接受时的占用时间；结束时刻已可复用。丢弃的请求不占用服务器。'),'visual-caption'));
-  }else{
+  }else if(item.id==='canvas-history'){
     const shapes=output===undefined?input.initial:Array.isArray(output?.shapes)?output.shapes:[];
     canvasView(shapes,host);
     if(output===undefined)host.append(element('p',t('Initial state only. Commands below have not run. Coordinates use a 0–100 canvas.','仅为初始状态，下方命令尚未执行。画布坐标范围为 0–100。'),'visual-caption'));
     else host.append(element('p',`undo: ${String(output?.undo_depth??'?')} · redo: ${String(output?.redo_depth??'?')}`,'visual-caption'));
     host.append(element('pre',input.commands.map((c,i)=>`${i+1}. ${JSON.stringify(c)}`).join('\n')||t('No commands.','没有命令。'),'command-list'));
   }
+}
+function dataTable(host,headers,rows){
+  const table=element('table','','timeline data-table'),head=element('thead'),row=element('tr');
+  headers.forEach(h=>row.append(element('th',h)));head.append(row);table.append(head);
+  const body=element('tbody');
+  for(const values of rows.slice(0,40)){const tr=element('tr');values.forEach(v=>tr.append(element('td',v===undefined?'?':String(v))));body.append(tr);}
+  table.append(body);host.append(table);
+  if(!rows.length)host.append(element('p',t('Empty list','空列表'),'visual-caption'));
 }
 function parseInput(){return parseScenarioInput(item,$('experiment-input').value);}
 function inputError(error){return ({size:t('Input exceeds 8 KB.','输入超过 8 KB。'),json:t('Invalid JSON. Use double quotes and remove trailing commas.','JSON 无法解析，请使用双引号并删除多余逗号。'),shape:t('The JSON keys must be exactly: ','JSON 须恰好包含：')+item.args.join(', '),contract:t('Input is outside the stated contract. Check sizes, coordinates, command fields and ordering.','输入不符合题目约束，请检查大小、坐标、命令字段与顺序。')})[error.message]||t('Invalid input.','输入不合法。');}
