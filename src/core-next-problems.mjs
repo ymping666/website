@@ -418,7 +418,7 @@ export const coreNextProblems = [
     "starter": "def rms_norm(x, eps):\n    \"\"\"Implement this precisely specified AI building block.\"\"\"\n    # TODO\n    pass",
     "solution": "import math\ndef rms_norm(x,eps):\n    rms=math.sqrt(sum(v*v for v in x)/len(x)+eps)\n    return [v/rms for v in x]",
     "explanation": [
-      "RMSNorm controls feature-vector scale but leaves its mean unchanged.",
+      "RMSNorm controls feature-vector scale without subtracting the mean; the output mean is generally rescaled.",
       "The denominator depends on mean squared magnitude, not the centered variance."
     ],
     "complexity": "O(d) time, O(d) output space.",
