@@ -51,4 +51,4 @@ for (const path of ['index.html','progress/index.html','privacy/index.html']) {
   if (process.env.SITE_ORIGIN) assert.ok(html.includes('hreflang="zh-CN"') && html.includes('hreflang="x-default"'));
 }
 assert.ok((await readFile(join(siteRoot,'zh','progress','index.html'),'utf8')).includes('name="robots" content="noindex"'));
-console.log('PASS all 100 Chinese problem contracts/editorials, 26 concepts, 19 sets, unchanged Python, language links and bilingual search');
+console.log(`PASS all ${problems.length} Chinese problem contracts/editorials, ${concepts.length} concepts, ${practiceSets.length} sets, unchanged Python, language links and bilingual search`);

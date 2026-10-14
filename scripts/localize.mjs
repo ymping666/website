@@ -3,6 +3,7 @@ import { zhUI, translate } from '../src/locales/zh-ui.mjs';
 import { problems } from '../src/problems.mjs';
 import { concepts } from '../src/concepts.mjs';
 import { practiceSets } from '../src/practice-sets.mjs';
+import { collectionTranslations } from '../src/practice-collections.mjs';
 import { searchTranslations } from '../src/search-pages.mjs';
 import { policyTranslations } from '../src/policy-pages.mjs';
 import { lessonTranslations } from '../src/visual-lessons.mjs';
@@ -41,7 +42,7 @@ export async function loadChinese() {
       original.segments.forEach((segment, i) => add(segment.note, chinese.notes[i], key + '.notes'));
     }
   }
-  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations);
+  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 

@@ -175,6 +175,7 @@ export function translate(text, dictionary = zhUI) {
   if (result === undefined) {
     const translated = part => translate(part, dictionary);
     const patterns = [
+      [/^(\d+) learning units · (\d+) distinct exercises$/, (_, units, count) => `${units} 个学习单元 · ${count} 道题（去重）`],
       [/^Step (\d+) of (\d+)$/, (_, position, count) => `第 ${position}/${count} 步`],
       [/^First unfinished: (.+) →$/, (_, title) => `最早未完成：${translated(title)} →`],
       [/^Python setup: ([\d.]+)s · Tests: ([\d.]+)s$/, (_, setup, tests) => `Python 环境准备：${setup} 秒 · 测试执行：${tests} 秒`],

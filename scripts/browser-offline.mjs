@@ -48,7 +48,7 @@ try {
   await page.goto(base);
   await page.screenshot({ path: 'artifacts/home-desktop.png', fullPage: true });
   await page.goto(base + 'problems/');
-  assert.equal(await page.locator('.problem-row:visible').count(), 100);
+  assert.equal(await page.locator('.problem-row:visible').count(), problems.length);
   await page.locator('#query').fill('RMSNorm');
   assert.equal(await page.locator('.problem-row:visible').count(), 2);
   await page.locator('#query').fill('no-such-topic-123');

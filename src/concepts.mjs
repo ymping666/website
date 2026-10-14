@@ -1,3 +1,4 @@
+import {feedbackConcepts} from './feedback-curriculum.mjs';
 // v0.9 taxonomy: only links to existing, fully authored exercises.
 export const concepts = [
   {
@@ -427,3 +428,4 @@ export const concepts = [
   }
 }
 ];
+concepts.push(...feedbackConcepts);

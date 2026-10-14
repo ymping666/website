@@ -1,5 +1,9 @@
 import { fileURLToPath } from 'node:url';
 
+// Node sends the bilingual catalog to Python as UTF-8 JSON. Windows otherwise
+// decodes stdin using the system code page, corrupting Unicode test fixtures.
+process.env.PYTHONIOENCODING = 'utf-8';
+
 export const siteRoot = fileURLToPath(new URL('../site/', import.meta.url));
 export const pythonCommand = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 

@@ -5,10 +5,11 @@ import { siteRoot } from './config.mjs';
 import { problems } from '../src/problems.mjs';
 import { concepts } from '../src/concepts.mjs';
 import { practiceSets } from '../src/practice-sets.mjs';
+import { practiceCollections } from '../src/practice-collections.mjs';
 import { searchSite } from '../src/site-search.mjs';
 
 const entries = JSON.parse(await readFile(join(siteRoot, 'assets/search-index.json'), 'utf8'));
-assert.equal(entries.length, problems.length * 2 + concepts.length + practiceSets.length + new Set(problems.map(problem => problem.track)).size);
+assert.equal(entries.length, problems.length * 2 + concepts.length + practiceSets.length + practiceCollections.length + new Set(problems.map(problem => problem.track)).size);
 assert.equal(new Set(entries.map(entry => entry.path)).size, entries.length);
 for (const entry of entries) {
   assert.ok(entry.title.en && /\p{Script=Han}/u.test(entry.title.zh), entry.path + ' bilingual title');

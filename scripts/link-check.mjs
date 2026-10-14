@@ -9,10 +9,11 @@ async function walk(dir){for(const de of await readdir(dir,{withFileTypes:true})
 await walk(root);
 import {problems} from '../src/problems.mjs';
 import {practiceSets} from '../src/practice-sets.mjs';
+import {practiceCollections} from '../src/practice-collections.mjs';
 import {concepts} from '../src/concepts.mjs';
 import {additionalPolicyPaths} from '../src/policy-pages.mjs';
 const trackDirs=(await readdir(join(root,'tracks'),{withFileTypes:true})).filter(x=>x.isDirectory()).length;
-const expected=2*(11+labPaths.length+additionalPolicyPaths.length+practiceSets.length+trackDirs+concepts.length+2*problems.length);
+const expected=2*(11+labPaths.length+additionalPolicyPaths.length+practiceSets.length+practiceCollections.length+trackDirs+concepts.length+2*problems.length);
 if(pages.length!==expected)errors.push(`Expected ${expected} distinct HTML pages; found ${pages.length}`);
 for(const file of pages){
  const html=await readFile(file,'utf8');

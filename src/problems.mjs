@@ -315,7 +315,8 @@ problems.push(...videoProblems);
 // v0.9: step-by-step foundations (attention, ViT, GAN, diffusion and AdaLN).
 import {foundationProblems} from './foundation-problems.mjs';
 problems.push(...foundationProblems);
-export const byId = Object.fromEntries(problems.map(p=>[p.id,p]));
-
 import {coreNextProblems} from './core-next-problems.mjs';
 problems.push(...coreNextProblems);
+import {feedbackProblems} from './feedback-problems.mjs';
+problems.push(...feedbackProblems);
+export const byId = Object.fromEntries(problems.map(p=>[p.id,p]));

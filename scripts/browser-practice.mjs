@@ -84,7 +84,7 @@ export async function checkPracticeUX(browser, base) {
     // A fresh test fixture covers the all-completed edge case without changing real user storage.
     await page.evaluate(ids => localStorage.setItem('frontiercode:v04:completed', JSON.stringify(Object.fromEntries(ids.map(id => [id, true])))), problems.map(p => p.id));
     await page.goto(base + 'zh/progress/');
-    await page.waitForFunction(() => document.querySelector('#solved-total').textContent === '100');
+    await page.waitForFunction(count => document.querySelector('#solved-total').textContent === String(count), problems.length);
     assert.match(await page.locator('#resume-practice').innerText(), /复习/);
     assert.match(await page.locator('#daily-challenge').innerText(), /复习/);
     assert.deepEqual(errors, []);

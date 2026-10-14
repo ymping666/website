@@ -33,10 +33,10 @@ try {
   await mkdir('artifacts', { recursive: true });
   await page.screenshot({ path: 'artifacts/home-desktop.png', fullPage: true });
   await page.goto(base + 'problems/');
-  assert.equal(await page.locator('.problem-row:visible').count(), 100);
+  assert.equal(await page.locator('.problem-row:visible').count(), problems.length);
   await page.locator('#query').fill('RMSNorm');
   assert.equal(await page.locator('.problem-row:visible').count(), 2);
-  pass('100-problem catalog and concept search');
+  pass(`${problems.length}-problem catalog and concept search`);
 
   const selected = problems.find(p => p.id === 'rope-rotate-pair');
   await page.goto(base + `problems/${selected.id}/`);
@@ -106,7 +106,7 @@ try {
   });
   const blocked = await blockedContext.newPage();
   await blocked.goto(base + `problems/${selected.id}/`);
-  await blocked.waitForFunction(() => document.querySelector('#header-progress').textContent === '0/100 solved');
+  await blocked.waitForFunction(count => document.querySelector('#header-progress').textContent === `0/${count} solved`, problems.length);
   await blocked.locator('#code-editor').fill('unsaved draft to recover');
   assert.match(await blocked.locator('#editor-save').textContent(), /not saved/i);
   assert.equal(await blocked.locator('#global-storage-notice').isVisible(), true);
@@ -195,7 +195,7 @@ try {
   for (const result of verdicts) {
     assert.ok(result.results.every(test => test.pass), JSON.stringify(result));
   }
-  pass(`${verdicts.reduce((n, p) => n + p.results.length, 0)} real Pyodide assertions across all 100 problems`);
+  pass(`${verdicts.reduce((n, p) => n + p.results.length, 0)} real Pyodide assertions across all ${problems.length} problems`);
   await page.setViewportSize({ width: 375, height: 812 });
   for (const path of ['', 'problems/', `problems/${selected.id}/`, 'progress/', 'privacy/', 'contact/', 'zh/', 'zh/problems/', `zh/problems/${selected.id}/`, `zh/editorials/${selected.id}/`, 'zh/progress/']) {
     await page.goto(base + path);

@@ -1398,5 +1398,89 @@
         "output": "(-4.5397868702390376e-05, 4.5397868702434395e-05)"
       }
     ]
+  ],
+  "rlef-public-test-controller": [
+    [
+      {
+        "input": "rlef_episode_action(public_passes=[], max_turns=3)",
+        "output": "'retry'"
+      }
+    ],
+    [
+      {
+        "input": "rlef_episode_action(public_passes=[False, True], max_turns=3)",
+        "output": "'private_eval'"
+      }
+    ]
+  ],
+  "rlef-shaped-turn-reward": [
+    [
+      {
+        "input": "rlef_turn_reward(valid_code=True, terminal=True, all_tests_pass=True, policy_logps=[-1], reference_logps=[-1], beta=0.5)",
+        "output": "1.0"
+      }
+    ],
+    [
+      {
+        "input": "rlef_turn_reward(valid_code=True, terminal=True, all_tests_pass=False, policy_logps=[-1], reference_logps=[-1], beta=0.5)",
+        "output": "-1.0"
+      }
+    ]
+  ],
+  "rlef-undiscounted-advantages": [
+    [
+      {
+        "input": "rlef_advantages(rewards=[0, 0, 1], values=[0, 0, 0])",
+        "output": "[1.0, 1.0, 1.0]"
+      }
+    ],
+    [
+      {
+        "input": "rlef_advantages(rewards=[0, 0, 1], values=[0.1, 0.2, 0.3])",
+        "output": "[0.9, 0.8, 0.7]"
+      }
+    ]
+  ],
+  "constitutional-revision-dataset": [
+    [
+      {
+        "input": "revision_training_pairs(prompt='Q', initial='draft', principles=['clear'], rounds=[{'source': 'draft', 'principle': 'clear', 'critique': 'clarify', 'revision': 'answer'}])",
+        "output": "[('Q', 'answer')]"
+      }
+    ],
+    [
+      {
+        "input": "revision_training_pairs(prompt='Q', initial='d0', principles=['p'], rounds=[{'source': 'd0', 'principle': 'p', 'critique': 'c1', 'revision': 'd1'}, {'source': 'd1', 'principle': 'p', 'critique': 'c2', 'revision': 'd2'}])",
+        "output": "[('Q', 'd1'), ('Q', 'd2')]"
+      }
+    ]
+  ],
+  "constitutional-soft-preference": [
+    [
+      {
+        "input": "ai_preference_label(logp_a=-2, logp_b=-2, clamp=False)",
+        "output": "(0.5, 0.5)"
+      }
+    ],
+    [
+      {
+        "input": "ai_preference_label(logp_a=-0.2231435513142097, logp_b=-1.6094379124341003, clamp=False)",
+        "output": "(0.8, 0.19999999999999996)"
+      }
+    ]
+  ],
+  "constitutional-preference-loss": [
+    [
+      {
+        "input": "soft_preference_loss(scores_a=[0], scores_b=[0], targets=[0.6])",
+        "output": "0.6931471805599453"
+      }
+    ],
+    [
+      {
+        "input": "soft_preference_loss(scores_a=[1.3862943611198906], scores_b=[0], targets=[0.8])",
+        "output": "0.5004024235381879"
+      }
+    ]
   ]
 }

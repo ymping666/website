@@ -28,7 +28,7 @@ export const searchPages = {
     title: ['AI Coding Practice Paths — Agents, World Models & More', 'AI 编程题单：Agent、世界模型等实现路线'],
     description: ['Follow coding paths for agent reliability, world model planning, Flow Matching and more. Build and test one Python component at a time with complete solutions.', '沿 Agent 执行可靠性、世界模型规划、Flow Matching 等题单逐步练习，按顺序实现 Python 组件，结合浏览器测试与完整题解理解每个步骤。'],
     heading: ['AI Coding Practice Paths', 'AI 编程专题题单'],
-    intro: ['Follow a focused sequence in agent execution, world model planning, Flow Matching and more. Each path links to published exercises with executable tests and complete solutions, plus prerequisites and a clear explanation of its scope.', '沿 Agent 执行、世界模型规划、Flow Matching 等实现路线循序练习。每个题单包含已发布的题目、可运行测试与完整题解，并说明先修要求和练习范围。']
+    intro: ['Explore six broad topics, from neural network foundations to agents, world models and more frontier AI. Within each topic, choose a learning direction and follow a focused sequence with tests and complete solutions.', '从神经网络基础到 Agent、世界模型等前沿 AI，按六大专题集中练习。进入专题后，再按学习方向选择单元，循序完成带测试和完整题解的练习。']
   },
   '/tracks/agent-engineering/': {
     title: ['Agent Coding Challenges — ReAct, Tools & Reliability', 'Agent 编程练习：ReAct、工具调用与执行可靠性'],

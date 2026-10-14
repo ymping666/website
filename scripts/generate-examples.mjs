@@ -64,4 +64,4 @@ if (process.argv.includes('--check')) {
     }
   }
 } else await writeFile(file, result.stdout.trim() + '\n');
-console.log('PASS readable input/output examples verified against all 100 reference implementations');
+console.log(`PASS readable input/output examples verified against all ${problems.length} reference implementations`);

@@ -1,3 +1,4 @@
+import {feedbackSets} from './feedback-curriculum.mjs';
 // Purpose-built practice sequences; each set links only to already published, tested exercises.
 export const practiceSets = [
   {
@@ -396,3 +397,4 @@ export const practiceSets = [
   "caution": "These kernels use one explicitly stated RoPE convention and do not form a pretrained attention model."
 }
 ];
+practiceSets.push(...feedbackSets);
