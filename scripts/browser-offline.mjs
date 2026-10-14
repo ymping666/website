@@ -110,7 +110,7 @@ try {
   await page.locator('#progress-filter').selectOption('solved');
   assert.equal(await page.locator('.problem-row:visible').count(), 1);
   await page.locator('#progress-filter').selectOption('unsolved');
-  assert.equal(await page.locator('.problem-row:visible').count(), 99);
+  assert.equal(await page.locator('.problem-row:visible').count(), problems.length - 1);
   console.log('PASS offline progress dashboard, goals, earned milestones, backup Blob/merge/rejection and solved filters');
   await page.setViewportSize({ width: 375, height: 812 });
   for (const path of ['', 'problems/', `problems/${selected.id}/`, 'progress/', 'privacy/', 'contact/']) {

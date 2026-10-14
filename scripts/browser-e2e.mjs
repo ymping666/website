@@ -123,7 +123,7 @@ try {
   await page.locator('#progress-filter').selectOption('solved');
   assert.equal(await page.locator('.problem-row:visible').count(), 1);
   await page.locator('#progress-filter').selectOption('unsolved');
-  assert.equal(await page.locator('.problem-row:visible').count(), 99);
+  assert.equal(await page.locator('.problem-row:visible').count(), problems.length - 1);
   pass('Daily progress, stable recommendation, goal persistence, backup transfer to a fresh browser and solved filtering');
 
   await page.goto(base + `problems/${selected.id}/`);
