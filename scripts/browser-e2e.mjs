@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { problems } from '../src/problems.mjs';
+import { practiceSets } from '../src/practice-sets.mjs';
 import { siteBase } from './config.mjs';
 import { checkPracticeUX } from './browser-practice.mjs';
 
@@ -86,7 +87,7 @@ try {
   const fresh = await freshContext.newPage();
   await fresh.goto(base + 'progress/');
   assert.equal(await fresh.locator('html').getAttribute('lang'), 'en', 'English default even with a Chinese browser locale');
-  await fresh.waitForFunction(() => document.querySelector('#plan-progress').children.length === 19);
+  await fresh.waitForFunction(count => document.querySelector('#plan-progress').children.length === count, practiceSets.length);
   assert.equal(await fresh.locator('#solved-total').textContent(), '0');
   await fresh.locator('#import-progress-file').setInputFiles('artifacts/progress-backup.json');
   await fresh.waitForFunction(() => document.querySelector('#solved-total').textContent === '1');
