@@ -5,6 +5,7 @@ import { mathText } from './lesson-notation.mjs';
 import { mountRound4Lesson } from './lesson-ui-round4.js';
 import { mountRound5Lesson } from './lesson-ui-round5.js';
 import { mountRound6Lesson } from './lesson-ui-round6.js';
+import { mountRound7Lesson } from './lesson-ui-round7.js';
 
 const root = document.querySelector('[data-lesson]');
 const zh = document.documentElement.lang === 'zh-CN';
@@ -100,5 +101,6 @@ if (root) {
     mountRound4Lesson(root);
     mountRound5Lesson(root);
     mountRound6Lesson(root);
+    mountRound7Lesson(root);
   }
 }

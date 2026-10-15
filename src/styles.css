@@ -181,3 +181,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 
 /* Round-six numerical walkthroughs. Charts are original and responsive. */
 .r6-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.r6-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.r6-chart{min-width:0;margin:18px 0}.r6-chart figcaption{font-size:13px;font-weight:650;margin-bottom:10px}.r6-chart svg{display:block;width:100%;height:auto;background:#fff;border:1px solid #dce5e0;border-radius:9px}.r6-chart svg text{font:16px system-ui,sans-serif;fill:#4b5c54}.r6-three svg text{font-size:14px}@media(max-width:760px){.r6-three,.r6-two{grid-template-columns:1fr}.r6-three .r6-chart{width:min(100%,420px);margin:10px auto}}
+.r7-chart{margin:1.2rem 0;padding:1rem;overflow-x:auto;background:#fff;border:1px solid var(--line,#dce5e0);border-radius:12px}
+.r7-chart figcaption{font-weight:700;margin-bottom:.6rem}
+.r7-chart svg{display:block;width:100%;min-width:440px;max-width:660px;height:auto;margin:auto;overflow:visible}
+.r7-chart svg text{font:16px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#34484b}
