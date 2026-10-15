@@ -359,7 +359,7 @@ export const videoProblems = [
       "Squared Euclidean distance avoids square roots and preserves nearest-neighbor ranking.",
       "Explicit tie breaking ensures stable code indices across runs."
     ],
-    "complexity": "O(KD) time and O(1) auxiliary space for K codebook entries of dimension D.",
+    "complexity": "O(K(D+1)) time and O(1) auxiliary space for K codebook entries of dimension D, including D=0. For positive D, this is O(KD).",
     "pitfall": "Selecting by vector norm or by coordinate-wise distance independently is not the same as total squared distance.",
     "hints": [
       "Compute one sum of squared differences per code vector.",
