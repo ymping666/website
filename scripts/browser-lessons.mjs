@@ -234,6 +234,8 @@ try {
   }
   const {checkDiffusionLessons}=await import('./browser-round10-checks.mjs');
   await checkDiffusionLessons(page,base);
+  const {checkHeadAndCrossLessons}=await import('./browser-round11-checks.mjs');
+  await checkHeadAndCrossLessons(page,base);
   assert.deepEqual(errors, []);
   await context.close();
   const staticContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 375, height: 900 } });
