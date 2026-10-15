@@ -185,3 +185,6 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .r7-chart figcaption{font-weight:700;margin-bottom:.6rem}
 .r7-chart svg{display:block;width:100%;min-width:440px;max-width:660px;height:auto;margin:auto;overflow:visible}
 .r7-chart svg text{font:16px ui-monospace,SFMono-Regular,Consolas,monospace;fill:#34484b}
+
+/* The inspected ODE update remains readable without color alone. */
+.lesson-table tr.r9-selected{background:#edf7f3;outline:1px solid #91b9a7;outline-offset:-1px}
