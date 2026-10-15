@@ -232,6 +232,8 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${id} enlarged math remains in its scroll area`);
     }
   }
+  const {checkDiffusionLessons}=await import('./browser-round10-checks.mjs');
+  await checkDiffusionLessons(page,base);
   assert.deepEqual(errors, []);
   await context.close();
   const staticContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 375, height: 900 } });
