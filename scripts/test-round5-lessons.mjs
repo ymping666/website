@@ -90,7 +90,7 @@ for(const locale of ['','zh/'])for(const id of Object.values(ids)){
  const lesson=decodeHtml(html.slice(visual,code));assert.doesNotMatch(lesson,/<iframe|href="https?:|NaN/);
  assert.ok(html.includes(`src="${siteBase()}assets/lesson-ui.js"`));
  if(locale)assert.doesNotMatch(lesson,/Retained token indices|Output probability|Guided prediction|Shared scaling factor|Input L2 norm/);
- if(id==='optimizer-global-norm-clipping')assert.match(html,/<msqrt><mrow><mo>∑<\/mo><msubsup>/);
+ if(id==='optimizer-global-norm-clipping')assert.match(html,/<msqrt><mrow><munder><mo>∑<\/mo><mi>i<\/mi><\/munder><msup><msub><mi>g<\/mi><mi>i<\/mi><\/msub><mn>2<\/mn>/);
  const en=decodeHtml(await readFile(join(siteRoot,'editorials',id,'index.html'),'utf8'));
  if(locale)for(const [original,translated] of Object.entries(round5Translations))if(en.includes('>'+original+'<'))assert.ok(decodeHtml(html).includes(translated),original);
 }

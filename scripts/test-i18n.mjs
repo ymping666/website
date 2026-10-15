@@ -7,6 +7,7 @@ import { practiceSets } from '../src/practice-sets.mjs';
 import { siteRoot, siteBase } from './config.mjs';
 import { loadChinese, decodeHtml } from './localize.mjs';
 import { translate } from '../src/locales/zh-ui.mjs';
+import {originalMathText} from '../src/lesson-notation.mjs';
 
 const base = siteBase(), chinese = await loadChinese();
 const parseChallenge = html => JSON.parse(html.match(/id="challenge-json">([\s\S]*?)<\/script>/)[1]);
@@ -23,7 +24,7 @@ for (const problem of problems) {
   assert.match(en, /<html lang="en">/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.ok(decodeHtml(zh).includes(chinese.translate(problem.title)));
-  assert.ok(decodeHtml(editorial).includes(chinese.translate(problem.description)));
+  assert.ok(decodeHtml(originalMathText(editorial)).includes(chinese.translate(problem.description)));
   const original = parseChallenge(en), localized = parseChallenge(zh);
   assert.equal(original.id, localized.id);
   assert.equal(original.starter, localized.starter, 'Shared executable starter');

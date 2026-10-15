@@ -73,7 +73,7 @@ for(const locale of ['','zh/'])for(const [kind,id] of Object.entries(ids)){
  const en=decodeHtml(await readFile(join(siteRoot,'editorials',id,'index.html'),'utf8'));
  if(locale)for(const [original,translated] of Object.entries(round6Translations))if(en.includes('>'+original+'<'))assert.ok(decodeHtml(html).includes(translated),original);
  assert.equal(decodeHtml(html.match(/<pre class="code-pre">([\s\S]*?)<\/pre>/)[1]),refs[kind]);
- if(kind==='layer')assert.match(html,/<msqrt><mrow><msup>/);
+ if(kind==='layer')assert.match(html,/<msqrt><mrow><mi mathvariant="normal">variance<\/mi><mo>\+<\/mo><mi>ε<\/mi><\/mrow><\/msqrt>/);
 }
 for(const file of ['lesson-ui-round6.js','lesson-round6-math.mjs','lesson-round6-view.mjs'])await readFile(join(siteRoot,'assets',file));
 console.log('PASS six bilingual pages, static fallback, code before references, translation and unchanged reference code');

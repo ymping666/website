@@ -13,6 +13,8 @@ import {siteAdsense} from './adsense.mjs';
 import {nextPractice, practicePath as nextPracticePath} from '../src/practice.mjs';
 import {renderVisualLesson,renderLessonResources} from '../src/visual-lessons.mjs';
 import {typesetVisualLesson} from '../src/lesson-notation.mjs';
+import {typesetFlowPage} from '../src/flow-notation.mjs';
+import {typesetPracticePage} from '../src/practice-notation.mjs';
 import {buildSearchIndex} from './build-search.mjs';
 import {buildLabs,labPaths} from './build-labs.mjs';
 import {withLabEntry} from '../src/labs/home-entry.mjs';
@@ -68,8 +70,8 @@ const focusedEntries=(compact=false)=>compact ? `<nav class="practice-entry-nav"
 const relatedEntries=path=>searchPages[path]?.related ? `<section>${sectionTitle('Related practice','Explore the next component or follow a guided exercise sequence.')}<div class="topic-grid">${searchPages[path].related.map(target=>{const item=routeInfo(target);return `<a class="topic-card" href="${pathHref(target)}"><strong>${e(item.title)}</strong><p>${e(item.description)}</p></a>`}).join('')}</div></section>` : '';
 const verifiedNotice=`<p class="fineprint">All ${problems.length} published exercises have original contracts, editorial explanations and reference implementations checked against their stated tests. Planned topics are not counted as published problems.</p>`;
 async function output(path,html){
- const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,typesetVisualLesson(path==='/'?withLabEntry(decorate(html,path,{base,origin}),'en',base):decorate(html,path,{base,origin})));
- const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,typesetVisualLesson(path==='/'?withLabEntry(localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary}),'zh',base):localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary})));
+ const dest=join(out,path.replace(/^\//,''),'index.html');await mkdir(dirname(dest),{recursive:true});await writeFile(dest,typesetPracticePage(typesetFlowPage(typesetVisualLesson(path==='/'?withLabEntry(decorate(html,path,{base,origin}),'en',base):decorate(html,path,{base,origin})),path),path));
+ const zhDest=join(out,'zh',path.replace(/^\//,''),'index.html');await mkdir(dirname(zhDest),{recursive:true});await writeFile(zhDest,typesetPracticePage(typesetFlowPage(typesetVisualLesson(path==='/'?withLabEntry(localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary}),'zh',base):localizeHtml(html,path,{base,origin,dictionary:chinese.dictionary})),path),path));
 }
 await rm(out,{recursive:true,force:true});await mkdir(join(out,'assets'),{recursive:true});
 const agent=problems.filter(p=>p.track==='Agent Engineering'),world=problems.filter(p=>p.track==='World Models');
