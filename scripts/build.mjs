@@ -152,6 +152,9 @@ const missingPage=shell('Page not found','The requested exercise or page does no
 await writeFile(join(out,'404.html'),decorate(missingPage,'/404.html',{base,origin}));
 await writeFile(join(out,'zh','404.html'),localizeHtml(missingPage,'/404.html',{base,origin,dictionary:chinese.dictionary}));
 await writeFile(join(out,'.nojekyll'),'');
+await copyFile(new URL('../src/brand/favicon.ico',import.meta.url),join(out,'favicon.ico'));
+// Cloudflare Pages: keep this binary asset's response type explicit and scoped.
+await writeFile(join(out,'_headers'),`${pathHref('/favicon.ico')}\n  Content-Type: image/x-icon\n`);
 if(verification)await writeFile(join(out,'ads.txt'),verification.adsTxt);
 for(const name of ['icon.svg','favicon-32.png','apple-touch-icon.png','share-cover-en-v1.png','share-cover-zh-v1.png']){
  await copyFile(new URL('../src/brand/'+name,import.meta.url),join(out,'assets',name));

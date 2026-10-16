@@ -85,7 +85,9 @@ export function localizeHtml(html, path, { base, origin, dictionary }) {
 export function decorate(html, path, { base, origin, locale = 'en' }) {
   const href = language => base + (language === 'zh' ? 'zh/' : '') + path.replace(/^\//, '');
   const alternatives = origin ? ['en','zh'].map(language => `<link rel="alternate" hreflang="${language === 'zh' ? 'zh-CN' : 'en'}" href="${origin + href(language)}">`).join('') + `<link rel="alternate" hreflang="x-default" href="${origin + href('en')}">` : '';
-  html = html.replace('</head>', alternatives + '</head>');
+  // Shared by the regular pages, labs and both 404 pages in each language.
+  const favicon = `<link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="${base}favicon.ico">`;
+  html = html.replace('</head>', favicon + alternatives + '</head>');
   const title = decodeHtml(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] || 'TensorDrill');
   html = html.replace(/(<meta name="description" content=")([^"]*)(")/, (_,start,value,end) => start + escapeHtml(metaDescription(path,locale,decodeHtml(value))) + end);
   const description = decodeHtml(html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '');
