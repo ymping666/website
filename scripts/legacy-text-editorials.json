@@ -63,8 +63,5 @@
   "transformer-swiglu",
   "attention-key-padding-mask",
   "diffusion-ddpm-stochastic-step",
-  "gan-discriminator-logit-gradients",
-  "constitutional-revision-dataset",
-  "constitutional-soft-preference",
-  "constitutional-preference-loss"
+  "gan-discriminator-logit-gradients"
 ]

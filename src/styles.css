@@ -270,3 +270,36 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .r13-ratio{display:grid;grid-template-columns:22px minmax(0,1fr) 85px;gap:12px;align-items:center;margin:10px 0;font-size:12px}.r13-ratio output{text-align:right;font-family:ui-monospace,monospace}
 .r13-signed-track{position:relative;height:17px;background:linear-gradient(to right,#f7eeeb 50%,#eaf3f1 50%);border-radius:4px;overflow:hidden}.r13-signed-track:after{content:'';position:absolute;left:50%;height:100%;border-left:1px solid #697c87}.r13-signed-track>span{position:absolute;height:100%}.r13-negative{background:#b96d4c}.r13-positive{background:#338d7c}
 @media(max-width:650px){.visual-lesson .r13-equations{font-size:17px}.r13-gates{grid-template-columns:1fr}.r13-step,.r13-ratios{padding:14px}.r13-number{font-size:14px}.r13-timeline{gap:9px}.r13-turn{flex-basis:95px;padding:12px}.r13-ratio{grid-template-columns:18px minmax(0,1fr) 75px;gap:7px}}
+/* Constitutional AI worked examples: shared static and interactive rendering. */
+.r14-output{background:#f4f6f9;padding:1rem;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.88rem}
+.r14-context{padding:.75rem 1rem;background:#f7f9fb;border:1px solid var(--line);border-radius:12px}
+.r14-context p{margin:.4rem 0}
+.r14-chain{list-style:none;padding:0;display:grid;gap:1.1rem}
+.r14-chain>li{border:1px solid #d6e3df;border-left:4px solid #258574;border-radius:12px;padding:1rem}
+.r14-chain>li.r14-invalid{border-left-color:#b35234;background:#fffaf7}
+.r14-chain>li.r14-skipped{border-left-color:#9aa3b1;background:#f7f8fa}
+.r14-chain h4{margin:.2rem 0 .5rem}
+.r14-chain-grid{display:grid;grid-template-columns:1.3fr .8fr 1fr;gap:.65rem}
+.r14-card{border:1px solid #e0e5ed;border-radius:10px;padding:.85rem;background:white;min-width:0}
+.r14-card h4{font-size:.9rem;margin:0 0 .65rem}
+.r14-card p{margin:.4rem 0;font-size:.9rem}
+.r14-card samp,.r14-context samp{font-size:.85rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.r14-status{font-size:.9rem;font-weight:600}
+.r14-two-up{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.r14-probability{border:1px solid #dce3ec;padding:1rem;border-radius:12px;min-width:0}
+.r14-probability h4{font-size:.95rem;margin:0 0 .8rem}
+.r14-prob-track{height:22px;border-radius:6px;overflow:hidden;background:#dcd1f3}
+.r14-prob-track span{display:block;background:#158373;height:100%}
+.r14-prob-labels{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;font-variant-numeric:tabular-nums;margin-top:.6rem;font-size:.9rem}
+.r14-arithmetic{font-family:var(--mono,monospace);font-size:.9rem;overflow-wrap:anywhere}
+.r14-checkbox{display:flex!important;align-items:center;gap:.55rem}
+.r14-checkbox input{width:1.1rem!important;height:1.1rem;accent-color:#158373}
+.r14-curve{margin:1.25rem 0;padding:1rem;border:1px solid #dce3ec;border-radius:12px;background:#fafbfd}
+.r14-curve figcaption{font-weight:650;margin-bottom:.4rem}
+.r14-curve svg{width:100%;display:block;height:auto;max-height:320px;font:14px var(--mono,monospace);fill:#57647a;overflow:visible}
+.r14-axis{fill:none;stroke:#a2aec0;stroke-width:1.5}
+.r14-line{fill:none;stroke:#8060b1;stroke-width:3;stroke-linejoin:round}
+.r14-optimum{stroke:#96a3b3;stroke-dasharray:5 5;fill:none}
+.r14-point{fill:#148271;stroke:white;stroke-width:2}
+.r14-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#148271}
+@media(max-width:700px){.r14-chain-grid,.r14-two-up{grid-template-columns:1fr}.r14-chain>li,.r14-probability,.r14-curve{padding:.75rem}.r14-curve svg{min-width:0}.r14-curve svg text{font-size:26px}.r14-curve{margin-inline:0}}

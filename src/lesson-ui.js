@@ -12,6 +12,7 @@ import { mountRound10Lesson } from './lesson-ui-round10.js';
 import { mountRound11Lesson } from './lesson-ui-round11.js';
 import { mountRound12Lesson } from './lesson-ui-round12.js';
 import { mountRound13Lesson } from './lesson-ui-round13.js';
+import { mountRound14Lesson } from './lesson-ui-round14.js';
 
 const root = document.querySelector('[data-lesson]');
 const zh = document.documentElement.lang === 'zh-CN';
@@ -114,5 +115,6 @@ if (root) {
     mountRound11Lesson(root);
     mountRound12Lesson(root);
     mountRound13Lesson(root);
+    mountRound14Lesson(root);
   }
 }
