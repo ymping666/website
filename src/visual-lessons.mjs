@@ -11,9 +11,10 @@ import { round9Translations, renderRound9Lesson, renderRound9Resources } from '.
 import { round10Translations, renderRound10Lesson, renderRound10Resources } from './visual-lessons-round10.mjs';
 import { round11Translations, renderRound11Lesson, renderRound11Resources } from './visual-lessons-round11.mjs';
 import { round12Translations, renderRound12Lesson, renderRound12Resources } from './visual-lessons-round12.mjs';
+import { round13Translations, renderRound13Lesson, renderRound13Resources } from './visual-lessons-round13.mjs';
 
 // Bilingual original explanations. External material is linked, never embedded/copied.
-export const lessonTranslations = { ...additionalLessonTranslations, ...frontierTranslations, ...round4Translations, ...round5Translations, ...round6Translations, ...round7Translations, ...round8Translations, ...round9Translations, ...round10Translations, ...round11Translations, ...round12Translations };
+export const lessonTranslations = { ...additionalLessonTranslations, ...frontierTranslations, ...round4Translations, ...round5Translations, ...round6Translations, ...round7Translations, ...round8Translations, ...round9Translations, ...round10Translations, ...round11Translations, ...round12Translations, ...round13Translations };
 const t = (en, zh) => { lessonTranslations[en] = zh; return en; };
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const external = (label, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
@@ -68,10 +69,10 @@ ${lessonEquations.attention}
 const attentionResources = `<section class="lesson-resources"><h3>${resourcesTitle}</h3><ul><li>${external('Vaswani et al. · Attention Is All You Need · §3.2.1', 'https://arxiv.org/html/1706.03762v7#S3.SS2.SSS1')}<p>${t('English paper · Check the formula, dₖ/dᵥ notation and the assumptions behind the scaling argument.', '英文论文 · 核对公式、dₖ/dᵥ 记号与缩放论证的前提。')}</p></li><li>${external('Jay Alammar · The Illustrated Transformer', 'https://jalammar.github.io/illustrated-transformer/')}<p>${t('English illustrated blog · Follow the score → Softmax → weighted values calculation, then explore multiple heads.', '英文图解博客 · 顺着分数 → Softmax → value 加权计算阅读，再了解多头结构。')}</p></li><li>${external('3Blue1Brown · Attention in transformers, step-by-step', 'https://www.3blue1brown.com/lessons/attention/')} · ${external(t('Watch the original video', '观看原视频'), 'https://www.youtube.com/watch?v=eMlx5fFNoYc')}<p>${t('English video and text · Useful for geometric intuition. Its vectors are arranged as columns; this exercise follows the paper’s row-oriented QKᵀ convention. Transpose the layout when comparing diagrams.', '英文视频与文字版 · 适合建立几何直觉。视频把向量排成列；本题采用原论文以行为向量的 QKᵀ 约定。对照图示时要留意转置关系。')}</p></li></ul><p class="fineprint">${sourceNote}</p></section>`;
 
 export function renderVisualLesson(id, base = '/') {
-  const markup = { 'stable-softmax': softmax, 'attention-scaled-dot-product': attention }[id] || renderAdditionalLesson(id) || renderFrontierLesson(id) || renderRound4Lesson(id) || renderRound5Lesson(id) || renderRound6Lesson(id) || renderRound7Lesson(id) || renderRound8Lesson(id) || renderRound9Lesson(id) || renderRound10Lesson(id) || renderRound11Lesson(id) || renderRound12Lesson(id);
+  const markup = { 'stable-softmax': softmax, 'attention-scaled-dot-product': attention }[id] || renderAdditionalLesson(id) || renderFrontierLesson(id) || renderRound4Lesson(id) || renderRound5Lesson(id) || renderRound6Lesson(id) || renderRound7Lesson(id) || renderRound8Lesson(id) || renderRound9Lesson(id) || renderRound10Lesson(id) || renderRound11Lesson(id) || renderRound12Lesson(id) || renderRound13Lesson(id);
   return markup ? markup + `<script type="module" src="${escape(base)}assets/lesson-ui.js"></script>` : '';
 }
 
 export function renderLessonResources(id) {
-  return { 'stable-softmax': softmaxResources, 'attention-scaled-dot-product': attentionResources }[id] || renderAdditionalResources(id) || renderFrontierResources(id) || renderRound4Resources(id) || renderRound5Resources(id) || renderRound6Resources(id) || renderRound7Resources(id) || renderRound8Resources(id) || renderRound9Resources(id) || renderRound10Resources(id) || renderRound11Resources(id) || renderRound12Resources(id);
+  return { 'stable-softmax': softmaxResources, 'attention-scaled-dot-product': attentionResources }[id] || renderAdditionalResources(id) || renderFrontierResources(id) || renderRound4Resources(id) || renderRound5Resources(id) || renderRound6Resources(id) || renderRound7Resources(id) || renderRound8Resources(id) || renderRound9Resources(id) || renderRound10Resources(id) || renderRound11Resources(id) || renderRound12Resources(id) || renderRound13Resources(id);
 }

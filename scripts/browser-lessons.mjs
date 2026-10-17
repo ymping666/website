@@ -238,6 +238,8 @@ try {
   await checkHeadAndCrossLessons(page,base);
   const {checkPlanningLessons,checkStaticPlanningLessons}=await import('./browser-round12-checks.mjs');
   await checkPlanningLessons(page,base);
+  const {checkRlefLessons,checkStaticRlefLessons}=await import('./browser-round13-checks.mjs');
+  await checkRlefLessons(page,base);
   assert.deepEqual(errors, []);
   await context.close();
   const staticContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 375, height: 900 } });
@@ -259,6 +261,7 @@ try {
     }
   }
   await checkStaticPlanningLessons(staticPage,base);
+  await checkStaticRlefLessons(staticPage,base);
   await staticContext.close();
   console.log('PASS real browser lesson controls, mathematical golden outputs, both languages, keyboard, reset, stage highlighting, 375/768px layout and no-JS fallbacks');
 } finally { await browser.close(); }

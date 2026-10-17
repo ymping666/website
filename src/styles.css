@@ -251,3 +251,22 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .r12-prob-track>span {display:block;height:100%}
 @media(max-width:760px){.r12-models{grid-template-columns:1fr}.r12-model{padding:14px}.r12-sum{gap:12px}.r12-plot{padding:12px}.r12-verdict{grid-template-columns:1fr}.visual-lesson .r12-equations{font-size:17px}}
 @media(max-width:500px){.r12-plot text{font-size:22px}}
+/* RLEF: explicit turn histories and arithmetic, independent of model services. */
+.visual-lesson .r13-equations{font-size:18px;gap:15px}
+.r13-timeline{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.r13-turn{flex:1 1 105px;min-width:0;display:grid;gap:7px;padding:14px;border:1px solid #d9e3e8;border-radius:9px;background:#fff}
+.r13-turn small{font-size:12px;color:#65717c}.r13-turn strong{font:600 21px ui-monospace,monospace}.r13-turn>span{font-size:12px;line-height:1.6}
+.r13-success{background:#eaf6ef;border-color:#93bfa9}.r13-failure{background:#fff5ef;border-color:#ddbaa4}.r13-pending{background:#f4f6f8;color:#73808d;border-style:dashed}
+.r13-included{background:#eff4fc;border-color:#b7c8df}.r13-inspected{outline:2px solid #5b73a5;outline-offset:1px}
+.r13-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}.r13-actions button:disabled{cursor:not-allowed;opacity:.45}
+.r13-gates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.r13-gates p{padding:14px;border:1px solid #dce4e8;border-radius:8px;background:#fff}.r13-gates strong{display:block;font-size:20px;color:#3b557c}
+.r13-result{padding:18px 20px;border:1px solid #aec3d7;border-left:4px solid #607fa7;border-radius:8px;background:#f3f7fc;margin:18px 0}.r13-result>strong{font:600 20px ui-monospace,monospace}.r13-result p{margin:10px 0 0}
+.r13-step{border:1px solid #dce4e8;border-radius:9px;padding:18px;background:white;margin:16px 0;min-width:0}.r13-step h4{margin:0 0 13px;font-size:15px}.r13-step p:last-child{margin-bottom:0}
+.r13-number{font:15px/1.9 ui-monospace,Consolas,monospace;overflow-wrap:anywhere;color:#263f59}
+.r13-output{max-width:100%;overflow:auto;padding:16px;background:#f3f5f8;border-radius:8px;font-size:13px;line-height:1.65}
+.r13-flags{display:grid;gap:7px;margin:0 0 14px}.r13-flags>div{display:flex;justify-content:space-between;gap:20px;font-size:13px}.r13-flags dd{margin:0;font-weight:600;white-space:nowrap}
+.r13-table caption{font-size:12px;text-align:left;color:#647480;padding:9px 12px}.r13-table th{white-space:normal}.r13-table th,.r13-table td{font-size:13px}
+.r13-ratios{padding:16px;border:1px solid #dce4e8;border-radius:9px;background:white;margin:18px 0}.r13-ratios figcaption{font-size:13px;font-weight:600;margin-bottom:14px}
+.r13-ratio{display:grid;grid-template-columns:22px minmax(0,1fr) 85px;gap:12px;align-items:center;margin:10px 0;font-size:12px}.r13-ratio output{text-align:right;font-family:ui-monospace,monospace}
+.r13-signed-track{position:relative;height:17px;background:linear-gradient(to right,#f7eeeb 50%,#eaf3f1 50%);border-radius:4px;overflow:hidden}.r13-signed-track:after{content:'';position:absolute;left:50%;height:100%;border-left:1px solid #697c87}.r13-signed-track>span{position:absolute;height:100%}.r13-negative{background:#b96d4c}.r13-positive{background:#338d7c}
+@media(max-width:650px){.visual-lesson .r13-equations{font-size:17px}.r13-gates{grid-template-columns:1fr}.r13-step,.r13-ratios{padding:14px}.r13-number{font-size:14px}.r13-timeline{gap:9px}.r13-turn{flex-basis:95px;padding:12px}.r13-ratio{grid-template-columns:18px minmax(0,1fr) 75px;gap:7px}}

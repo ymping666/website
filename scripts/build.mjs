@@ -12,6 +12,8 @@ import {policyPages,additionalPolicyPaths} from '../src/policy-pages.mjs';
 import {siteAdsense} from './adsense.mjs';
 import {nextPractice, practicePath as nextPracticePath} from '../src/practice.mjs';
 import {renderVisualLesson,renderLessonResources} from '../src/visual-lessons.mjs';
+import {assertVisualEditorialCoverage,assertBuiltVisualEditorial} from './visual-editorial-policy.mjs';
+const visualEditorialIds=assertVisualEditorialCoverage(problems);
 import {typesetVisualLesson} from '../src/lesson-notation.mjs';
 import {typesetFlowPage} from '../src/flow-notation.mjs';
 import {typesetPracticePage} from '../src/practice-notation.mjs';
@@ -164,7 +166,7 @@ await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));
 for (const name of ['site-search.mjs','site-search-ui.js']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await writeFile(join(out,'assets/search-index.json'),JSON.stringify(buildSearchIndex({problems,concepts,practiceSets,practiceCollections,tracks,translate:chinese.translate})));
-for (const name of ['lesson-ui.js','lesson-math.mjs','lesson-ui-extra.js','lesson-diagrams.mjs','lesson-notation.mjs','lesson-ui-frontier.js','lesson-frontier-math.mjs','lesson-frontier-view.mjs','lesson-ui-round4.js','lesson-round4-math.mjs','lesson-round4-view.mjs','lesson-ui-round5.js','lesson-round5-math.mjs','lesson-round5-view.mjs','lesson-ui-round6.js','lesson-round6-math.mjs','lesson-round6-view.mjs','lesson-ui-round7.js','lesson-round7-math.mjs','lesson-round7-view.mjs','lesson-ui-round8.js','lesson-round8-math.mjs','lesson-round8-view.mjs','lesson-ui-round9.js','lesson-round9-math.mjs','lesson-round9-view.mjs','lesson-ui-round10.js','lesson-round10-math.mjs','lesson-round10-view.mjs','lesson-ui-round11.js','lesson-round11-math.mjs','lesson-round11-view.mjs','lesson-ui-round12.js','lesson-round12-math.mjs','lesson-round12-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
+for (const name of ['lesson-ui.js','lesson-math.mjs','lesson-ui-extra.js','lesson-diagrams.mjs','lesson-notation.mjs','lesson-ui-frontier.js','lesson-frontier-math.mjs','lesson-frontier-view.mjs','lesson-ui-round4.js','lesson-round4-math.mjs','lesson-round4-view.mjs','lesson-ui-round5.js','lesson-round5-math.mjs','lesson-round5-view.mjs','lesson-ui-round6.js','lesson-round6-math.mjs','lesson-round6-view.mjs','lesson-ui-round7.js','lesson-round7-math.mjs','lesson-round7-view.mjs','lesson-ui-round8.js','lesson-round8-math.mjs','lesson-round8-view.mjs','lesson-ui-round9.js','lesson-round9-math.mjs','lesson-round9-view.mjs','lesson-ui-round10.js','lesson-round10-math.mjs','lesson-round10-view.mjs','lesson-ui-round11.js','lesson-round11-math.mjs','lesson-round11-view.mjs','lesson-ui-round12.js','lesson-round12-math.mjs','lesson-round12-view.mjs','lesson-ui-round13.js','lesson-round13-math.mjs','lesson-round13-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/i18n.js',import.meta.url),join(out,'assets/i18n.js'));
 await mkdir(join(out,'assets/locales'),{recursive:true});
 await copyFile(new URL('../src/locales/zh-ui.mjs',import.meta.url),join(out,'assets/locales/zh-ui.mjs'));
@@ -180,4 +182,8 @@ if(origin){
  await writeFile(join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.flatMap(x=>[x,'/zh'+x]).map(x=>`<url><loc>${e(origin+pathHref(x))}</loc></url>`).join('')}</urlset>`);
  await writeFile(join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${origin+pathHref('/sitemap.xml')}\n`);
 }else{await writeFile(join(out,'robots.txt'),'User-agent: *\nAllow: /\n');}
+for(const locale of ['en','zh'])for(const id of visualEditorialIds){
+ const html=await readFile(join(out,locale==='zh'?'zh':'','editorials',id,'index.html'),'utf8');
+ assertBuiltVisualEditorial(html,id,locale);
+}
 console.log(`Built ${2*(11+labPaths.length+additionalPolicyPaths.length+practiceSets.length+practiceCollections.length+tracks.length+concepts.length+2*problems.length)} bilingual HTML routes (including ${problems.length} challenge/editorial pairs per language).`);
