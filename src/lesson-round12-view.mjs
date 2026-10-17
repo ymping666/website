@@ -4,10 +4,10 @@ export const t=(en,zh)=>{round12Translations[en]=zh;return en;};
 export const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const L={
  modelA:t('Model A','模型 A'),modelB:t('Model B','模型 B'),inputs:t('Inputs and standard deviations','输入及标准差'),probabilities:t('Probabilities by time step','逐时间步的概率'),
- action:t('Action','动作'),truth:t('True cost','真实代价'),prediction:t('Predicted cost','预测代价'),error:t('Squared error','平方误差'),selected:t('Selected','已选中'),best:t('Lowest true cost','最低真实代价'),
+ action:t('Action','动作'),truth:t('True cost','真实代价'),prediction:t('Predicted cost','预测代价'),error:t('Squared error','平方误差'),selected:t('Chosen action','选中动作'),best:t('Lowest true cost','最低真实代价'),
  choose:t('1 · Choose by predicted cost','1 · 按预测代价选动作'),execute:t('2 · Look up its true cost','2 · 查找该动作的真实代价'),regret:t('3 · Subtract the true optimum','3 · 减去真实最优代价'),
  mse:t('Average over all actions','对全部动作取平均'),lowerMse:t('Lower forecast MSE','预测 MSE 更低'),lowerRegret:t('Lower planning regret','规划 regret 更低'),tie:t('Tie','平局'),
- legend:t('Selected marks the action this model would execute. The true optimum is shown separately; lower cost is better.','“已选中”表示该模型会执行的动作。真实最优值单独展示；代价越低越好。'),
+ legend:t('Chosen action marks the action this model would execute. The true optimum is shown separately; lower cost is better.','“选中动作”表示该模型会执行的动作。真实最优值单独展示；代价越低越好。'),
  precision:t('Tables and diagrams show up to 6 decimals; function output retains full numeric values. Choices and comparisons use unrounded values.','表格与图示最多显示 6 位小数；函数输出保留完整数值。选择与比较使用未舍入值。'),
  output:t('Function output','函数输出'),mean:t('Mean cost','平均代价'),variance:t('Variance','方差'),std:t('Standard deviation','标准差'),penalty:t('Risk penalty','风险惩罚'),score:t('Selection score','选择分数'),
  curve:t('How each action’s score changes with risk weight','各动作的选择分数随风险权重的变化'),weight:t('Risk weight λ','风险权重 λ'),

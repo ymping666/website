@@ -9,6 +9,14 @@ import '../src/visual-lessons-round12.mjs';
 import {originalMathText} from '../src/lesson-notation.mjs';
 import {decodeHtml,loadChinese} from './localize.mjs';
 import {siteRoot,siteBase,pythonCommand} from './config.mjs';
+// The build merges translation dictionaries globally. New lessons must not
+// change existing labels while their browser modules retain older wording.
+const previousTranslations={};
+for(const name of ['extra','frontier',...Array.from({length:8},(_,i)=>'round'+(i+4))]){
+ const module=await import('../src/visual-lessons-'+name+'.mjs');
+ for(const[key,value]of Object.entries(module))if(key.endsWith('Translations'))Object.assign(previousTranslations,value);
+}
+for(const[key,value]of Object.entries(round12Translations))if(key in previousTranslations)assert.equal(value,previousTranslations[key],'Translation collision: '+key);
 const cases=[],traces={forecast:forecastTrace,risk:riskTrace,cem:cemTrace};
 function add(kind,args){const before=JSON.stringify(args),trace=traces[kind](...args);assert.equal(JSON.stringify(args),before);cases.push({kind,args,trace});}
 for(const p of Object.values(forecastPresets))for(let a=-8;a<=8;a++)add('forecast',[{...p.a,a:p.a.a+a/4},p.b,p.truth]);
@@ -89,6 +97,7 @@ for(const c of cases.slice(0,controls))for(const zh of [false,true]){
  }
 }
 const chinese=await loadChinese();
+assert.equal(chinese.translate('Selected'),'选中','Existing MPC static label must still match its browser module');
 for(const locale of ['','zh/'])for(const [kind,id]of Object.entries(ids)){
  const html=await readFile(join(siteRoot,locale,'editorials',id,'index.html'),'utf8');
  const visual=html.indexOf('<section class="visual-lesson"'),code=html.indexOf('<pre class="code-pre">'),tests=html.indexOf(locale?'代表性测试':'Representative tests'),sources=html.indexOf('<section class="lesson-resources">');
