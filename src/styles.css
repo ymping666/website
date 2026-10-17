@@ -211,3 +211,43 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .lesson-formula mtd:last-child{text-align:left}
 .lesson-math[data-notation]:not([display="block"]){display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:.12em 0;vertical-align:-.15em;font-size:1em;scrollbar-width:thin}
 @media(max-width:650px){.lesson-formula,.lesson-formula.lesson-equations,.lesson-formula.flow-equations{font-size:16px;padding:18px 14px}.flow-contract .flow-math-block{font-size:16px}.flow-symbol-key{font-size:13px!important}}
+/* Round 12: cost decisions and categorical planning, scoped to editorials. */
+.visual-lesson .r12-equations {font-size:18px;gap:15px}
+.r12-models {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.r12-model,.r12-risk-card {min-width:0;border:1px solid #dce5e5;border-radius:10px;padding:18px;background:white}
+.r12-model h4,.r12-risk-card h4 {margin:0 0 12px}
+.r12-table caption {text-align:left;font-size:13px;color:#68757d;padding:8px 0}
+.r12-table th,.r12-table td {font-size:14px;padding:10px 12px}
+.r12-model .r12-table {table-layout:fixed}
+.r12-model .r12-table th,.r12-model .r12-table td {white-space:normal;overflow-wrap:anywhere;font-size:13px;padding:9px 6px}
+.r12-picked {background:#eaf5f1}
+.r12-decision {list-style:none;padding:0!important;display:grid;gap:8px;margin:16px 0 0}
+.r12-decision li {display:grid;gap:5px;border-left:3px solid #74a69a;padding:10px 12px;background:#f7faf9;margin:0}
+.r12-decision span {font-size:13px;color:#576971}
+.r12-decision strong {font-family:var(--font-mono,monospace);font-size:15px;overflow-wrap:anywhere}
+.r12-verdict {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.r12-verdict p {margin:0;padding:13px 16px;border:1px solid #ceded9;border-radius:8px;font-size:15px}
+.r12-verdict strong {display:block;font-size:23px;color:#147d73}
+.r12-output {font-size:13px;line-height:1.65;padding:16px;background:#f4f6f8;border-radius:8px;overflow:auto;max-width:100%}
+.r12-plot {margin:18px 0;padding:16px;background:white;border:1px solid #dce5e5;border-radius:10px}
+.r12-plot figcaption {font-size:16px;font-weight:600}
+.r12-plot svg {display:block;width:100%;max-width:700px;margin:10px auto;height:auto;overflow:visible}
+.r12-plot text {font:13px system-ui,sans-serif;fill:#54636b}
+.r12-grid {stroke:#e4e8ee;stroke-width:1;fill:none}
+.r12-current {stroke:#66717e;stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+.r12-legend {display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:14px}
+.r12-legend span {display:flex;align-items:center;gap:7px}
+.r12-legend span:before {content:'';width:24px;height:3px;background:var(--r12-color)}
+.r12-risk-cards {display:grid;gap:12px;margin-top:16px}
+.r12-risk-card {border-left:4px solid var(--r12-color)}
+.r12-risk-card.r12-picked {background:#eaf5f1;outline:1px solid #7cac9e}
+.r12-sum {display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.r12-sum div {display:grid;gap:7px}
+.r12-sum small {font-size:13px;color:#53646f}
+.r12-sum strong {font-size:16px;font-family:var(--font-mono,monospace)}
+.r12-action {display:inline-grid;place-items:center;min-width:30px;min-height:30px;background:var(--r12-color);color:white;font-weight:600;border-radius:5px}
+.r12-column {box-shadow:inset 2px 0 #7950b6,inset -2px 0 #7950b6;background:#f3effa}
+.r12-prob-track {display:block;height:9px;width:100%;min-width:65px;background:#e6eaf0;border-radius:5px;margin-top:7px;overflow:hidden}
+.r12-prob-track>span {display:block;height:100%}
+@media(max-width:760px){.r12-models{grid-template-columns:1fr}.r12-model{padding:14px}.r12-sum{gap:12px}.r12-plot{padding:12px}.r12-verdict{grid-template-columns:1fr}.visual-lesson .r12-equations{font-size:17px}}
+@media(max-width:500px){.r12-plot text{font-size:22px}}
