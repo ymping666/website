@@ -1,3 +1,4 @@
+import {mountRound19Lesson} from './lesson-ui-round19.js';
 import {mountRound18Lesson} from './lesson-ui-round18.js';
 import {mountRound17Lesson} from './lesson-ui-round17.js';
 import { softmaxTrace, attentionTrace, formatNumber as f, formatVector as vector } from './lesson-math.mjs';
@@ -124,5 +125,6 @@ if (root) {
     mountRound16Lesson(root);
     mountRound17Lesson(root);
     mountRound18Lesson(root);
+    mountRound19Lesson(root);
   }
 }
