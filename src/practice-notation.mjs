@@ -3,6 +3,7 @@ import {mathExpression,mathTokens,mathMarkup,escapeMath,identifier} from './math
 import {typesetMathText} from './lesson-notation.mjs';
 import {typesetFormulaCards} from './formula-cards.mjs';
 import {specialExpressions} from './practice-notation-special.mjs';
+import {typesetGateCalculation} from './gate-statement.mjs';
 
 // These are expressions in the existing contracts, not inferred new formulas.
 export const practiceExpressions={
@@ -93,6 +94,7 @@ const atomBody=s=>identifier(s==='x0'?'x₀':s==='x1'?'x₁':s);
 export function typesetPracticePage(html,path){
   const match=/^\/(problems|editorials)\/([^/]+)\/$/.exec(path);
   if(!match||!problems.some(p=>p.id===match[2]))return html;
+  if(match[1]==='problems'&&match[2]==='dit-adaln-zero-gate')html=typesetGateCalculation(html);
   html=typesetFormulaCards(html,match[2]);
   const start=html.indexOf('<main '),end=html.indexOf('</main>',start);if(start<0||end<0)return html;
   const entry=catalog.get(match[2]);
