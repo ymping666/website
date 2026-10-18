@@ -303,3 +303,43 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .r14-point{fill:#148271;stroke:white;stroke-width:2}
 .r14-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#148271}
 @media(max-width:700px){.r14-chain-grid,.r14-two-up{grid-template-columns:1fr}.r14-chain>li,.r14-probability,.r14-curve{padding:.75rem}.r14-curve svg{min-width:0}.r14-curve svg text{font-size:26px}.r14-curve{margin-inline:0}}
+/* Original forward/backward worked examples. */
+.r15-route{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .65rem;padding:.8rem 0;margin-bottom:.8rem;font-size:.85rem}
+.r15-route a[aria-current]{font-weight:750;text-decoration:none;color:#36435a;background:#edf2f6;border-radius:5px;padding:.2rem .4rem}
+.visual-lesson .r15-equations{font-size:1rem;gap:.85rem;padding:1rem 1.2rem}
+.r15-output{background:#f3f6f9;padding:1rem;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem}
+.r15-card{min-width:0;border:1px solid #dfe5eb;border-radius:10px;background:#fff;padding:.85rem 1rem;margin:.65rem 0}
+.r15-card h4{font-size:.95rem;margin:0 0 .65rem;line-height:1.55}
+.r15-card p{margin:.4rem 0;overflow-wrap:anywhere}
+.r15-card samp,.r15-path samp{font-size:.9rem;overflow-wrap:anywhere}
+.r15-equation{font-family:ui-monospace,Consolas,monospace;font-size:.95rem!important}
+.r15-equation output{font-weight:750;color:#147d64}
+.r15-terms{display:flex;flex-wrap:wrap;gap:.65rem}
+.r15-terms>.r15-card,.r15-path{flex:1 1 145px;min-width:0;padding:.75rem;border:1px solid #e0e5eb;border-radius:9px}
+.r15-terms>.r15-card{margin:0}
+.r15-path{background:#f6f8fb;font-size:.9rem}
+.r15-path p{margin:.4rem 0}
+.r15-path small{color:#7b4c9d;font-weight:700}
+.r15-bias{background:#f5f0fb}
+.r15-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
+.r15-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+.r15-matrix td small{display:block;white-space:nowrap;color:#72808e;font-size:.8rem}
+.r15-matrix .r15-focus{background:#eef7f4}
+.r15-matrix .r15-cell{background:#eee7fa;box-shadow:inset 0 0 0 2px #8b69b0;font-weight:700}
+.r15-gate-flow{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1.25fr) 18px minmax(0,1fr);gap:.5rem;align-items:center;margin:1rem 0}
+.r15-gate-flow .r15-card{height:100%;margin:0}
+.r15-gate-flow strong{font-size:1.1rem}
+.r15-open{background:#eef8f4;border-color:#74b39b}
+.r15-closed{background:#f5f1f9;border-color:#baa7d0}
+.r15-arrow{font-size:1.2rem;color:#687789;text-align:center}
+.r15-chart{margin:1rem 0;border:1px solid #dfe5eb;border-radius:12px;padding:1rem;background:#fafbfd}
+.r15-chart figcaption{font-weight:700;line-height:1.6}
+.r15-chart svg{display:block;width:100%;height:auto;font:14px ui-monospace,Consolas,monospace;fill:#526378}
+.r15-axis{fill:none;stroke:#a7b3c1;stroke-width:1.5}
+.r15-curve{fill:none;stroke:#8865ad;stroke-width:3;stroke-linejoin:round}
+.r15-dashed{fill:none;stroke:#516b86;stroke-width:2;stroke-dasharray:5 5}
+.r15-probe{stroke:white;stroke-width:2;fill:#13816c}
+.r15-probe-1{fill:#9e65a5}
+.r15-key-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#13816c;margin-right:.2rem}
+.r15-purple{background:#9e65a5}
+@media(max-width:700px){.r15-three,.r15-two,.r15-gate-flow{grid-template-columns:1fr}.r15-card,.r15-chart{padding:.75rem}.r15-gate-flow .r15-card{height:auto}.r15-arrow{transform:rotate(90deg)}.r15-chart svg text{font-size:28px}.r15-probe{r:8px}.visual-lesson .r15-equations{font-size:.95rem}.r15-route{font-size:.8rem}}
