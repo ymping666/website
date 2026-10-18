@@ -249,6 +249,8 @@ try {
   await checkNormalizationLessons(page,base);
   await page.setViewportSize({width:375,height:900});
   await checkNormalizationLessons(page,base);
+  const {checkRound17Lessons,checkStaticRound17Lessons}=await import('./browser-round17-checks.mjs');
+  await checkRound17Lessons(page,base);
   const {checkCalculationLayouts}=await import('./browser-calculation-checks.mjs');
   await checkCalculationLayouts(page,base);
   assert.deepEqual(errors, []);
@@ -276,6 +278,7 @@ try {
   await checkStaticConstitutionalLessons(staticPage,base);
   await checkStaticGradientLessons(staticPage,base);
   await checkStaticNormalizationLessons(staticPage,base);
+  await checkStaticRound17Lessons(staticPage,base);
   await staticContext.close();
   console.log('PASS real browser lesson controls, mathematical golden outputs, both languages, keyboard, reset, stage highlighting, 375/768px layout and no-JS fallbacks');
 } finally { await browser.close(); }

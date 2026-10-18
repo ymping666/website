@@ -39,9 +39,6 @@
   "gan-discriminator-bce",
   "gan-generator-nonsaturating",
   "gan-gradient-penalty",
-  "diffusion-linear-beta",
-  "diffusion-alpha-bar",
-  "diffusion-noise-mse",
   "diffusion-classifier-guidance",
   "cnn-zero-padded-convolution",
   "cnn-pointwise-projection",
@@ -51,8 +48,6 @@
   "norm-batch-inference",
   "optimizer-adamw-update",
   "rope-position-encoding",
-  "transformer-swiglu",
-  "attention-key-padding-mask",
   "diffusion-ddpm-stochastic-step",
   "gan-discriminator-logit-gradients"
 ]
