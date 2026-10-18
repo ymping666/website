@@ -343,3 +343,88 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .r15-key-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#13816c;margin-right:.2rem}
 .r15-purple{background:#9e65a5}
 @media(max-width:700px){.r15-three,.r15-two,.r15-gate-flow{grid-template-columns:1fr}.r15-card,.r15-chart{padding:.75rem}.r15-gate-flow .r15-card{height:auto}.r15-arrow{transform:rotate(90deg)}.r15-chart svg text{font-size:28px}.r15-probe{r:8px}.visual-lesson .r15-equations{font-size:.95rem}.r15-route{font-size:.8rem}}
+/* Normalization and residual walkthroughs: shared statistics, branch and bypass. */
+.r16-route { display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0; }
+.r16-route a { padding:.4rem .65rem; border:1px solid #dbe3e8; border-radius:7px; font-size:.9rem; }
+.r16-route a[aria-current=page] { background:#edf7f4; border-color:#75afa0; }
+.r16-card { min-width:0; padding:1rem; border:1px solid #dbe3e8; border-radius:10px; background:#fff; }
+.r16-card h4 { margin:0 0 .75rem; font-size:.98rem; line-height:1.55; }
+.r16-card p { margin:.5rem 0; overflow-wrap:anywhere; }
+.r16-three { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.7rem; margin:1rem 0; }
+.r16-flow { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:.5rem; margin:1rem 0; }
+.r16-flow > .r16-card { align-self:stretch; }
+.r16-arrow { color:#6f718b; font-size:1.25rem; text-align:center; }
+.r16-vector { display:flex; flex-direction:column; gap:.5rem; margin:.5rem 0; min-width:0; }
+.r16-vector > span { color:#526474; font-size:.9rem; }
+.r16-vector > div { display:flex; flex-wrap:wrap; gap:.4rem; min-width:0; }
+.r16-chip { display:inline-flex; flex-direction:column; gap:.2rem; border:1px solid #dbe3e8; border-radius:7px; padding:.35rem .5rem; background:#f8fafc; }
+.r16-chip small { color:#68778a; font-size:.72rem; }
+.r16-chip samp { font-size:.88rem; overflow-wrap:anywhere; }
+.r16-picked { border-color:#8875c6; background:#f3effd; }
+.r16-call-order { display:flex; flex-wrap:wrap; align-items:center; gap:.65rem; padding:.8rem; background:#f5f3fc; border-radius:8px; margin:1rem 0; }
+.r16-call-order > span:first-child { flex-basis:100%; font-size:.9rem; color:#526474; }
+.r16-bypass { border:1px solid #90b8a8; border-left:4px solid #36856d; border-radius:9px; padding:.6rem 1rem; background:#f1f9f5; margin:1rem 0; }
+.r16-branch { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:.6rem; margin:1rem 0; }
+.r16-state { padding:.75rem 1rem; border-radius:8px; background:#f5f3fc; }
+.r16-identity { background:#f1f9f5; border:1px solid #90b8a8; }
+.r16-highlight { background:#f3effd; }
+.r16-equation { font-size:1rem; line-height:1.8; font-variant-numeric:tabular-nums; }
+.r16-output { max-height:18rem; overflow:auto; font-size:.9rem; padding:.8rem; background:#f5f7fa; border-radius:8px; }
+.r16-equations math { font-size:1rem; }
+.r16-gate-story { margin:1.2rem 0; }
+.r16-gate-story figcaption { display:flex; align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
+.r16-gate-channel { padding:.25rem .6rem; border-radius:6px; background:#f0edf9; color:#61518c; font-size:.85rem; }
+.r16-gate-story .r16-gate-scope { margin:.5rem 0 1rem; color:#637381; font-size:.88rem; }
+.r16-gate-step { border:1px solid #e3deee; border-radius:12px; padding:1rem; background:#f8f6fc; }
+.r16-gate-step h4 { display:flex; align-items:center; gap:.6rem; margin:0 0 1rem; font-size:.98rem; line-height:1.5; }
+.r16-gate-step-number { display:grid; place-items:center; flex:none; width:1.6rem; height:1.6rem; background:#e9e2f6; color:#65518f; border-radius:50%; font-size:.85rem; }
+.r16-gate-arithmetic { display:grid; grid-template-columns:minmax(0,1fr) 1.7rem minmax(0,1fr) 1.7rem minmax(0,1fr); align-items:stretch; gap:.3rem; }
+.r16-gate-node { display:flex; flex-direction:column; align-items:center; gap:.35rem; min-width:0; padding:.75rem .3rem; border:1px solid #e2e5ed; border-radius:9px; background:#fff; text-align:center; }
+.r16-gate-label { color:#526475; font-size:.85rem; line-height:1.5; }
+.r16-gate-symbol { color:#7d8492; font-family:Georgia,serif; font-style:italic; font-size:.9rem; }
+.r16-gate-symbol sub { font-size:.7em; }
+.r16-gate-node samp,.r16-gate-node output { margin-top:auto; font-size:1.35rem; font-weight:600; line-height:1.4; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; max-width:100%; }
+.r16-gate-update,.r16-gate-carried { border-color:#c6b6e5; background:#f1ebfb; color:#685098; }
+.r16-gate-operator { display:grid; place-items:center; color:#737e8b; font-size:1.4rem; }
+.r16-gate-story .r16-gate-carry { display:flex; align-items:center; justify-content:center; gap:.5rem; margin:.5rem 0; color:#74628f; font-size:.85rem; }
+.r16-gate-carry > span:first-child { font-size:1.3rem; }
+.r16-gate-step-merge { border-color:#d4e6de; background:#f4f9f6; }
+.r16-gate-step-merge .r16-gate-step-number { background:#deeee6; color:#387c64; }
+.r16-gate-input,.r16-gate-final { border-color:#b4d4c6; color:#296f57; }
+.r16-gate-final { background:#e9f5ee; }
+.r16-gate-story .r16-gate-takeaway { margin:.9rem 0 0; padding-left:.8rem; border-left:3px solid #a997c8; color:#526475; font-size:.94rem; }
+.lesson-calc-transition { grid-template-columns:minmax(0,1fr) 1.7rem minmax(0,1fr); }
+.lesson-calc-vector samp { font-size:.96rem; white-space:pre-wrap; }
+.lesson-calc-context { margin:.8rem 0 1.2rem; padding:.75rem 1rem; border:1px solid #e0e6eb; border-radius:10px; background:#f8fafb; }
+.lesson-calc-context > div { display:grid; grid-template-columns:minmax(130px,.9fr) minmax(0,1.5fr); gap:.8rem; padding:.45rem 0; align-items:center; }
+.lesson-calc-context dt { color:#62717e; font-size:.88rem; }
+.lesson-calc-context dd { margin:0; overflow-wrap:anywhere; font-size:.94rem; }
+.lesson-calc-context samp { white-space:pre-wrap; }
+.lesson-calc-context math { font-size:1rem; }
+.lesson-calc-hint { font-size:.87rem; margin:.5rem 0 .8rem!important; color:#657180; }
+.lesson-calc-branches { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; }
+.lesson-calc-branches .r16-gate-step { padding:.7rem; }
+.lesson-calc-branches .r16-gate-arithmetic { grid-template-columns:minmax(0,1fr) 1rem minmax(0,1fr) 1rem minmax(0,1fr); gap:.15rem; }
+.lesson-calc-branches .r16-gate-node samp,.lesson-calc-branches .r16-gate-node output { font-family:ui-monospace,Consolas,monospace; font-size:var(--calc-mobile-font,1.08rem); white-space:nowrap; }
+@media(max-width:650px) {
+ .r16-three,.r16-flow,.r16-branch { grid-template-columns:minmax(0,1fr); }
+ .r16-flow > .r16-arrow,.r16-branch > .r16-arrow { transform:rotate(90deg); }
+ .r16-call-order { display:grid; grid-template-columns:minmax(0,1fr); }
+ .r16-call-order > .r16-arrow { transform:rotate(90deg); }
+ .r16-card { padding:.8rem; }
+ .r16-equation,.r16-equations math { font-size:.94rem; }
+ .r16-gate-step { padding:.7rem .5rem; }
+ .r16-gate-step h4 { font-size:.91rem; gap:.4rem; margin-bottom:.8rem; }
+ .r16-gate-arithmetic { grid-template-columns:minmax(0,1fr) 1rem minmax(0,1fr) 1rem minmax(0,1fr); gap:.15rem; }
+ .r16-gate-label { font-size:.78rem; }
+ .r16-gate-node samp,.r16-gate-node output { font-size:1.08rem; }
+ .r16-gate-symbol { font-size:.8rem; }
+ .r16-gate-operator { font-size:1.1rem; }
+ .lesson-calc-transition { grid-template-columns:minmax(0,1fr) 1rem minmax(0,1fr); }
+ .lesson-calc-context { padding:.5rem .7rem; }
+ .lesson-calc-context > div { grid-template-columns:minmax(0,1fr); gap:.2rem; }
+ .lesson-calc-context math { font-size:.94rem; }
+ .lesson-calc-branches { grid-template-columns:minmax(0,1fr); }
+ .lesson-calc-vector samp { font-size:.88rem; }
+ .lesson-calculation .r16-gate-node:not(.lesson-calc-vector) > samp,.lesson-calculation .r16-gate-node > output { font-family:ui-monospace,Consolas,monospace; font-size:var(--calc-mobile-font,1.08rem); white-space:nowrap; }
+}

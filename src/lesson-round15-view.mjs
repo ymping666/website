@@ -1,5 +1,6 @@
 import {formatNumber as f} from './lesson-math.mjs';
 import {scalarFunctions} from './lesson-round15-math.mjs';
+import {calcNode,calcLine,calcStep,calcStory,calcCarry,calcEqual} from './lesson-calculation-view.mjs';
 export const round15Translations={};
 export const t=(en,zh)=>{round15Translations[en]=zh;return en;};
 export const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -35,7 +36,15 @@ const L={
  calls:t('The tested helper makes exactly two function calls. The curve is drawn with separate display samples.','被测辅助函数恰好调用 f 两次；曲线使用另外的展示采样绘制。'),
  arithmetic:t('Read rise divided by run','纵向变化量除以横向距离'),analytic:t('Analytic derivative at x','x 处的解析导数'),error:t('Absolute numerical error','数值估计的绝对误差'),
  kink:t('No derivative exists here. A centered estimate of 0 does not establish differentiability.','该点不存在导数；中心差分估计为 0，不能证明这里可微。'),
- precision:t('Most labels use up to 6 decimals; tiny nonzero values use scientific notation. Probe coordinates and component outputs retain full precision.','多数标签最多保留 6 位小数；微小非零值使用科学计数法。探测坐标与组件输出保留完整精度。')
+ precision:t('Most labels use up to 6 decimals; tiny nonzero values use scientific notation. Probe coordinates and component outputs retain full precision.','多数标签最多保留 6 位小数；微小非零值使用科学计数法。探测坐标与组件输出保留完整精度。'),
+ reluStory:t('Choose the mask, then multiply the upstream gradient','先确定开关，再乘上游梯度'),inspectCoordinate:t('Current coordinate','当前坐标'),
+ reluDecision:t('Use the forward input to choose 0 or 1','由前向输入决定取 0 还是 1'),reluProduct:t('Multiply the upstream gradient by this mask','用这个开关乘上游梯度'),
+ forwardValue:t('Forward input','前向输入'),origin:t('Zero threshold','零阈值'),localMask:t('Local mask','局部开关'),givenGradient:t('Upstream gradient','上游梯度'),returnedGradient:t('Returned gradient','返回梯度'),
+ carryMask:t('Use the same mask below; the upstream sign does not change it','把同一个开关带到下方；上游梯度的正负不改变开关'),
+ mseStory:t('One residual feeds two different calculations','一份残差，分清两条计算路径'),mseResidual:t('Subtract target from prediction','预测值减去目标值'),predictionValue:t('Prediction','预测值'),targetValue:t('Target value','目标值'),residualValue:t('Signed residual','带符号残差'),
+ lossBranch:t('Loss path: square the residual','损失路径：将残差平方'),gradientBranch:t('Gradient path: divide 2r by n','梯度路径：用 2r 除以 n'),squaredValue:t('Squared residual','残差平方'),twiceValue:t('Twice the residual','两倍残差'),elementCount:t('Element count','元素总数'),
+ mseFork:t('Both paths read r above. The gradient does not use the squared residual.','下面两条路径都读取上面的残差 r；梯度不读取残差平方。'),
+ lossMean:t('This square contributes to the loss. Average all coordinates’ squares to obtain L.','这一平方项参与损失计算；对所有坐标的平方项取均值，才得到 L。'),gradientTwice:t('Gradient numerator','梯度分子')
 };
 const say=(k,zh)=>zh?round15Translations[L[k]]:L[k];
 const vector=v=>JSON.stringify(v);
@@ -66,11 +75,19 @@ export function renderBackward(tr,i=0,o=0,zh=false){
 export function renderMse(tr,i=0,zh=false){
  const p=tr.p[i],target=tr.t[i],other=tr.squares.reduce((a,b)=>a+b,0)-tr.squares[i],xmin=Math.min(p,target)-2,xmax=Math.max(p,target)+2;
  const points=Array.from({length:81},(_,j)=>{const z=xmin+(xmax-xmin)*j/80;return [z,(other+(z-target)**2)/tr.n];});points.push([target,other/tr.n],[p,tr.loss]);points.sort((a,b)=>a[0]-b[0]);
- return `<p>n = ${tr.n}; <span>${say('loss',zh)}</span>: ${code(tr.loss)}</p><div class="r15-three">${card(say('residual',zh),`<p>p[${i}] − t[${i}]</p><p>${n(p)} − (${n(target)}) = ${code(tr.residuals[i])}</p>`)}${card(say('square',zh),`<p>r² = (${n(tr.residuals[i])})²</p><p>${code(tr.squares[i])}</p>`)}${card(say('gradient',zh),`<p>2r / n</p><p>2 × (${n(tr.residuals[i])}) / ${tr.n} = <output id="mse-number">${n(tr.output[i])}</output></p>`)}</div>${chart(points,[[p,tr.loss]],say('mseCurve',zh),'p',zh,false,target)}<p class="r15-key"><span class="r15-key-dot"></span> p[${i}] = ${n(p)}; t[${i}] = ${n(target)}; L = ${n(tr.loss)}</p><p>${say('mseLegend',zh)}</p><p class="fineprint">${say('mseOther',zh)}</p><p class="lesson-warning">${say(tr.output[i]>0?'positive':tr.output[i]<0?'negative':'zeroGrad',zh)}</p>${table(['i',say('pred',zh),say('target',zh),'r','r²',say('grad',zh)],tr.p.map((v,j)=>[j,v,tr.t[j],tr.residuals[j],tr.squares[j],tr.output[j]]),say('mseTable',zh))}<p>${say('repeat',zh)}</p>${result('mse-gradient-output',tr.output,zh)}`;
+ const node=(key,symbol,value,opts={})=>calcNode(say(key,zh),symbol,value,{index:i,...opts}),r=tr.residuals[i];
+ const residual=calcStep(1,say('mseResidual',zh),calcLine([node('predictionValue','p',p,{tone:'input',key:'mse-p'}),node('targetValue','t',target,{key:'mse-t'}),node('residualValue','r',r,{tone:'update',key:'mse-r'})],['−',calcEqual(p,target,r)],say('mseResidual',zh)));
+ const loss=calcStep('2A',say('lossBranch',zh),calcLine([node('residualValue','r',r,{tone:'carried',key:'mse-loss-r'}),node('residualValue','r',r,{tone:'carried'}),node('squaredValue','r²',tr.squares[i],{key:'mse-square'})],['×',calcEqual(r,tr.squares[i])],say('lossBranch',zh))+`<p class="lesson-calc-hint">${say('lossMean',zh)}</p>`);
+ const gradient=calcStep('2B',say('gradientBranch',zh),`<p class="lesson-calc-hint"><span>${say('gradientTwice',zh)}</span>: 2 × (${n(r)}) ≈ ${n(2*r)}</p>`+calcLine([node('twiceValue','2r',2*r,{tone:'carried',key:'mse-two-r'}),node('elementCount','n',tr.n,{index:null,key:'mse-n'}),node('returnedGradient','g',tr.output[i],{tone:'final',id:'mse-number'})],['÷',calcEqual(2*r,tr.n,tr.output[i])],say('gradientBranch',zh)),true);
+ const visual=calcStory(say('mseStory',zh),say('inspectCoordinate',zh),i,residual+`<p class="lesson-calc-hint">${say('mseFork',zh)}</p><div class="lesson-calc-branches">${loss}${gradient}</div>`);
+ return `<p>n = ${tr.n}; <span>${say('loss',zh)}</span>: ${code(tr.loss)}</p>${visual}${chart(points,[[p,tr.loss]],say('mseCurve',zh),'p',zh,false,target)}<p class="r15-key"><span class="r15-key-dot"></span> p[${i}] = ${n(p)}; t[${i}] = ${n(target)}; L = ${n(tr.loss)}</p><p>${say('mseLegend',zh)}</p><p class="fineprint">${say('mseOther',zh)}</p><p class="lesson-warning">${say(tr.output[i]>0?'positive':tr.output[i]<0?'negative':'zeroGrad',zh)}</p>${table(['i',say('pred',zh),say('target',zh),'r','r²',say('grad',zh)],tr.p.map((v,j)=>[j,v,tr.t[j],tr.residuals[j],tr.squares[j],tr.output[j]]),say('mseTable',zh))}<p>${say('repeat',zh)}</p>${result('mse-gradient-output',tr.output,zh)}`;
 }
 export function renderRelu(tr,i=2,zh=false){
  if(!tr.x.length)return `<p>${say('emptyRelu',zh)}</p>${result('relu-backward-output',[],zh)}`;
- return `<div class="r15-gate-flow">${card(say('incoming',zh),`<p>g[${i}]</p><strong>${n(tr.g[i])}</strong>`)}<span class="r15-arrow" aria-hidden="true">→</span>${card(say('gate',zh),`<p>x[${i}] = ${n(tr.x[i])}</p><strong>${say(tr.mask[i]?'open':'closed',zh)}</strong><p>mask = ${tr.mask[i]}</p>`,tr.mask[i]?'r15-open':'r15-closed')}<span class="r15-arrow" aria-hidden="true">→</span>${card(say('outgoing',zh),`<p>dx[${i}] = g[${i}] × mask</p><strong><output id="relu-number">${n(tr.output[i])}</output></strong>`)}</div><p>${say('reluNote',zh)}</p><p class="lesson-warning">${say('zeroRule',zh)}</p>${table(['i','x[i]','ReLU(x[i])',say('mask',zh),'g[i]','dx[i]'],tr.x.map((v,j)=>[j,v,tr.forward[j],tr.mask[j],tr.g[j],tr.output[j]]),say('reluTable',zh))}${result('relu-backward-output',tr.output,zh)}`;
+ const node=(key,symbol,value,opts={})=>calcNode(say(key,zh),symbol,value,{index:i,...opts});
+ const decision=calcStep(1,say('reluDecision',zh),calcLine([node('forwardValue','x',tr.x[i],{tone:'input',key:'relu-x'}),node('origin','',0,{index:null,key:'relu-threshold'}),node('localMask','mask',tr.mask[i],{tone:'update',key:'relu-mask'})],[tr.mask[i]?'>':'≤','⇒'],say('reluDecision',zh))+`<p class="lesson-calc-hint">${say(tr.mask[i]?'open':'closed',zh)}</p>`);
+ const multiply=calcStep(2,say('reluProduct',zh),calcLine([node('givenGradient','g',tr.g[i],{tone:'input',key:'relu-g'}),node('localMask','mask',tr.mask[i],{tone:'carried',key:'relu-mask-again'}),node('returnedGradient','dx',tr.output[i],{tone:'final',id:'relu-number'})],['×',calcEqual(tr.g[i],tr.mask[i],tr.output[i])],say('reluProduct',zh)),true);
+ return calcStory(say('reluStory',zh),say('inspectCoordinate',zh),i,decision+calcCarry(say('carryMask',zh))+multiply)+`<p>${say('reluNote',zh)}</p><p class="lesson-warning">${say('zeroRule',zh)}</p>`+table(['i','x[i]','ReLU(x[i])',say('mask',zh),'g[i]','dx[i]'],tr.x.map((v,j)=>[j,v,tr.forward[j],tr.mask[j],tr.g[j],tr.output[j]]),say('reluTable',zh))+result('relu-backward-output',tr.output,zh);
 }
 export function renderCentral(tr,kind='cubic',zh=false){
  const def=scalarFunctions[kind],analytical=def.derivative(tr.x),points=Array.from({length:81},(_,i)=>{const delta=(-2+4*i/80)*tr.h;return [delta,def.fn(tr.x+delta)];});

@@ -244,6 +244,13 @@ try {
   await checkConstitutionalLessons(page,base);
   const {checkGradientLessons,checkStaticGradientLessons}=await import('./browser-round15-checks.mjs');
   await checkGradientLessons(page,base);
+  const {checkNormalizationLessons,checkStaticNormalizationLessons}=await import('./browser-round16-checks.mjs');
+  await page.setViewportSize({width:1280,height:900});
+  await checkNormalizationLessons(page,base);
+  await page.setViewportSize({width:375,height:900});
+  await checkNormalizationLessons(page,base);
+  const {checkCalculationLayouts}=await import('./browser-calculation-checks.mjs');
+  await checkCalculationLayouts(page,base);
   assert.deepEqual(errors, []);
   await context.close();
   const staticContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 375, height: 900 } });
@@ -268,6 +275,7 @@ try {
   await checkStaticRlefLessons(staticPage,base);
   await checkStaticConstitutionalLessons(staticPage,base);
   await checkStaticGradientLessons(staticPage,base);
+  await checkStaticNormalizationLessons(staticPage,base);
   await staticContext.close();
   console.log('PASS real browser lesson controls, mathematical golden outputs, both languages, keyboard, reset, stage highlighting, 375/768px layout and no-JS fallbacks');
 } finally { await browser.close(); }
