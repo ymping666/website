@@ -43,6 +43,9 @@ try {
     assert.equal(indexRequests, before + 1, 'Reuse the same index for subsequent searches');
     assert.equal(new URL(await page.locator('[data-language="' + (language ? 'en' : 'zh') + '"]').getAttribute('href'), page.url()).searchParams.get('q'), '矩阵乘法');
     await page.locator('.site-search-result').first().click();
+    // Wait for the destination document before requesting browser history.
+    // Chromium can swap renderer sessions while the clicked navigation commits.
+    await page.waitForURL(base + language + 'editorials/foundation-matmul/', { waitUntil: 'domcontentloaded' });
     await page.goBack();
     await page.waitForFunction(() => document.querySelector('.site-search-result')?.pathname.includes('foundation-matmul'));
     assert.equal(await page.locator('#site-query').inputValue(), '矩阵乘法');
