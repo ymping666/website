@@ -16,10 +16,6 @@
   "llm-evidence-context-pack",
   "foundation-epsilon-greedy",
   "foundation-nstep-return",
-  "foundation-matmul",
-  "foundation-gelu",
-  "foundation-sinusoidal-positions",
-  "vit-class-token",
   "gan-discriminator-bce",
   "gan-generator-nonsaturating",
   "gan-gradient-penalty",
@@ -27,7 +23,6 @@
   "norm-batch-training",
   "norm-batch-inference",
   "optimizer-adamw-update",
-  "rope-position-encoding",
   "diffusion-ddpm-stochastic-step",
   "gan-discriminator-logit-gradients"
 ]

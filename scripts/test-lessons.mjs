@@ -121,7 +121,11 @@ for (const language of ['', 'zh/']) {
     }
   }
 }
-const untouched = await readFile(join(siteRoot, 'editorials', 'foundation-matmul', 'index.html'), 'utf8');
-assert.doesNotMatch(untouched, /data-lesson=|assets\/lesson-ui.js/);
-assert.match(untouched, /Step-by-step reasoning/);
+// Check the actual text-only backlog as older examples are upgraded.
+const legacy = JSON.parse(await readFile(new URL('./legacy-text-editorials.json', import.meta.url), 'utf8'));
+for (const id of legacy) for (const locale of ['', 'zh/']) {
+  const untouched = await readFile(join(siteRoot, locale, 'editorials', id, 'index.html'), 'utf8');
+  assert.doesNotMatch(untouched, /data-lesson=|assets\/lesson-ui.js/, id + ' remains text-only');
+  assert.ok(untouched.includes(locale ? '思路解析' : 'Step-by-step reasoning'));
+}
 console.log('PASS numerical invariants, ten bilingual lessons, static fallback, complete translations, bottom resource links and unchanged other editorials');
