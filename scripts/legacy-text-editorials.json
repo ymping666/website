@@ -16,13 +16,8 @@
   "llm-evidence-context-pack",
   "foundation-epsilon-greedy",
   "foundation-nstep-return",
-  "gan-discriminator-bce",
-  "gan-generator-nonsaturating",
-  "gan-gradient-penalty",
-  "diffusion-classifier-guidance",
   "norm-batch-training",
   "norm-batch-inference",
   "optimizer-adamw-update",
-  "diffusion-ddpm-stochastic-step",
-  "gan-discriminator-logit-gradients"
+  "diffusion-ddpm-stochastic-step"
 ]

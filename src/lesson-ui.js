@@ -1,3 +1,4 @@
+import {mountRound23Lesson} from './lesson-ui-round23.js';
 import {mountRound22Lesson} from './lesson-ui-round22.js';
 import {mountRound21Lesson} from './lesson-ui-round21.js';
 import {mountRound20Lesson} from './lesson-ui-round20.js';
@@ -132,5 +133,6 @@ if (root) {
     mountRound20Lesson(root);
     mountRound21Lesson(root);
     mountRound22Lesson(root);
+    mountRound23Lesson(root);
   }
 }
