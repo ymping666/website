@@ -24,7 +24,7 @@ const figure=(key,legend,body,zh)=>`<figure class="r19-figure"><figcaption><stro
 const node=(key,symbol,v,zh,tone='block')=>calcNode(s(key,zh),symbol,v,{tone});
 export function renderConv(tr,index=0,zh=false){
  const r=tr.rows[index];
- const chart=figure('convTitle','convLegend',`<div class="r19-boards">`+
+ const chart=figure('convTitle','convLegend',`<div class="r19-boards r19-conv-boards">`+
  grid(tr.padded,s('padded',zh),{origin:[-tr.ph,-tr.pw],mark:(i,j)=>`${i<tr.ph||i>=tr.ph+tr.h||j<tr.pw||j>=tr.pw+tr.w?'r19-muted ':''}${i>=r.i&&i<r.i+tr.kh&&j>=r.j&&j<r.j+tr.kw?'r19-picked':''}`})+
  grid(tr.kernel,s('kernel',zh))+grid(tr.output,s('output',zh),{mark:(i,j)=>i===r.i&&j===r.j?'r19-final':''})+`</div>`,zh);
  const products=Array.from({length:tr.kh},(_,a)=>r.terms.slice(a*tr.kw,(a+1)*tr.kw).map(t=>t.product));
