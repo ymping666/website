@@ -390,7 +390,7 @@ export const expansionProblems = [
     "explanation": [
       "For linear Gaussian transitions, expectations and variances can be propagated analytically without sampling.",
       "Multiplying a random variable by a scales its variance by a². Independent additive noise contributes process_var.",
-      "Uncertainty accumulates over longer imagined trajectories even if the mean trajectory looks plausible."
+      "Variance can grow or shrink along a rollout: each step combines a squared dynamics gain with fresh process noise."
     ],
     "complexity": "Time O(T), output/extra space O(T) for T controls.",
     "pitfall": "Updating variance with a rather than a² is wrong and can create negative variances for negative a.",
@@ -525,7 +525,7 @@ export const expansionProblems = [
       "This exercise assumes diagonal Gaussian distributions and is not an implementation of the recurrent state-space model or its full training objective."
     ],
     "complexity": "Time O(d), extra space O(1) for d latent coordinates.",
-    "pitfall": "Confusing variance with standard deviation introduces a systematic factor-of-two error.",
+    "pitfall": "Use variances, not standard deviations; substituting standard deviations changes the terms and does not produce a fixed multiplicative error.",
     "hints": [
       "Write out the one-dimensional closed form first.",
       "For d independent coordinates, sum the terms and multiply by 0.5."
