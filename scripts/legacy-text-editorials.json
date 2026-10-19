@@ -14,10 +14,5 @@
   "agent-jsonrpc-response",
   "llm-mean-reciprocal-rank",
   "llm-evidence-context-pack",
-  "foundation-epsilon-greedy",
-  "foundation-nstep-return",
-  "norm-batch-training",
-  "norm-batch-inference",
-  "optimizer-adamw-update",
-  "diffusion-ddpm-stochastic-step"
+  "foundation-epsilon-greedy"
 ]
