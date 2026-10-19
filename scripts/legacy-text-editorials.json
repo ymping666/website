@@ -1,5 +1,4 @@
 [
-  "tool-call-parser",
   "agent-retry-guard",
   "agent-memory-window",
   "rag-recall-k",
@@ -7,11 +6,7 @@
   "world-model-evaluation",
   "agent-plan-ready",
   "agent-reflection-controller",
-  "tool-schema-enforcer",
   "agent-topological-schedule",
-  "agent-merge-tool-results",
-  "agent-exponential-backoff",
-  "agent-jsonrpc-response",
   "llm-mean-reciprocal-rank",
   "llm-evidence-context-pack",
   "foundation-epsilon-greedy"
