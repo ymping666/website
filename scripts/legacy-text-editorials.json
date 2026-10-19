@@ -1,13 +1,8 @@
 [
-  "agent-retry-guard",
-  "agent-memory-window",
-  "rag-recall-k",
   "world-model-action",
   "world-model-evaluation",
   "agent-plan-ready",
   "agent-reflection-controller",
   "agent-topological-schedule",
-  "llm-mean-reciprocal-rank",
-  "llm-evidence-context-pack",
   "foundation-epsilon-greedy"
 ]
