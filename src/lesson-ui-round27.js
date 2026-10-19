@@ -1,0 +1,18 @@
+import {presets,fromPreset,lex} from './lesson-round27-math.mjs';
+import {renders,renderInvalid,L} from './lesson-round27-view.mjs';
+const keys={action:['gamma'],regret:['offset'],ready:[],schedule:[],reflection:['last','budget','target','improvement'],epsilon:['epsilon','draw','randomIndex']};
+export function mountRound27Lesson(root){
+ if(!root.dataset.lesson.startsWith('r27-'))return;const kind=root.dataset.lesson.slice(4),zh=document.documentElement.lang==='zh-CN',$=key=>root.querySelector('#r27-'+kind+'-'+key);let completed=[];
+ function update(){const p=presets[kind][$('preset').value],old=Number($('index').value)||0,o={index:old};for(const key of keys[kind]){o[key]=Number($(key).value);if($(key+'-value'))$(key+'-value').textContent=$(key).value;}if(kind==='ready')o.completed=completed;let tr;
+  try{tr=fromPreset(kind,p,$('preset').value==='invalid'?{}:o);}catch(e){if(!(e instanceof RangeError))throw e;for(const key of keys[kind])$(key).disabled=true;$('index').disabled=true;$('index').replaceChildren();root.querySelectorAll('[data-r27-completed],[data-r27-next]').forEach(el=>el.disabled=true);$('view').innerHTML=renderInvalid(zh,p);return;}
+  const items=kind==='schedule'?tr.steps.map((_,i)=>[i,'step '+i]):kind==='reflection'?tr.gates.map((g,i)=>[i,L(g.key,zh)]):tr.rows.map((r,i)=>[i,r.name??'i='+i]),index=items.length?Math.min(old,items.length-1):0;
+  $('index').replaceChildren(...items.map(([i,s])=>new Option(s,String(i))));$('index').disabled=!items.length;if(items.length)$('index').value=String(index);for(const key of keys[kind])$(key).disabled=false;if(kind==='reflection')$('last').disabled=!p.scores.length;if(kind==='regret')$('offset').disabled=!tr.rows.length;
+  if(kind==='schedule')root.querySelector('[data-r27-next]').disabled=index>=tr.steps.length-1;root.querySelectorAll('[data-r27-completed]').forEach(el=>el.disabled=false);$('view').innerHTML=renders[kind](tr,index,zh);
+ }
+ function setPreset(){const p=presets[kind][$('preset').value];$('index').replaceChildren(new Option('0','0'));for(const key of keys[kind])$(key).disabled=false;
+  if(kind==='action')$('gamma').value=String(p.gamma);if(kind==='regret')$('offset').value='0';if(kind==='reflection'){for(const key of ['budget','target','improvement'])$(key).value=String(p[key]);$('last').value=String(p.scores.at(-1)??0);}
+  if(kind==='epsilon'){for(const key of ['epsilon','draw'])$(key).value=String(p[key]);$('randomIndex').replaceChildren(...p.q.map((_,i)=>new Option(String(i),String(i))));if(p.q.length)$('randomIndex').value=String(p.randomIndex);}
+  if(kind==='ready'){completed=[...p.completed];$('completed').replaceChildren(...Object.keys(p.tasks).sort(lex).map(name=>{const label=document.createElement('label'),input=document.createElement('input');label.className='r27-flag';input.type='checkbox';input.dataset.r27Completed=name;input.checked=completed.includes(name);input.addEventListener('change',()=>{completed=[...root.querySelectorAll('[data-r27-completed]:checked')].map(el=>el.dataset.r27Completed);update();});label.append(input,document.createTextNode(name));return label;}));}update();
+ }
+ $('preset').addEventListener('change',setPreset);$('index').addEventListener('change',()=>{if(kind==='regret')$('offset').value='0';update();});for(const key of keys[kind])$(key).addEventListener($(key).tagName==='SELECT'?'change':'input',update);if(kind==='schedule')root.querySelector('[data-r27-next]').addEventListener('click',()=>{$('index').value=String(Number($('index').value)+1);update();});root.querySelector('[data-reset-lesson]').addEventListener('click',()=>{$('preset').value='basic';setPreset();});setPreset();
+}

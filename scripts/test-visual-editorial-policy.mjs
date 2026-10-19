@@ -6,6 +6,7 @@ import {renderVisualLesson,renderLessonResources} from '../src/visual-lessons.mj
 import {assertVisualEditorialCoverage,assertBuiltVisualEditorial,legacyTextEditorialIds} from './visual-editorial-policy.mjs';
 import {siteRoot} from './config.mjs';
 
+assert.deepEqual(legacyTextEditorialIds,[],'The cleared text-only backlog must stay empty; new problems require bilingual visual editorials');
 const required=assertVisualEditorialCoverage(problems),id='future-problem-needing-a-visual-editorial';
 assert.throws(()=>assertVisualEditorialCoverage([...problems,{id}]),/requires a complete bilingual visual editorial.*future-problem/);
 const protectedId='rlef-public-test-controller';
@@ -13,7 +14,7 @@ assert.throws(()=>assertVisualEditorialCoverage(problems,{lesson:x=>x===protecte
 assert.throws(()=>assertVisualEditorialCoverage(problems,{resources:x=>x===protectedId?'':renderLessonResources(x)}),/requires bottom reference/);
 assert.throws(()=>assertVisualEditorialCoverage(problems,{legacyIds:[...legacyTextEditorialIds,protectedId]}),/remove its legacy exemption/);
 assert.throws(()=>assertVisualEditorialCoverage(problems,{legacyIds:[...legacyTextEditorialIds,'nonexistent-problem']}),/stale legacy/);
-assert.throws(()=>assertVisualEditorialCoverage(problems,{legacyIds:[...legacyTextEditorialIds,legacyTextEditorialIds[0]]}),/Duplicate legacy/);
+assert.throws(()=>assertVisualEditorialCoverage(problems,{legacyIds:[...legacyTextEditorialIds,protectedId,protectedId]}),/Duplicate legacy/);
 // A genuinely complete new renderer, with references, can extend the catalog.
 const lesson=x=>renderVisualLesson(x===id?protectedId:x),resources=x=>renderLessonResources(x===id?protectedId:x);
 assert.ok(assertVisualEditorialCoverage([...problems,{id}],{lesson,resources}).includes(id));
