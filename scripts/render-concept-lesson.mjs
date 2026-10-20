@@ -1,7 +1,9 @@
 import {flowMatchingConceptLesson as lesson,conceptLessonStages} from '../src/concept-lessons.mjs';
 import {conceptFlowExperiment,conceptEquation} from '../src/concept-flow-view.mjs';
+import {renderAgentConceptLesson} from './render-concept-agent.mjs';
 const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderConceptLesson({concept,set,problems,row,a,heading,base}){
+ if(concept.slug==='agent-control')return renderAgentConceptLesson({concept,problems,row,a,heading,base});
  if(concept.slug!==lesson.slug)return null;
  const stages=conceptLessonStages(concept,set,problems),l=lesson.labels,p=items=>items.map(s=>`<p>${e(s)}</p>`).join(''),path=id=>`/problems/${id}/?set=${set.slug}`,ids=stages.flatMap(s=>s.problems.map(p=>p.id)),section=(id,title,body)=>`<section id="${id}" class="cf-section" aria-labelledby="${id}-title"><h2 id="${id}-title">${e(title)}</h2>${body}</section>`;
  return `<main class="site-container page-top concept-lesson" data-concept-lesson="flow-matching"><div class="breadcrumbs">${a('Concepts','/concepts/')} <span>/</span> ${e(concept.title)}</div><header class="cf-intro"><div class="eyebrow">FLOW MATCHING</div><h1>${heading}</h1><p class="lede narrow">${e(lesson.lead)}</p><p class="cf-count">${ids.length} published, independently tested coding challenges</p><div class="button-row">${a(e(l.start),path(ids[0]),'button primary')}</div><ol class="cf-workflow" aria-label="${e(lesson.workflow.join(' → '))}">${lesson.workflow.map(s=>`<li>${e(s)}</li>`).join('')}</ol></header><nav class="cf-jumps" aria-label="${e(l.shortcut)}">${[['cf-overview',l.overview],['cf-intuition',l.intuition],['cf-python',l.python],['cf-path',l.path],['cf-myths',l.myths],['cf-reading',l.reading]].map(([id,title])=>`<a href="#${id}">${e(title)}</a>`).join('')}</nav>

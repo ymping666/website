@@ -37,9 +37,9 @@ try{
   const context=await browser.newContext({viewport:{width:1280,height:900}});await blockAds(context);const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));await page.goto(base+locale+'concepts/flow-matching/');
   await page.locator('.cf-intro .button.primary').click();
   for(const [i,id]of ids.entries()){
-   await page.locator('#practice-route').waitFor({state:'visible'});
+   await page.locator('#practice-route').waitFor({state:'visible'});await page.waitForLoadState('load');
    assert.ok(page.url().includes('/problems/'+id+'/?set=flow-matching-ode-practice'));
-   const p=problems.find(p=>p.id===id);await page.locator('#code-editor').fill(p.solution);await page.locator('#run-samples').click();await page.waitForFunction(()=>/\d+\/\d+ (passed|通过)/.test(document.querySelector('#status').textContent),null,{timeout:120000});assert.match(await page.locator('#status').innerText(),/2\/2 (passed|通过)/,await page.locator('#test-results').innerText());assert.equal(await page.locator('#completion-indicator').isVisible(),false);
+   const p=problems.find(p=>p.id===id);await page.locator('#code-editor').fill(p.solution);await page.locator('#run-samples').click();try{await page.waitForFunction(()=>/\d+\/\d+ (passed|通过)/.test(document.querySelector('#status').textContent),null,{timeout:120000});}catch(error){throw Error(`${locale}${id}: ${await page.locator('#status').innerText()} / ${await page.locator('#run-note').innerText()}`,{cause:error});}assert.match(await page.locator('#status').innerText(),/2\/2 (passed|通过)/,await page.locator('#test-results').innerText());assert.equal(await page.locator('#completion-indicator').isVisible(),false);
    await page.locator('#submit-solution').click();await page.waitForFunction(()=>/^(Accepted|完整本地测试全部通过)/.test(document.querySelector('#run-note').textContent),null,{timeout:120000});assert.equal(await page.locator('.case-detail.good').count(),p.tests.length);assert.equal(await page.locator('#completion-indicator').isVisible(),true);console.log('PASS real Python',locale||'en',id);
    if(i<ids.length-1){const next=page.locator('#success-panel [data-next-practice]');assert.ok((await next.getAttribute('href')).includes(ids[i+1]+'/?set=flow-matching-ode-practice'));await next.click();}
   }
