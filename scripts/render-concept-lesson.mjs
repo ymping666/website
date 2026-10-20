@@ -1,8 +1,10 @@
 import {flowMatchingConceptLesson as lesson,conceptLessonStages} from '../src/concept-lessons.mjs';
 import {conceptFlowExperiment,conceptEquation} from '../src/concept-flow-view.mjs';
 import {renderAgentConceptLesson} from './render-concept-agent.mjs';
+import {renderStateConceptLesson} from './render-concept-state.mjs';
 const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderConceptLesson({concept,set,problems,row,a,heading,base}){
+ if(concept.slug==='state-estimation')return renderStateConceptLesson({concept,problems,row,a,heading,base});
  if(concept.slug==='agent-control')return renderAgentConceptLesson({concept,problems,row,a,heading,base});
  if(concept.slug!==lesson.slug)return null;
  const stages=conceptLessonStages(concept,set,problems),l=lesson.labels,p=items=>items.map(s=>`<p>${e(s)}</p>`).join(''),path=id=>`/problems/${id}/?set=${set.slug}`,ids=stages.flatMap(s=>s.problems.map(p=>p.id)),section=(id,title,body)=>`<section id="${id}" class="cf-section" aria-labelledby="${id}-title"><h2 id="${id}-title">${e(title)}</h2>${body}</section>`;

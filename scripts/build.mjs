@@ -166,7 +166,7 @@ if(verification)await writeFile(join(out,'ads.txt'),verification.adsTxt);
 for(const name of ['icon.svg','favicon-32.png','apple-touch-icon.png','share-cover-en-v1.png','share-cover-zh-v1.png']){
  await copyFile(new URL('../src/brand/'+name,import.meta.url),join(out,'assets',name));
 }
-for(const name of ['concept-lesson-ui.js','concept-lesson.css','concept-flow-view.mjs','concept-agent-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
+for(const name of ['concept-lesson-ui.js','concept-lesson.css','concept-flow-view.mjs','concept-agent-view.mjs','concept-state-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/styles.css',import.meta.url),join(out,'assets/styles.css'));
 await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'));
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));

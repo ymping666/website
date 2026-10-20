@@ -1,0 +1,21 @@
+import {stateEstimationLesson as lesson} from '../src/concept-state-lesson.mjs';
+import {conceptStateExperiment} from '../src/concept-state-view.mjs';
+import {conceptEquation} from '../src/concept-flow-view.mjs';
+import {flowMatchingConceptLesson as shared} from '../src/concept-lessons.mjs';
+import {escapeMath as e} from '../src/math-expression.mjs';
+export function stateLessonStages(concept,catalog){
+ if(JSON.stringify(concept.ids)!==JSON.stringify(lesson.stages.map(s=>s.id)))throw Error('State Concept core order must match its four published exercises');
+ return lesson.stages.map(s=>{const problem=catalog.find(p=>p.id===s.id);if(!problem)throw Error('Unpublished State lesson exercise: '+s.id);return {...s,problem};});
+}
+export function renderStateConceptLesson({concept,problems,row,a,heading,base}){
+ const stages=stateLessonStages(concept,problems),l=lesson.labels,c=shared.labels,p=items=>items.map(s=>`<p>${e(s)}</p>`).join(''),path=id=>`/problems/${id}/?concept=${concept.slug}`,
+ section=(id,title,body)=>`<section id="${id}" class="cf-section" aria-labelledby="${id}-title"><h2 id="${id}-title">${e(title)}</h2>${body}</section>`,link=(label,id)=>a(e(label),path(id),'cf-inline-link'),related=i=>a(`<span>${e(c.related)}</span> <span>${e(stages[i].problem.title)}</span>`,path(stages[i].id));
+ return `<main class="site-container page-top concept-lesson" data-concept-lesson="state-estimation"><div class="breadcrumbs">${a('Concepts','/concepts/')} <span>/</span> ${e(concept.title)}</div><header class="cf-intro"><div class="eyebrow">${e(concept.title)}</div><h1>${heading}</h1><p class="lede narrow">${e(lesson.lead)}</p><p class="cf-count">${stages.length} published, independently tested coding challenges</p><div class="button-row">${a(e(c.start),path(stages[0].id),'button primary')}</div><ol class="cf-workflow" aria-label="${e(shared.workflow.join(' → '))}">${shared.workflow.map(s=>`<li>${e(s)}</li>`).join('')}</ol></header><nav class="cf-jumps" aria-label="${e(c.shortcut)}">${[['cs-overview',l.overview],['cs-intuition',l.intuition],['cs-cycle',l.cycle],['cs-python',l.python],['cs-path',l.path],['cs-myths',c.myths],['cs-reading',c.reading]].map(([id,title])=>`<a href="#${id}">${e(title)}</a>`).join('')}</nav>
+ ${section('cs-overview',l.overview,p(lesson.overview)+`<p class="cf-note">${e(l.scope)}</p><h3>${e(l.notation)}</h3><dl class="cs-symbols">${lesson.symbols.map(([symbol,text])=>`<div><dt>${e(symbol)}</dt><dd>${e(text)}</dd></div>`).join('')}</dl>`)}
+ ${section('cs-intuition',l.intuition,p(lesson.intuition.slice(0,2))+`<div class="lesson-formula lesson-equations cf-equations">${['K = P/(P+R)','mu_next = mu+K*(z-mu)','P_next = (1-K)*P'].map(conceptEquation).join('')}</div>`+conceptStateExperiment()+p([lesson.intuition[2]]))}
+ ${section('cs-cycle',l.cycle,`<div class="cf-myths">${lesson.cycle.map(step=>`<article><h3>${e(step.title)}</h3><p>${e(step.text)}</p>${related(step.index)}</article>`).join('')}</div>`)}
+ ${section('cs-python',l.python,p([lesson.python[0]])+`<pre class="code-pre"><code>${e(lesson.code)}</code></pre>`+p([lesson.python[1]])+link(c.start,stages[0].id))}
+ ${section('cs-path',l.path,p([c.roles])+`<div class="cf-stages">${stages.map((s,i)=>`<section class="cf-stage" id="cs-stage-${s.key}" aria-labelledby="cs-stage-title-${s.key}"><div class="eyebrow">${i+1} / ${stages.length}</div><h3 id="cs-stage-title-${s.key}">${e(s.problem.title)}</h3><dl>${[[c.goal,s.goal],[c.prerequisites,s.prerequisites],[l.risk,s.risk],[l.bridge,s.bridge]].map(([title,text])=>`<div><dt>${e(title)}</dt><dd>${e(text)}</dd></div>`).join('')}</dl><div class="problem-list">${row(s.problem,{concept:concept.slug})}</div></section>`).join('')}</div><aside class="cf-note"><h3>${e(l.extension)}</h3>${a(e(l.planning),'/practice-sets/world-model-planning/')}</aside>`)}
+ ${section('cs-myths',c.myths,`<div class="cf-myths">${lesson.misconceptions.map(m=>`<article><h3>${e(m.title)}</h3><p>${e(m.explanation)}</p>${related(m.index)}</article>`).join('')}</div>`)}
+ ${section('cs-reading',c.reading,`<ul class="cf-reading">${lesson.references.map(r=>`<li><a href="${e(r.url)}" target="_blank" rel="noopener noreferrer">${e(r.title)} ↗</a><p>${e(r.note)}</p></li>`).join('')}</ul>`)}<p>${a('← '+e(c.all),'/concepts/')}</p></main><script type="module" src="${base}assets/concept-lesson-ui.js"></script>`;
+}
