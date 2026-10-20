@@ -557,3 +557,5 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 
 /* Allow long exercise-title words to wrap on narrow screens and fallback fonts. */
 .editorial h1{overflow-wrap:anywhere}
+
+.topic-card.course-entry{grid-column:1/-1}

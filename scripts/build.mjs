@@ -22,6 +22,7 @@ import {buildSearchIndex} from './build-search.mjs';
 import {buildLabs,labPaths} from './build-labs.mjs';
 import {withLabEntry} from '../src/labs/home-entry.mjs';
 import {renderConceptLesson} from './render-concept-lesson.mjs';
+import {transformerChapterFor,transformerConcept} from '../src/concept-transformer.mjs';
 const readableExamples = JSON.parse(await readFile(new URL('../src/examples.json', import.meta.url), 'utf8'));
 const catalogSets = practiceSets.map(({slug,title,segments})=>({slug,title,ids:segments.map(x=>x.id)}));
 const catalogConcepts = concepts.map(({slug,title,ids})=>({slug,title,ids}));
@@ -108,12 +109,12 @@ for(const t of tracks){
 }
 // Every fine-grained concept has its own meaningful navigation page with only published challenges.
 await output('/concepts/',shell('AI Concepts — practical coding challenges','Learn and practice concrete AI components: Attention, ViT, Diffusion, classifier guidance, GAN, AdaLN and more.',
-  `<main class="site-container page-top"><div class="eyebrow">AI COMPONENTS · IMPLEMENTATION GUIDES</div><h1>${searchHeading('/concepts/','Concept index')}</h1><p class="lede narrow">${searchIntro('/concepts/','')}</p>${['Applied Systems','Generative Models','Transformers','Foundations'].map(f=>`${sectionTitle(f,'Published, independently tested components')}<div class="topic-grid">${concepts.filter(c=>c.family===f).map(c=>`<a class="topic-card" href="${pathHref(conceptPath(c))}"><strong>${e(c.title)}</strong><p>${e(c.summary)}</p><span>${c.ids.length} published exercises →</span></a>`).join('')}</div>`).join('')}${verifiedNotice}</main>`,
+  `<main class="site-container page-top"><div class="eyebrow">AI COMPONENTS · IMPLEMENTATION GUIDES</div><h1>${searchHeading('/concepts/','Concept index')}</h1><p class="lede narrow">${searchIntro('/concepts/','')}</p>${['Applied Systems','Generative Models','Transformers','Foundations'].map(f=>`${sectionTitle(f,'Published, independently tested components')}<div class="topic-grid">${concepts.filter(c=>c.family===f&&!transformerChapterFor(c.slug)).map(c=>`<a class="topic-card ${c.slug===transformerConcept.slug?'course-entry':''}" href="${pathHref(conceptPath(c))}"><strong>${e(c.title)}</strong><p>${e(c.summary)}</p><span>${c.ids.length} published exercises →</span></a>`).join('')}</div>`).join('')}${verifiedNotice}</main>`,
   {canonicalPath:'/concepts/'}));
 for(const c of concepts){
  const members=c.ids.map(id=>problems.find(p=>p.id===id));
  if(members.some(x=>!x))throw Error('Unpublished concept member: '+c.slug);
- const lesson=renderConceptLesson({concept:c,set:practiceSets.find(s=>s.slug==='flow-matching-ode-practice'),problems,row,a,heading:searchHeading(conceptPath(c),c.title),base});
+ const lesson=renderConceptLesson({concept:c,concepts,set:practiceSets.find(s=>s.slug==='flow-matching-ode-practice'),problems,row,a,heading:searchHeading(conceptPath(c),c.title),base});
  const page=lesson || `<main class="site-container page-top"><div class="breadcrumbs">${a('Concepts','/concepts/')} <span>/</span> ${e(c.family)}</div><div class="eyebrow">${e(c.title)}</div><h1>${searchHeading(conceptPath(c),c.title)}</h1><p class="lede narrow">${searchIntro(conceptPath(c),c.summary)}</p><div class="two-cols"><section>${sectionTitle('Practice in this order',members.length+' published, independently tested coding challenges')}<div class="problem-list">${members.map(p=>row(p,{concept:c.slug})).join('')}</div><p>${a('← All concepts','/concepts/')}</p></section><aside class="taxonomy">${sectionTitle('Before you start','Knowledge dependencies and exercise scope')}<ol><li><strong>Prerequisites</strong><span>${e(c.prerequisites)}</span></li><li><strong>Exercise scope</strong><span>Short, CPU-only and deterministic kernels. A completed problem is not a fully trained model.</span></li><li><strong>Conceptual reference</strong><span><a href="${e(c.reference.url)}" rel="noopener noreferrer" target="_blank">${e(c.reference.title)} ↗</a></span></li></ol></aside></div>${relatedEntries(conceptPath(c))}${verifiedNotice}</main>`;
  const html=shell(c.title+' — coding challenges',c.summary,page,{canonicalPath:conceptPath(c)});
  await output(conceptPath(c),lesson?html.replace('</head>',`<link rel="stylesheet" href="${base}assets/concept-lesson.css"></head>`):html);
@@ -166,7 +167,7 @@ if(verification)await writeFile(join(out,'ads.txt'),verification.adsTxt);
 for(const name of ['icon.svg','favicon-32.png','apple-touch-icon.png','share-cover-en-v1.png','share-cover-zh-v1.png']){
  await copyFile(new URL('../src/brand/'+name,import.meta.url),join(out,'assets',name));
 }
-for(const name of ['concept-lesson-ui.js','concept-lesson.css','concept-flow-view.mjs','concept-agent-view.mjs','concept-state-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
+for(const name of ['concept-lesson-ui.js','concept-lesson.css','concept-flow-view.mjs','concept-agent-view.mjs','concept-state-view.mjs','concept-transformer-ui.js','concept-transformer-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/styles.css',import.meta.url),join(out,'assets/styles.css'));
 await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'));
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));

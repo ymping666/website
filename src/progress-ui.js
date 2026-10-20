@@ -101,6 +101,12 @@ export async function mountProgressUI(store) {
       element.textContent = done ? '✓' : '○'; element.classList.toggle('done', done);
       element.setAttribute('aria-label', done ? 'Previously solved' : 'Not yet solved');
     }
+    for(const element of document.querySelectorAll('[data-progress-ids]')){
+      const members=[...new Set(element.dataset.progressIds.split(','))].filter(id=>byId.has(id)),done=members.filter(id=>solved[id]).length;
+      const count=element.querySelector('[data-course-solved]');if(count)count.textContent=String(done);
+      const bar=element.querySelector('[data-course-progress]');if(bar){bar.max=members.length;bar.value=done;bar.hidden=false;}
+      const resume=element.querySelector('[data-course-continue]');if(resume&&members.length){const next=members.find(id=>!solved[id])||members[0];resume.href=href(practicePath(next,{concept:element.dataset.courseConcept}));resume.textContent=done===members.length?(locale==='zh'?'复习本专题 →':'Review this course →'):done?(locale==='zh'?'继续学习 →':'Continue learning →'):(locale==='zh'?'开始第一道编程题 →':'Start the first challenge →');}
+    }
     const storageWarning = $('#storage-warning');
     if (storageWarning) { storageWarning.hidden = !store.error; storageWarning.textContent = store.error; }
     const notice = $('#global-storage-notice');

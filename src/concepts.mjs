@@ -1,4 +1,5 @@
 import {feedbackConcepts} from './feedback-curriculum.mjs';
+import {transformerConcept} from './concept-transformer.mjs';
 // v0.9 taxonomy: only links to existing, fully authored exercises.
 export const concepts = [
   {
@@ -429,3 +430,4 @@ export const concepts = [
 }
 ];
 concepts.push(...feedbackConcepts);
+concepts.push(transformerConcept);

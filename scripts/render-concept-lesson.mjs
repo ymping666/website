@@ -2,8 +2,11 @@ import {flowMatchingConceptLesson as lesson,conceptLessonStages} from '../src/co
 import {conceptFlowExperiment,conceptEquation} from '../src/concept-flow-view.mjs';
 import {renderAgentConceptLesson} from './render-concept-agent.mjs';
 import {renderStateConceptLesson} from './render-concept-state.mjs';
+import {renderTransformerConcept} from './render-concept-transformer.mjs';
+import {transformerConcept,transformerChapterFor} from '../src/concept-transformer.mjs';
 const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function renderConceptLesson({concept,set,problems,row,a,heading,base}){
+export function renderConceptLesson({concept,concepts,set,problems,row,a,heading,base}){
+ if(concept.slug===transformerConcept.slug||transformerChapterFor(concept.slug))return renderTransformerConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug==='state-estimation')return renderStateConceptLesson({concept,problems,row,a,heading,base});
  if(concept.slug==='agent-control')return renderAgentConceptLesson({concept,problems,row,a,heading,base});
  if(concept.slug!==lesson.slug)return null;

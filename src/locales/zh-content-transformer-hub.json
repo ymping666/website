@@ -1,0 +1,3 @@
+[
+ {"slug":"transformer-applications","title":"Transformer 在语言模型及其他模型中的应用","summary":"通过可视化例子与 Python 编程练习，理解 Transformer 在语言模型及其他模型中的应用，覆盖 Attention、多头与遮罩、归一化与残差、RoPE、SwiGLU、ViT 等组件。","prerequisites":"需要 Python 列表、点积与基础概率知识；各章另列具体前置知识。"}
+]
