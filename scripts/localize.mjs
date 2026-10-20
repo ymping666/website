@@ -8,6 +8,7 @@ import { searchTranslations } from '../src/search-pages.mjs';
 import { policyTranslations } from '../src/policy-pages.mjs';
 import { lessonTranslations } from '../src/visual-lessons.mjs';
 import { gateStatementTranslations } from '../src/gate-statement.mjs';
+import { conceptLessonTranslations } from '../src/concept-lessons.mjs';
 import { metaDescription } from '../src/meta-descriptions.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
@@ -43,7 +44,7 @@ export async function loadChinese() {
       original.segments.forEach((segment, i) => add(segment.note, chinese.notes[i], key + '.notes'));
     }
   }
-  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations, gateStatementTranslations);
+  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations, gateStatementTranslations, conceptLessonTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 

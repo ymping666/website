@@ -80,9 +80,9 @@ export const searchPages = {
   },
   '/concepts/flow-matching/': {
     title: ['Flow Matching Coding Exercises — Paths, Velocity & ODEs', 'Flow Matching 编程练习：概率路径、速度场与 ODE'],
-    description: ['Flow Matching coding exercises in Python: linear interpolation, conditional velocity, regression loss, Euler and Heun solvers, and classifier-free guidance.', 'Flow Matching 编程练习：用 Python 实现线性插值、条件速度、回归损失、Euler 与 Heun 求解器，以及分类器无关引导。'],
-    heading: ['Flow Matching Coding Exercises', 'Flow Matching 编程练习'],
-    intro: ['Learn Flow Matching by implementing the arithmetic behind probability paths and velocity targets. Practice velocity regression, Euler and Heun integration, and classifier-free guidance for velocity predictions. These are deterministic components rather than a full model-training pipeline.', '通过实现概率路径和速度目标的计算学习 Flow Matching。练习速度回归、Euler 与 Heun 积分，以及速度预测的分类器无关引导。这些题聚焦确定性的模型组件，帮助你理解完整训练与采样流程中的具体步骤。'],
+    description: ['Learn Flow Matching with interactive interpolation, conditional velocity and Python exercises, then build velocity losses, Euler and Heun samplers.', '从交互式插值与条件速度理解 Flow Matching，再通过 Python 练习实现速度回归、Euler 与 Heun 采样，以及速度引导组件。'],
+    heading: ['Flow Matching Coding Exercises: From Intuition to Code', 'Flow Matching 编程练习：从直觉到代码'],
+    intro: ['Understand a conditional path, explore its numbers, then implement the components of Flow Matching. Start with Python and vectors; ODE knowledge comes later.', '先理解条件路径、探索数值，再动手实现 Flow Matching 的组成部分。从 Python 和向量开始，ODE 知识留到数值积分阶段。'],
     related: ['/practice-sets/flow-matching-ode-practice/', '/practice-sets/diffusion-core-and-sampling/']
   },
   '/practice-sets/diffusion-core-and-sampling/': {

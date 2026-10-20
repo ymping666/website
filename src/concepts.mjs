@@ -190,7 +190,7 @@ export const concepts = [
     "title": "Flow Matching Components",
     "family": "Generative Models",
     "summary": "Implement probability paths, target velocities, sampling solvers and guidance arithmetic before larger diffusion-Transformer systems.",
-    "prerequisites": "Requires numerical ODE intuition.",
+    "prerequisites": "Begin with Python and vectors; use MSE for velocity learning and ODE basics for Euler and Heun only.",
     "ids": [
       "flow-linear-interpolation",
       "flow-conditional-velocity",

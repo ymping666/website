@@ -69,7 +69,7 @@
     "slug": "flow-matching",
     "title": "Flow Matching 组件",
     "summary": "先实现概率路径、目标速度、采样求解器与引导计算，再研究大型扩散 Transformer。",
-    "prerequisites": "需要数值 ODE 的基本直觉。"
+    "prerequisites": "从 Python 与向量开始；速度学习需要均方误差，Euler 与 Heun 阶段才需要 ODE 基础。"
   },
   {
     "slug": "agent-control",

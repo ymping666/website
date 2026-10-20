@@ -27,6 +27,8 @@ try {
   for (const language of ['', 'zh/']) {
     await page.goto(base + language + 'editorials/diffusion-forward-sampling/');
     await page.locator('.site-search-link').click();
+    // A clicked navigation can commit before the search module attaches inputs.
+    await page.waitForLoadState('load');
     assert.equal(new URL(page.url()).pathname, siteBase() + language + 'search/');
     const before = indexRequests;
     assert.equal(await page.locator('#search-results li').count(), 0);
