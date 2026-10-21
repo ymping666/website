@@ -5,9 +5,11 @@ import {stateLessonTranslations} from './concept-state-lesson.mjs';
 import {stateViewTranslations} from './concept-state-view.mjs';
 import {transformerTranslations} from './concept-transformer.mjs';
 import {transformerViewTranslations} from './concept-transformer-view.mjs';
+import {generativeTranslations} from './concept-generative.mjs';
+import {generativeViewTranslations} from './concept-generative-view.mjs';
 export {agentControlConceptLesson} from './concept-agent-lesson.mjs';
 export {stateEstimationLesson} from './concept-state-lesson.mjs';
-export const conceptLessonTranslations={...flowConceptTranslations,...agentLessonTranslations,...agentViewTranslations,...stateLessonTranslations,...stateViewTranslations,...transformerTranslations,...transformerViewTranslations};
+export const conceptLessonTranslations={...flowConceptTranslations,...agentLessonTranslations,...agentViewTranslations,...stateLessonTranslations,...stateViewTranslations,...transformerTranslations,...transformerViewTranslations,...generativeTranslations,...generativeViewTranslations};
 const t=(en,zh)=>{conceptLessonTranslations[en]=zh;return en;};
 export const flowMatchingConceptLesson={
  slug:'flow-matching',set:'flow-matching-ode-practice',

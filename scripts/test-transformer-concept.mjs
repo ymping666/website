@@ -27,7 +27,7 @@ const py=`import json,sys,math\nfrom decimal import Decimal,getcontext\ngetconte
 const result=spawnSync(pythonCommand,['-c',py],{input:JSON.stringify(cases,(_,v)=>v===-Infinity?'-inf':v),encoding:'utf8'});assert.equal(result.status,0,result.stdout+result.stderr);console.log(result.stdout.trim());
 for(const locale of ['','zh/']){
  const root=await readFile(join(siteRoot,locale,'concepts',course.slug,'index.html'),'utf8');assert.equal((root.match(/<h1\b/g)||[]).length,1);assert.equal((root.match(/class="ct-chapter-card"/g)||[]).length,7);assert.equal((root.match(/class="ct-area"/g)||[]).length,3);assert.ok(root.includes('data-progress-ids="'+transformerIds.join(',')+'"'));
- const index=await readFile(join(siteRoot,locale,'concepts/index.html'),'utf8');assert.equal((index.match(/course-entry/g)||[]).length,1);assert.ok(index.includes(`href="${siteBase()+locale}concepts/${course.slug}/"`));
+ const index=await readFile(join(siteRoot,locale,'concepts/index.html'),'utf8');assert.equal([...index.matchAll(/<a class="topic-card[^"]*course-entry" href="([^"]+)"/g)].filter(m=>m[1]===`${siteBase()+locale}concepts/${course.slug}/`).length,1);assert.ok(index.includes(`href="${siteBase()+locale}concepts/${course.slug}/"`));
  for(const ch of chapters){
   assert.ok(!index.includes(`href="${siteBase()+locale}concepts/${ch.slug}/"`),'Chapter hidden from top-level cards');
   const html=await readFile(join(siteRoot,locale,'concepts',ch.slug,'index.html'),'utf8'),main=html.match(/<main[\s\S]*?<\/main>/)[0];assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.ok(html.includes('data-transformer-example="'+ch.kind+'"'));assert.ok(html.includes('<noscript>')&&html.includes('id="ct-example" disabled'));

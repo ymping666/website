@@ -18,3 +18,5 @@
 @media(max-width:600px){.ct-heads{grid-template-columns:1fr}.ct-experiment .lesson-controls label{flex-basis:100%}.ct-experiment select{font-size:.85rem}.ct-weight{grid-template-columns:16px minmax(0,1fr) 76px;gap:.4rem}.ct-map-node{padding:.8rem}.ct-mini,.ct-input,.ct-result{padding:.8rem}.ct-chapter-pagination a{font-size:.86rem}}
 
 [data-course-progress][hidden]{display:none}
+.cg-experiment select{display:block;width:100%;min-width:0;max-width:100%;margin-top:.6rem;padding:.65rem .5rem;border:1px solid #a8bdb0;border-radius:6px;background:white;color:#263744;font:inherit}.cg-experiment :is(button,select):focus-visible{outline:3px solid #147d64;outline-offset:3px}.cg-formula{overflow-x:auto;margin:1rem 0;padding:.5rem 0}.cg-formula math{font-size:.96rem}.cg-table td:first-child{font-variant-numeric:tabular-nums}.cg-selected{background:#e6f2eb;font-weight:650}
+@media(max-width:600px){.cg-experiment .lesson-controls label{flex-basis:100%}.cg-experiment select{font-size:.85rem}.cg-formula math{font-size:.84rem}.cg-formula{max-width:100%}}
