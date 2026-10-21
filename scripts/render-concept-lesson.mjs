@@ -1,3 +1,5 @@
+import {foundationsConcept,foundationsChapterFor} from '../src/concept-foundations.mjs';
+import {renderFoundationsConcept} from './render-concept-foundations.mjs';
 import {flowMatchingConceptLesson as lesson,conceptLessonStages} from '../src/concept-lessons.mjs';
 import {conceptFlowExperiment,conceptEquation} from '../src/concept-flow-view.mjs';
 import {renderAgentConceptLesson} from './render-concept-agent.mjs';
@@ -8,6 +10,7 @@ import {renderGenerativeConcept} from './render-concept-generative.mjs';
 import {generativeConcept,generativeChapterFor,generativeLabels} from '../src/concept-generative.mjs';
 const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderConceptLesson({concept,concepts,set,problems,row,a,heading,base}){
+ if(concept.slug===foundationsConcept.slug||foundationsChapterFor(concept.slug))return renderFoundationsConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug===transformerConcept.slug||transformerChapterFor(concept.slug))return renderTransformerConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug===generativeConcept.slug||(generativeChapterFor(concept.slug)&&concept.slug!=='flow-matching'))return renderGenerativeConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug==='state-estimation')return renderStateConceptLesson({concept,problems,row,a,heading,base});

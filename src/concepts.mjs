@@ -1,3 +1,4 @@
+import {foundationsConcept} from './concept-foundations.mjs';
 import {feedbackConcepts} from './feedback-curriculum.mjs';
 import {transformerConcept} from './concept-transformer.mjs';
 import {generativeConcept} from './concept-generative.mjs';
@@ -433,3 +434,5 @@ export const concepts = [
 concepts.push(...feedbackConcepts);
 concepts.push(transformerConcept);
 concepts.push(generativeConcept);
+
+concepts.push(foundationsConcept);

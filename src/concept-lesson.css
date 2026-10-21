@@ -20,3 +20,17 @@
 [data-course-progress][hidden]{display:none}
 .cg-experiment select{display:block;width:100%;min-width:0;max-width:100%;margin-top:.6rem;padding:.65rem .5rem;border:1px solid #a8bdb0;border-radius:6px;background:white;color:#263744;font:inherit}.cg-experiment :is(button,select):focus-visible{outline:3px solid #147d64;outline-offset:3px}.cg-formula{overflow-x:auto;margin:1rem 0;padding:.5rem 0}.cg-formula math{font-size:.96rem}.cg-table td:first-child{font-variant-numeric:tabular-nums}.cg-selected{background:#e6f2eb;font-weight:650}
 @media(max-width:600px){.cg-experiment .lesson-controls label{flex-basis:100%}.cg-experiment select{font-size:.85rem}.cg-formula math{font-size:.84rem}.cg-formula{max-width:100%}}
+
+/* Compact, labeled calculations in the neural-network foundations course. */
+.cn-step{padding:1rem 1.1rem;margin:.8rem 0;border:1px solid var(--line,#dfe7e5);border-radius:12px;background:#fff;min-width:0}
+.cn-step>strong,.cn-step>code{display:block}.cn-step>code,.cn-step p code{margin-top:.55rem;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.88em;line-height:1.8}
+.cn-step .cn-step{padding:.65rem .8rem;background:#f6faf8}.cn-training-trace{border-left:3px solid #92c6b1;padding-left:.8rem}
+.cn-formula{font-size:.92em;margin:1rem 0}.cn-matrix{display:grid;grid-template-columns:repeat(var(--cn-cols),minmax(0,3.5rem));gap:.4rem;margin:1rem 0}
+.cn-matrix span{padding:.65rem .3rem;text-align:center;background:#f6f8f8;border:1px solid #dde4e4;border-radius:8px;font-family:monospace;font-size:.9em}
+.cn-matrix .cn-active{background:#e7f5ef;border-color:#33836d;color:#135842;font-weight:700}.cn-matrix .cn-discard{background:#eceff0;color:#6f7479;border-style:dashed;text-decoration:line-through}
+.cn-probabilities{margin:1rem 0}.cn-probabilities>div{display:grid;grid-template-columns:2rem minmax(0,1fr) 5.2rem;align-items:center;gap:.6rem;margin:.6rem 0;font-size:.85em}
+.cn-prob-track{height:.65rem;background:#eaf0ee;border-radius:6px;overflow:hidden}.cn-prob-track span{display:block;height:100%;background:#308671;border-radius:6px}
+.cn-table{font-size:.88em}.cn-table th,.cn-table td{overflow-wrap:anywhere}.cn-experiment pre{font-size:.83em}.cn-experiment .ct-result code{white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:600px){.cn-step{padding:.8rem}.cn-table{font-size:.76em}.cn-table th,.cn-table td{padding:.45rem .25rem}.cn-training-trace{padding-left:.4rem}.cn-formula{font-size:.86em}}
+
+.cn-output-row{margin-top:.7rem}.cn-output-row>span{display:block;font-size:.9em;font-weight:600;margin-bottom:.2rem}.cn-output-row code{font-size:.85em}

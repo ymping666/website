@@ -1,3 +1,4 @@
+import {foundationsConcept,foundationsChapterFor} from '../src/concept-foundations.mjs';
 import {transformerConcept,transformerChapterFor} from '../src/concept-transformer.mjs';
 import {generativeConcept,generativeChapterFor} from '../src/concept-generative.mjs';
 import assert from 'node:assert/strict';
@@ -47,5 +48,5 @@ for(const locale of ['','zh/']){
  const firstStage=main.slice(main.indexOf('id="cf-stage-paths"'),main.indexOf('id="cf-stage-learning"'));assert.ok(firstStage.includes(locale?'不需要 ODE':'No ODE'));
 }
 function e(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-for(const other of concepts.filter(c=>![lesson.slug,'agent-control','state-estimation',transformerConcept.slug,generativeConcept.slug].includes(c.slug)&&!transformerChapterFor(c.slug)&&!generativeChapterFor(c.slug)))for(const locale of ['','zh/']){assert.equal(renderConceptLesson({concept:other}),null);const h=await readFile(join(siteRoot,locale,'concepts',other.slug,'index.html'),'utf8');assert.ok(!h.includes('data-concept-flow')&&!h.includes('assets/concept-lesson'));}
+for(const other of concepts.filter(c=>![lesson.slug,'agent-control','state-estimation',transformerConcept.slug,generativeConcept.slug,foundationsConcept.slug].includes(c.slug)&&!transformerChapterFor(c.slug)&&!generativeChapterFor(c.slug)&&!foundationsChapterFor(c.slug)))for(const locale of ['','zh/']){assert.equal(renderConceptLesson({concept:other}),null);const h=await readFile(join(siteRoot,locale,'concepts',other.slug,'index.html'),'utf8');assert.ok(!h.includes('data-concept-flow')&&!h.includes('assets/concept-lesson'));}
 console.log('PASS bilingual Flow Matching pilot: six real exercises, staged prerequisites, set navigation, static MathML, no-JS fallback, translation parity and unchanged other Concept layouts');
