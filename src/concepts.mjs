@@ -1,3 +1,4 @@
+import {feedbackConcept} from './concept-feedback.mjs';
 import {foundationsConcept} from './concept-foundations.mjs';
 import {feedbackConcepts} from './feedback-curriculum.mjs';
 import {transformerConcept} from './concept-transformer.mjs';
@@ -436,3 +437,5 @@ concepts.push(transformerConcept);
 concepts.push(generativeConcept);
 
 concepts.push(foundationsConcept);
+
+concepts.push(feedbackConcept);

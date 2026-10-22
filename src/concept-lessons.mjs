@@ -1,3 +1,5 @@
+import {feedbackLessonTranslations} from './concept-feedback.mjs';
+import {feedbackViewTranslations} from './concept-feedback-view.mjs';
 import {foundationsTranslations} from './concept-foundations.mjs';
 import {foundationsViewTranslations} from './concept-foundations-view.mjs';
 import {flowConceptTranslations} from './concept-flow-view.mjs';
@@ -11,7 +13,7 @@ import {generativeTranslations} from './concept-generative.mjs';
 import {generativeViewTranslations} from './concept-generative-view.mjs';
 export {agentControlConceptLesson} from './concept-agent-lesson.mjs';
 export {stateEstimationLesson} from './concept-state-lesson.mjs';
-export const conceptLessonTranslations={...foundationsTranslations,...foundationsViewTranslations,...flowConceptTranslations,...agentLessonTranslations,...agentViewTranslations,...stateLessonTranslations,...stateViewTranslations,...transformerTranslations,...transformerViewTranslations,...generativeTranslations,...generativeViewTranslations};
+export const conceptLessonTranslations={...feedbackLessonTranslations,...feedbackViewTranslations,...foundationsTranslations,...foundationsViewTranslations,...flowConceptTranslations,...agentLessonTranslations,...agentViewTranslations,...stateLessonTranslations,...stateViewTranslations,...transformerTranslations,...transformerViewTranslations,...generativeTranslations,...generativeViewTranslations};
 const t=(en,zh)=>{conceptLessonTranslations[en]=zh;return en;};
 export const flowMatchingConceptLesson={
  slug:'flow-matching',set:'flow-matching-ode-practice',

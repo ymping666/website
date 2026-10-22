@@ -34,3 +34,10 @@
 @media(max-width:600px){.cn-step{padding:.8rem}.cn-table{font-size:.76em}.cn-table th,.cn-table td{padding:.45rem .25rem}.cn-training-trace{padding-left:.4rem}.cn-formula{font-size:.86em}}
 
 .cn-output-row{margin-top:.7rem}.cn-output-row>span{display:block;font-size:.9em;font-weight:600;margin-bottom:.2rem}.cn-output-row code{font-size:.85em}
+
+/* Feedback lessons: outcomes and source lineage, with text labels beside every state. */
+.fb-experiment h3{font-size:1.15rem;line-height:1.55;margin-top:0}.fb-trace{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.7rem;margin:1rem 0}
+.fb-trace li{display:flex;align-items:center;gap:.5rem;border:1px solid #bed5ca;border-radius:10px;padding:.8rem;background:#fff;font-size:.92rem}.fb-index{font-weight:700;color:#176b53}.fb-trace .fb-fail{border-style:dashed}.fb-trace .fb-pass{background:#e8f6ee}
+.fb-revisions{list-style:none;padding:0}.fb-revisions h4{margin:0 0 .8rem;font-size:1rem}.fb-revisions dl{margin:0}.fb-revisions dl>div{display:grid;grid-template-columns:minmax(8rem,1fr) 1fr;gap:.8rem;margin:.65rem 0}.fb-revisions dt{font-size:.85rem;color:#526978}.fb-revisions dd{margin:0;min-width:0}.fb-revisions code{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85em}.fb-rejected{border:2px solid #b45d46}
+.fb-distribution{padding:.9rem 0}.fb-distribution strong{font-size:.92rem}.fb-bar{display:flex;height:1.1rem;background:#eee;border-radius:6px;overflow:hidden;margin-top:.65rem}.fb-bar span:first-child{background:#267f68}.fb-bar span:last-child{background:#a6bdde}.fb-distribution p{display:flex;justify-content:space-between;gap:1rem;margin:.35rem 0;font-size:.85rem}.fb-formula{font-size:.9em;margin:1rem 0}.fb-experiment .ct-result code{white-space:pre-wrap;overflow-wrap:anywhere}.fb-table{font-size:.85rem}.fb-table td,.fb-table th{overflow-wrap:anywhere}
+@media(max-width:600px){.fb-experiment h3{font-size:1.05rem}.fb-revisions dl>div{grid-template-columns:1fr;gap:.1rem}.fb-table{font-size:.75rem}.fb-table td,.fb-table th{padding:.45rem .25rem}.fb-formula{font-size:.84em}}
