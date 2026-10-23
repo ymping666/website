@@ -10,6 +10,7 @@ import { lessonTranslations } from '../src/visual-lessons.mjs';
 import { gateStatementTranslations } from '../src/gate-statement.mjs';
 import { conceptLessonTranslations } from '../src/concept-lessons.mjs';
 import { metaDescription } from '../src/meta-descriptions.mjs';
+import { siteAnalytics } from './analytics.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const decodeHtml = text => text.replace(/&(amp|lt|gt|quot|nbsp|#39|#\d+);/g, (_, entity) =>
@@ -85,6 +86,7 @@ export function localizeHtml(html, path, { base, origin, dictionary }) {
 }
 
 export function decorate(html, path, { base, origin, locale = 'en' }) {
+  html = html.replace('<head>', '<head>' + siteAnalytics({base, origin}));
   const href = language => base + (language === 'zh' ? 'zh/' : '') + path.replace(/^\//, '');
   const alternatives = origin ? ['en','zh'].map(language => `<link rel="alternate" hreflang="${language === 'zh' ? 'zh-CN' : 'en'}" href="${origin + href(language)}">`).join('') + `<link rel="alternate" hreflang="x-default" href="${origin + href('en')}">` : '';
   // Shared by the regular pages, labs and both 404 pages in each language.
