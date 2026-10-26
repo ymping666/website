@@ -11,6 +11,7 @@ import { gateStatementTranslations } from '../src/gate-statement.mjs';
 import { conceptLessonTranslations } from '../src/concept-lessons.mjs';
 import { metaDescription } from '../src/meta-descriptions.mjs';
 import { siteAnalytics } from './analytics.mjs';
+import { feedbackTranslations } from '../src/feedback.mjs';
 
 export const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const decodeHtml = text => text.replace(/&(amp|lt|gt|quot|nbsp|#39|#\d+);/g, (_, entity) =>
@@ -45,7 +46,7 @@ export async function loadChinese() {
       original.segments.forEach((segment, i) => add(segment.note, chinese.notes[i], key + '.notes'));
     }
   }
-  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations, gateStatementTranslations, conceptLessonTranslations);
+  Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations, gateStatementTranslations, conceptLessonTranslations, feedbackTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 
@@ -87,6 +88,10 @@ export function localizeHtml(html, path, { base, origin, dictionary }) {
 
 export function decorate(html, path, { base, origin, locale = 'en' }) {
   html = html.replace('<head>', '<head>' + siteAnalytics({base, origin}));
+  if (/^\/(?:problems|editorials)\/[^/]+\/$/.test(path)) {
+    const zh = locale === 'zh';
+    html = html.replace('</main>', `<aside class="feedback-note" data-feedback-entry><span>${zh?'发现题目、测试或讲解有问题？':'Found a problem with this exercise, its tests or explanation?'}</span> <a href="${base}${zh?'zh/':''}contact/">${zh?'提交反馈 →':'Send feedback →'}</a></aside></main>`);
+  }
   const href = language => base + (language === 'zh' ? 'zh/' : '') + path.replace(/^\//, '');
   const alternatives = origin ? ['en','zh'].map(language => `<link rel="alternate" hreflang="${language === 'zh' ? 'zh-CN' : 'en'}" href="${origin + href(language)}">`).join('') + `<link rel="alternate" hreflang="x-default" href="${origin + href('en')}">` : '';
   // Shared by the regular pages, labs and both 404 pages in each language.

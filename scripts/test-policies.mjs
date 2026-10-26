@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, access, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { policyPages, publicContactEmail } from '../src/policy-pages.mjs';
+import { policyPages } from '../src/policy-pages.mjs';
 import { adsenseVerification, siteAdsense, productionPublisherId } from './adsense.mjs';
 import { siteRoot, siteBase } from './config.mjs';
 import { decodeHtml } from './localize.mjs';
@@ -36,7 +36,7 @@ for (const page of policyPages) {
       assert.ok(decoded.includes(section.heading[i]), page.path + ': localized section');
       for (const paragraph of section.paragraphs) assert.ok(decoded.includes(paragraph[i]), page.path + ': complete policy translation');
     }
-    assert.ok(html.includes('mailto:' + publicContactEmail));
+    assert.doesNotMatch(html, /mailto:|pym123amingge@gmail\.com/i, 'Public policies do not expose the maintainer email');
     for (const path of footerPaths) assert.ok(html.match(/<footer[\s\S]*?<\/footer>/)[0].includes(`href="${siteBase() + prefix + path.slice(1)}"`));
     if (verification) assert.ok(html.includes(verification.meta));
     else assert.doesNotMatch(html, /name="google-adsense-account"/);
@@ -49,6 +49,7 @@ async function checkAdCode(directory) {
     if (entry.isDirectory()) await checkAdCode(file);
     else if (entry.name.endsWith('.html')) {
       const html = await readFile(file, 'utf8');
+      assert.doesNotMatch(html, /mailto:|pym123amingge@gmail\.com/i, file + ': feedback replaces public email');
       const scripts = html.match(/<script\b[^>]*\bsrc="[^"]*(?:adsbygoogle|googlesyndication)[^"]*"[^>]*><\/script>/gi) || [];
       if (verification) {
         assert.deepEqual(scripts, [verification.script], file + ': exactly one AdSense script');

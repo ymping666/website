@@ -1,7 +1,6 @@
-export const publicContactEmail = 'pym123amingge@gmail.com';
 const link = (en, zh, href) => ({label:[en,zh],href});
 const section = (en, zh, paragraphs, links=[]) => ({heading:[en,zh],paragraphs,links});
-const contact = link('Email TensorDrill','联系 TensorDrill','mailto:'+publicContactEmail);
+const contact = link('Send feedback','提交反馈','/contact/');
 const privacy = link('Privacy policy','隐私政策','/privacy/');
 const cookies = link('Cookie and storage choices','Cookie 与存储选择','/cookies/');
 const googleData = link('How Google uses data on partner sites','Google 如何使用合作网站的数据','https://policies.google.com/technologies/partner-sites');
@@ -13,7 +12,7 @@ export const policyPages = [
   path:'/privacy/', title:['Privacy Policy','隐私政策'],
   description:['How TensorDrill handles local practice data, hosting requests, advertising cookies, privacy choices and enquiries.','了解 TensorDrill 如何处理本地练习记录、托管请求、广告 Cookie、隐私选择及相关咨询。'],
   heading:['Privacy Policy','隐私政策'],
-  intro:['This policy covers tensordrill.com and its English and Chinese pages. For privacy enquiries, contact '+publicContactEmail+'.','本政策适用于 tensordrill.com 及其中英文页面。隐私相关咨询请联系 '+publicContactEmail+'。'],
+  intro:['This policy covers tensordrill.com and its English and Chinese pages. Use the feedback page for privacy enquiries.','本政策适用于 tensordrill.com 及其中英文页面。隐私相关咨询请通过反馈页面提交。'],
   sections:[
    section('What is active today','目前启用的功能',[
     ['The application has no account registration or cloud progress database. The production site uses Google Analytics 4 for usage statistics and includes the Google AdSense script. Loading these scripts sends requests to Google, which can include your IP address, browser information and page URL. Whether ads appear depends on Google approval, account settings and applicable privacy choices.','应用没有账号注册或云端进度数据库。正式站使用 Google Analytics 4 统计访问情况，并接入 Google AdSense 脚本。加载这些脚本会向 Google 发出请求，可能包含你的 IP 地址、浏览器信息及页面网址。广告是否展示取决于 Google 审核、账号设置及适用的隐私选择。']
@@ -41,7 +40,7 @@ export const policyPages = [
     ['Where an advertising consent message is displayed, use its controls to review or change your choices. Applicable US-state sale, sharing or targeted-advertising choices and supported browser opt-out signals must be handled by the advertising integration. This policy page does not collect or record advertising consent.','如页面显示广告同意消息，请通过其中的控件查看或修改选择。适用的美国州个人信息出售、共享或定向广告选择，以及受支持的浏览器退出信号，必须由广告集成处理。本政策页不收集或记录广告同意。']
    ],[cookies]),
    section('Enquiries, rights and children','咨询、权利与未成年人',[
-    ['If you email us, we receive the address and information you choose to include and use them to address your request. Please send only what is necessary. Avoid passwords, identity documents, confidential research code and other sensitive material. Correspondence is kept only as needed for the request and applicable obligations.','如果你发送邮件，我们会收到邮箱地址及你主动提供的信息，并用于处理请求。请仅提供必要信息，不要发送密码、身份证件、保密研究代码或其他敏感材料。通信内容仅在处理请求及履行适用义务所需的范围内保留。'],
+    ['Feedback is collected through Google Forms. Opening the form contacts Google; submitting it shares the information you enter with Google and the TensorDrill maintainer. A reply email is optional and is used only to follow up on your request. Responses are not published as a public discussion. Send only what is necessary: no passwords, identity documents or confidential code. We retain feedback only as needed for the request and applicable obligations.','反馈通过 Google 表单收集。打开表单会连接 Google；提交时，你填写的信息将发送给 Google 及 TensorDrill 维护者。回复邮箱为选填，仅用于跟进你的问题。反馈不会作为公开讨论展示。请仅提供必要信息，不要填写密码、身份证件或保密代码。反馈内容仅在处理请求及履行适用义务所需的范围内保留。'],
     ['Depending on your location, you may have rights concerning access, correction, deletion, objection or withdrawal of consent. Contact the maintainer for information that we actually hold. Local practice records can be exported or deleted on your device; we have no remote copy to retrieve or erase.','根据你的所在地，你可能享有访问、更正、删除、反对处理或撤回同意等权利。对于我们实际持有的信息，请联系维护者。本地练习记录可以在你的设备上导出或删除，我们没有可远程调取或清除的副本。'],
     ['TensorDrill is intended for university students, researchers and other advanced learners, and is not directed at children under 13. Please contact us if you believe a child has sent personal information to the maintainer.','TensorDrill 面向大学生、研究人员及其他进阶学习者，不以 13 岁以下儿童为服务对象。如你认为儿童向维护者发送了个人信息，请联系我们。'],
     ['Policy changes will appear on this page with an updated date. Advertising will require an updated notice and working privacy controls before activation.','政策调整会在本页发布并更新日期。启用广告前，需要更新相关说明并提供有效的隐私控制。']
@@ -72,7 +71,7 @@ export const policyPages = [
   path:'/terms/',title:['Terms of Use','使用条款'],
   description:['Terms for using TensorDrill exercises, browser code execution, local progress, reference solutions and external services.','TensorDrill 练习、浏览器代码执行、本地进度、参考题解与外部服务的使用条款。'],
   heading:['Terms of Use','使用条款'],
-  intro:['These terms describe the use of TensorDrill, a free AI coding-practice platform. Questions can be sent to '+publicContactEmail+'.','本条款适用于 TensorDrill 免费 AI 编程练习平台。相关问题请发送至 '+publicContactEmail+'。'],
+  intro:['These terms describe the use of TensorDrill, a free AI coding-practice platform. Send questions through the feedback page.','本条款适用于 TensorDrill 免费 AI 编程练习平台。相关问题请通过反馈页面提交。'],
   sections:[
    section('Educational purpose','教学用途',[
     ['Exercises and reference solutions support learning and research practice. They are not a professional qualification, a verified contest result or production-ready model software. Published tests check the stated exercise contract and do not prove that a larger system is correct or safe.','题目和参考实现用于学习及研究练习，不代表专业资格、经过认证的比赛成绩或可直接用于生产的模型软件。公开测试用于检查题目的约定，不能证明更大系统的正确性或安全性。']
@@ -111,7 +110,7 @@ export const policyPages = [
     ['If AdSense is enabled, Google and participating ad vendors may process advertising identifiers and other request data as explained in our privacy policy. Required consent and regional opt-out controls must be operational before advertising is activated for the affected visitors.','未来启用 AdSense 时，Google 和参与的广告供应商可能按隐私政策所述处理广告标识符及其他请求数据。面向相关访问者启用广告前，必须先提供适用的同意及地区退出控制。']
    ],[privacy,cookies,googleData,googleAds]),
    section('Report an advertising concern','反馈广告相关问题',[
-    ['If you encounter a misleading or inappropriate ad once advertising is active, email the maintainer with the page URL, approximate time and a description. Do not click an ad just to investigate it, and remove personal details from any screenshot.','未来启用广告后，如遇到误导性或不适当的广告，请将页面网址、大致时间及说明发送给维护者。不要为了调查而专门点击广告；如附截图，请移除个人资料。']
+    ['If you encounter a misleading or inappropriate ad once advertising is active, use the feedback form to send the page URL, approximate time and a description. Do not click an ad just to investigate it.','未来启用广告后，如遇到误导性或不适当的广告，请通过反馈表单提交页面网址、大致时间及说明。不要为了调查而专门点击广告。']
    ],[contact])
   ]
  },
@@ -133,16 +132,16 @@ export const policyPages = [
  {
   path:'/contact/',title:['Contact & Report a Problem','联系与问题反馈'],
   description:['Contact TensorDrill about exercise errors, privacy, copyright, accessibility or advertising concerns.','联系 TensorDrill，反馈题目错误、隐私、版权、无障碍访问或广告相关问题。'],
-  heading:['Contact TensorDrill','联系 TensorDrill'],
-  intro:['For exercise feedback, privacy, copyright, advertising and other enquiries, email '+publicContactEmail+'.','题目反馈、隐私、版权、广告及其他咨询，请发送邮件至 '+publicContactEmail+'。'],
+  heading:['Feedback & support','意见反馈与帮助'],
+  intro:['Found an exercise error or have a suggestion? Send feedback through our Google Form. You can also report privacy, copyright, accessibility or advertising concerns.','发现题目错误，或有改进建议？欢迎通过 Google 表单反馈，也可提交隐私、版权、无障碍访问及广告相关问题。'],
   sections:[
-   section('Email enquiries','邮件咨询',[
-    ['The maintainer receives enquiries at the email address above. Include a clear subject and only the information needed to address your request. Do not send passwords, identity documents or confidential code.','维护者通过上述邮箱接收咨询。请填写清晰的主题，并仅提供处理请求所需的信息，不要发送密码、身份证件或保密代码。'],
-    ['Reading and practicing on TensorDrill require no account. Only include the information needed to investigate your enquiry.','阅读与练习 TensorDrill 无需账号。咨询时请仅提供调查问题所需的信息。']
-   ],[contact]),
+   section('A simple feedback form','通过表单反馈',[
+    ['Choose a feedback type, include the relevant page if possible, and describe what happened or what you would improve. Your reply email is optional; leave it blank if you do not need a response.','请选择反馈类型，尽可能提供相关页面，并描述问题或改进建议。回复邮箱为选填，不需要回复时可以留空。'],
+    ['The form opens on Google Forms in a new tab. Google processes form access and submissions under its own privacy policy. Do not include passwords, identity documents or confidential code.','表单将在新标签页打开，由 Google 表单提供。Google 会根据其隐私政策处理表单访问与提交的信息。请勿填写密码、身份证件或保密代码。']
+   ],[link('Google privacy policy','Google 隐私政策','https://policies.google.com/privacy')]),
    section('What helps us investigate','有助于排查的信息',[
     ['For a test or explanation error, include the exercise URL, a minimal input, the expected and actual result, and your browser. For a copyright concern, identify the material and your relationship to the rights holder, with enough information for us to review the claim.','反馈测试或题解错误时，请提供题目网址、最小输入、预期及实际结果和浏览器信息。反馈版权问题时，请指出相关材料及你与权利人的关系，并提供足够的信息供我们核查。'],
-    ['We review reports as project maintenance time allows and do not promise a fixed response time. If you include a screenshot or backup, remove personal or confidential data first.','我们会根据项目维护时间安排核查反馈，不承诺固定回复时限。如附截图或备份，请先移除个人或保密数据。']
+    ['We review reports as project maintenance time allows and do not promise a fixed response time. Responses are not displayed publicly.','我们会根据项目维护时间安排核查反馈，不承诺固定回复时限。反馈内容不会公开展示。']
    ],[privacy])
   ]
  }

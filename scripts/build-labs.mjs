@@ -50,7 +50,7 @@ export function releaseLabHtml(html,path,locale,{base='/',origin='',verification
   });
   const metadata=`<meta name="description" content="${escapeHtml(description[zh?1:0])}">${origin?`<link rel="canonical" href="${escapeHtml(origin+prefix+path.slice(1))}">`:''}${verification?.meta||''}${verification?.script||''}`;
   html=html.replace('</head>',metadata+'</head>');
-  const links=[['Privacy policy','隐私政策','privacy'],['Terms of use','使用条款','terms'],['Cookie choices','Cookie 选择','cookies'],['Advertising policy','广告政策','advertising'],['Contact','联系我们','contact']];
+  const links=[['Privacy policy','隐私政策','privacy'],['Terms of use','使用条款','terms'],['Cookie choices','Cookie 选择','cookies'],['Advertising policy','广告政策','advertising'],['Feedback','意见反馈','contact']];
   html=html.replace('</body>',`<footer class="site-footer"><div>TensorDrill · ${zh?'实验模块':'Experimental module'}</div><nav class="footer-links" aria-label="${zh?'网站政策':'Site policies'}">${links.map(([en,cn,route])=>`<a href="${prefix}${route}/">${zh?cn:en}</a>`).join('')}</nav></footer></body>`);
   return decorate(html,path,{base,origin,locale});
 }

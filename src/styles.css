@@ -559,3 +559,5 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .editorial h1{overflow-wrap:anywhere}
 
 .topic-card.course-entry{grid-column:1/-1}
+
+.feedback-card{margin:1.5rem 0 2rem;padding:1.5rem;border:1px solid #bcd8cd;border-radius:12px;background:#f5faf7}.feedback-card h2{margin-top:0}.feedback-card .button{max-width:100%;white-space:normal;text-align:center}.feedback-card .fineprint{margin-bottom:0}.feedback-note{display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:baseline;margin:2rem 0 1rem;padding:1rem 0;border-top:1px solid #dce3eb;color:#526273;font-size:.9rem}.feedback-note a{font-weight:600;white-space:nowrap}
