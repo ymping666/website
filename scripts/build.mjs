@@ -67,6 +67,11 @@ const shell=(title,description,contents,{kind='',canonicalPath='',script=true,no
 };
 const badge=p=>`<span class="difficulty ${p.difficulty.toLowerCase()}">${e(p.difficulty)}</span>`;
 const row=(p,context={})=>`<a class="problem-row" href="${pathHref('/'+nextPracticePath(p.id,context))}" data-title="${e((p.title+' '+p.tags.join(' ')).toLowerCase())}" data-track="${e(byTrackName[p.track])}" data-level="${e(p.difficulty)}"><span class="state-circle" data-solved="${e(p.id)}">○</span><span class="problem-row-name"><span>${e(p.title)}</span><small>${e(p.track)} · ${e(p.tags.slice(0,2).join(' / '))}</small></span>${badge(p)}<span class="problem-row-arrow">↗</span></a>`;
+// Keep the chosen course or set on direct editorial links, too.
+const lessonRow=(p,context={})=>{
+ const query=context.set ? `?set=${encodeURIComponent(context.set)}` : context.concept ? `?concept=${encodeURIComponent(context.concept)}` : '';
+ return `<div class="concept-exercise">${row(p,context)}<a class="concept-editorial-link" href="${pathHref(editorialPath(p)+query)}">${e('Visual explanation →')}<span class="sr-only"> — <span>${e(p.title)}</span></span></a></div>`;
+};
 const sectionTitle=(head,description)=>`<div class="section-title"><h2>${e(head)}</h2>${description?`<p>${e(description)}</p>`:''}</div>`;
 const searchHeading=(path,fallback)=>e(searchPages[path]?.heading[0] || fallback);
 const searchIntro=(path,fallback)=>e(searchPages[path]?.intro[0] || fallback);
@@ -118,7 +123,7 @@ await output('/concepts/',shell('AI Concepts — practical coding challenges','L
 for(const c of concepts){
  const members=c.ids.map(id=>problems.find(p=>p.id===id));
  if(members.some(x=>!x))throw Error('Unpublished concept member: '+c.slug);
- const lesson=renderConceptLesson({concept:c,concepts,set:practiceSets.find(s=>s.slug==='flow-matching-ode-practice'),problems,row,a,heading:searchHeading(conceptPath(c),c.title),base});
+ const lesson=renderConceptLesson({concept:c,concepts,set:practiceSets.find(s=>s.slug==='flow-matching-ode-practice'),problems,row:lessonRow,a,heading:searchHeading(conceptPath(c),c.title),base});
  const page=lesson || `<main class="site-container page-top"><div class="breadcrumbs">${a('Concepts','/concepts/')} <span>/</span> ${e(c.family)}</div><div class="eyebrow">${e(c.title)}</div><h1>${searchHeading(conceptPath(c),c.title)}</h1><p class="lede narrow">${searchIntro(conceptPath(c),c.summary)}</p><div class="two-cols"><section>${sectionTitle('Practice in this order',members.length+' published, independently tested coding challenges')}<div class="problem-list">${members.map(p=>row(p,{concept:c.slug})).join('')}</div><p>${a('← All concepts','/concepts/')}</p></section><aside class="taxonomy">${sectionTitle('Before you start','Knowledge dependencies and exercise scope')}<ol><li><strong>Prerequisites</strong><span>${e(c.prerequisites)}</span></li><li><strong>Exercise scope</strong><span>Short, CPU-only and deterministic kernels. A completed problem is not a fully trained model.</span></li><li><strong>Conceptual reference</strong><span><a href="${e(c.reference.url)}" rel="noopener noreferrer" target="_blank">${e(c.reference.title)} ↗</a></span></li></ol></aside></div>${relatedEntries(conceptPath(c))}${verifiedNotice}</main>`;
  const html=shell(c.title+' — coding challenges',c.summary,page,{canonicalPath:conceptPath(c)});
  await output(conceptPath(c),lesson?html.replace('</head>',`<link rel="stylesheet" href="${base}assets/concept-lesson.css"></head>`):html);
@@ -174,6 +179,7 @@ for(const name of ['icon.svg','favicon-32.png','apple-touch-icon.png','share-cov
 for(const name of ['concept-lesson-ui.js','concept-lesson.css','concept-flow-view.mjs','concept-agent-view.mjs','concept-state-view.mjs','concept-transformer-ui.js','concept-transformer-view.mjs','concept-generative-ui.js','concept-generative-view.mjs','concept-foundations-ui.js','concept-foundations-view.mjs','concept-feedback-ui.js','concept-feedback-view.mjs']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await copyFile(new URL('../src/styles.css',import.meta.url),join(out,'assets/styles.css'));
 await copyFile(new URL('../src/app.js',import.meta.url),join(out,'assets/app.js'));
+await copyFile(new URL('../src/practice-analytics.mjs',import.meta.url),join(out,'assets/practice-analytics.mjs'));
 await copyFile(new URL('../src/editor.js',import.meta.url),join(out,'assets/editor.js'));
 for (const name of ['site-search.mjs','site-search-ui.js']) await copyFile(new URL('../src/'+name,import.meta.url),join(out,'assets',name));
 await writeFile(join(out,'assets/search-index.json'),JSON.stringify(buildSearchIndex({problems,concepts,practiceSets,practiceCollections,tracks,translate:chinese.translate})));

@@ -2,6 +2,7 @@ import { createStore, recordPractice, localDay } from './progress.mjs';
 import { mountProgressUI } from './progress-ui.js';
 import { initLanguage, confirmLocalized } from './i18n.js';
 import { mountEditor } from './editor.js';
+import { trackPractice } from './practice-analytics.mjs';
 initLanguage();
 const $ = selector => document.querySelector(selector);
 const $$ = selector => Array.from(document.querySelectorAll(selector));
@@ -37,6 +38,8 @@ if ($('#catalog-list')) {
 
 if ($('#challenge-json')) {
   const problem = JSON.parse($('#challenge-json').textContent);
+  const track = name => trackPractice(window, name, problem.id, document.documentElement.lang);
+  for (const link of $$('[data-next-practice]')) link.addEventListener('click', () => track('practice_next'));
   const editor = $('#code-editor');
   const saved = $('#editor-save');
   const status = $('#status');
@@ -194,7 +197,8 @@ if ($('#challenge-json')) {
       details.append(body); results.append(details);
     }
     status.textContent = passing === rows.length ? `✓ ${passing}/${rows.length} passed` : `${passing}/${rows.length} passed`;
-    if (passing === rows.length && mode === 'submit') {
+    if (rows.length > 0 && passing === rows.length && mode === 'submit') {
+      track('practice_pass');
       Object.assign(solved, store.get('completed', {}) || {});
       solved[problem.id] = true;
       store.set('completed', solved);
@@ -260,6 +264,8 @@ if ($('#challenge-json')) {
   }
   function execute(mode) {
     if (active) return;
+    if (mode === 'samples') track('practice_run');
+    if (mode === 'submit') track('practice_submit');
     const tests = mode === 'custom' ? [] : mode === 'submit' ? problem.tests : problem.tests.slice(0, sampleCount);
     if (mode === 'custom' && !customCall.value.trim()) { customCall.focus(); return; }
     const requestId = ++sequence;

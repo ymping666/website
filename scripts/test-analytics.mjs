@@ -4,6 +4,7 @@ import {join} from 'node:path';
 import vm from 'node:vm';
 import {measurementId, siteAnalytics} from './analytics.mjs';
 import {siteRoot, siteBase} from './config.mjs';
+import {trackPractice} from '../src/practice-analytics.mjs';
 
 const production = {origin:'https://tensordrill.com', base:'/', branch:'main'};
 const tag = siteAnalytics(production);
@@ -19,6 +20,18 @@ assert.equal(context.dataLayer.length, 2);
 assert.equal(context.dataLayer[0][0], 'js');
 assert.equal(context.dataLayer[1][0], 'config');
 assert.equal(context.dataLayer[1][1], measurementId);
+
+const calls=[];
+const target={gtag:(...args)=>calls.push(args)};
+for(const name of ['practice_run','practice_submit','practice_pass','practice_next']) trackPractice(target,name,'stable-softmax','zh-CN');
+assert.deepEqual(calls.map(call=>call[1]),['practice_run','practice_submit','practice_pass','practice_next']);
+assert.deepEqual(calls[0][2],{problem_id:'stable-softmax',content_language:'zh',transport_type:'beacon'});
+trackPractice(target,'practice_pass','user input with spaces','en');
+trackPractice(target,'unknown','stable-softmax','en');
+assert.equal(calls.length,4);
+assert.doesNotThrow(()=>trackPractice({},'practice_run','stable-softmax','en'));
+assert.doesNotThrow(()=>trackPractice({gtag(){throw Error('blocked')}},'practice_run','stable-softmax','en'));
+assert.ok((await readFile(join(siteRoot,'assets/practice-analytics.mjs'),'utf8')).includes('trackPractice'));
 
 const expected = siteAnalytics();
 let count=0;
@@ -45,6 +58,7 @@ for(const locale of ['', 'zh/']) {
   assert.ok(html.includes('Google Analytics 4'));
   assert.ok(html.includes('_ga'));
   assert.ok(html.includes('https://tools.google.com/dlpage/gaoptout'));
+  assert.ok(html.includes(locale ? '题目编号和页面语言' : 'exercise ID and page language'));
 }
 assert.ok(count>0);
 console.log(`PASS GA4 production-only configuration, queue, bilingual disclosure and ${count} HTML heads (base ${siteBase()})`);

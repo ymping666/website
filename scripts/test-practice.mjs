@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './test-learning-path-links.mjs';
 import { problems as allProblems } from '../src/problems.mjs';
 import { concepts } from '../src/concepts.mjs';
 import { practiceSets } from '../src/practice-sets.mjs';

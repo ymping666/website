@@ -20,7 +20,7 @@ export const searchPages = {
   },
   '/concepts/': {
     title: ['AI Implementation Guides — Agents, World Models & More', 'AI 实现指南：Agent、世界模型等核心组件'],
-    description: ['Explore implementation guides for agent control, world model dynamics, Flow Matching and more, linked to Python challenges, tested solutions and references.', '梳理 Agent 控制流程、世界模型动力学、Flow Matching 等核心组件，结合知识点说明、Python 编程题、完整题解与参考资料，逐步理解实现原理。'],
+    description: ['Learn agent control, world models, Flow Matching and more with concept guides, Python exercises, tested solutions and selected interactive examples.', '学习 Agent 控制、世界模型、Flow Matching 等 AI 核心概念，结合专题讲解、Python 练习、完整题解和部分交互式示例理解实现原理。'],
     heading: ['AI Implementation Guides', 'AI 核心组件实现指南'],
     intro: ['Understand the components behind agents, world models, Flow Matching and more. Each guide connects a concept to published Python challenges, prerequisites and references, so you can move from the idea to an implementation.', '理解 Agent、世界模型、Flow Matching 等方向背后的核心组件。每个指南将知识点与已发布的 Python 编程题、先修要求和参考资料相连接，帮助你从原理走向实现。']
   },
@@ -42,14 +42,14 @@ export const searchPages = {
     description: ['Implement belief updates, dynamics rollouts, MPC, CEM and more through Python coding challenges. Explore model-based planning with tests and worked solutions.', '用 Python 编程练习实现信念状态更新、动力学展开、MPC、CEM 等世界模型与规划组件，结合可运行测试和完整题解理解模型驱动的决策。'],
     heading: ['World Model Coding Challenges', '世界模型编程练习'],
     intro: ['Practice belief-state estimation, dynamics, imagined rollouts, action selection and more. Implement lightweight world model and planning components, then inspect their tests and explanations. The exercises do not train a complete world model.', '练习信念状态估计、动力学、想象轨迹、动作选择等内容。通过轻量化的世界模型与规划组件，结合测试和题解理解具体实现；这些题目不包含完整世界模型的训练。'],
-    related: ['/practice-sets/world-model-planning/', '/practice-sets/world-model-belief-and-dynamics/', '/tracks/video-world-models/']
+    related: ['/concepts/state-estimation/', '/practice-sets/world-model-planning/', '/practice-sets/world-model-belief-and-dynamics/', '/tracks/video-world-models/']
   },
   '/tracks/video-world-models/': {
     title: ['Video World Model Coding Practice — Latents, Flow & More', '视频世界模型编程练习：潜表示、Flow Matching 等'],
     description: ['Practice video tokens, VAE and VQ-VAE components, Flow Matching, action-conditioned rollouts and more through tested Python exercises and complete solutions.', '通过 Python 编程练习实现视频 token、VAE 与 VQ-VAE 组件、Flow Matching、动作条件轨迹等，附可运行测试与完整题解，理解视频世界模型中的关键计算。'],
     heading: ['Video World Model Coding Practice', '视频世界模型编程练习'],
     intro: ['Implement video representations, latent compression, Flow Matching, action-conditioned prediction and more as focused Python components. These small, deterministic exercises explain key calculations without requiring a GPU or training a full video model.', '围绕视频表示、潜空间压缩、Flow Matching、动作条件预测等内容，逐个实现 Python 组件。通过小规模、确定性的练习理解关键计算，无需 GPU，也不涉及完整视频模型的训练。'],
-    related: ['/practice-sets/video-vae-latent-compression/', '/practice-sets/flow-matching-ode-practice/', '/practice-sets/video-dynamics-and-temporal-prediction/']
+    related: ['/concepts/flow-matching/', '/practice-sets/video-vae-latent-compression/', '/practice-sets/flow-matching-ode-practice/', '/practice-sets/video-dynamics-and-temporal-prediction/']
   },
   '/tracks/ai-foundations/': {
     title: ['Machine Learning & Deep Learning Coding Exercises', '机器学习编程练习与深度学习练习题'],

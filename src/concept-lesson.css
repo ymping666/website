@@ -41,3 +41,8 @@
 .fb-revisions{list-style:none;padding:0}.fb-revisions h4{margin:0 0 .8rem;font-size:1rem}.fb-revisions dl{margin:0}.fb-revisions dl>div{display:grid;grid-template-columns:minmax(8rem,1fr) 1fr;gap:.8rem;margin:.65rem 0}.fb-revisions dt{font-size:.85rem;color:#526978}.fb-revisions dd{margin:0;min-width:0}.fb-revisions code{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85em}.fb-rejected{border:2px solid #b45d46}
 .fb-distribution{padding:.9rem 0}.fb-distribution strong{font-size:.92rem}.fb-bar{display:flex;height:1.1rem;background:#eee;border-radius:6px;overflow:hidden;margin-top:.65rem}.fb-bar span:first-child{background:#267f68}.fb-bar span:last-child{background:#a6bdde}.fb-distribution p{display:flex;justify-content:space-between;gap:1rem;margin:.35rem 0;font-size:.85rem}.fb-formula{font-size:.9em;margin:1rem 0}.fb-experiment .ct-result code{white-space:pre-wrap;overflow-wrap:anywhere}.fb-table{font-size:.85rem}.fb-table td,.fb-table th{overflow-wrap:anywhere}
 @media(max-width:600px){.fb-experiment h3{font-size:1.05rem}.fb-revisions dl>div{grid-template-columns:1fr;gap:.1rem}.fb-table{font-size:.75rem}.fb-table td,.fb-table th{padding:.45rem .25rem}.fb-formula{font-size:.84em}}
+.concept-exercise{border-bottom:1px solid var(--line)}
+.concept-exercise:last-child{border-bottom:0}
+.concept-exercise .problem-row{border-bottom:0;padding-bottom:5px}
+.concept-editorial-link{display:inline-block;margin:0 20px 12px 64px;color:var(--primary);font-size:.9rem;font-weight:650;text-decoration:underline;text-underline-offset:3px}
+.concept-editorial-link:focus-visible{outline:2px solid var(--primary);outline-offset:3px}

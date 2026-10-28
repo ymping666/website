@@ -118,7 +118,7 @@ export const zhUI = {
   'First run downloads Pyodide. All tests run locally in a disposable Python Worker; no server-side grading or secret tests.':'首次运行会下载 Pyodide。全部测试在可终止的本地 Python Worker 中执行，没有服务器判题或隐藏测试。',
   'Sample and extended tests execute in your browser. All test assertions can be inspected; there is no secret server-side judge or anti-cheat protection.':'示例和扩展测试均在浏览器中运行。所有断言都可查看，没有隐藏的服务器判题或防作弊机制。',
   'Full editorial is free and available without solving first.':'题解完全免费，无需先完成题目。',
-  'Open editorial →':'查看题解 →', '← Back to problem list':'← 返回题库', 'Next problem →':'下一题 →',
+  'Open editorial →':'查看题解 →', 'Visual explanation →':'可视化题解 →', '← Back to problem list':'← 返回题库', 'Next problem →':'下一题 →',
   'FREE EDITORIAL':'免费题解', 'Problem contract':'题目约定', 'Reference solution (Python)':'参考实现（Python）',
   'Step-by-step reasoning':'思路解析', 'Complexity':'复杂度', 'Common mistake':'常见错误', 'Representative tests':'代表性测试',
   'Conceptual references':'知识参考', 'These sources inform the topic, not the original exercise text or tests.':'这些资料用于理解相关知识；本站的题目文字和测试为原创。',
