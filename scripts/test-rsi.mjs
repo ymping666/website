@@ -67,6 +67,12 @@ assert.equal(run.status,0,run.stderr);
 const near=(a,b)=>{if(typeof a==='number'&&typeof b==='number')assert.ok(Math.abs(a-b)<=1e-11*Math.max(1,Math.abs(a),Math.abs(b)),`${a} != ${b}`);else if(Array.isArray(a)&&Array.isArray(b)){assert.equal(a.length,b.length);a.forEach((x,i)=>near(x,b[i]));}else assert.deepEqual(a,b);};
 JSON.parse(run.stdout).forEach((expected,i)=>near(trace(cases[i].key,cases[i].input).output,expected));
 assert.equal(routerTrace('aggressive').gate.output,false);assert.equal(routerTrace('balanced').gate.output,true);assert.equal(routerTrace('overfit').gate.output,true);assert.deepEqual(routerTrace('aggressive').retainedAudit,[.5,.75]);assert.deepEqual(routerTrace('overfit').retainedAudit,[.25,.5]);
+// RSI must never change an existing course's global translation.
+const ownTranslations={...rsiTranslations};
+for(const key of Object.keys(ownTranslations))delete rsiTranslations[key];
+let existingDictionary;
+try{existingDictionary=(await loadChinese()).dictionary;}finally{Object.assign(rsiTranslations,ownTranslations);}
+for(const [en,cn] of Object.entries(ownTranslations))if(Object.hasOwn(existingDictionary,en))assert.equal(cn,existingDictionary[en],`RSI overwrites an existing translation: ${en}`);
 const zh=await loadChinese();
 // Unambiguous keys across new curricula and per-problem translations, including identical words such as Quality.
 for(const [en,cn] of Object.entries(rsiTranslations))assert.equal(zh.translate(en),cn,`RSI translation collision: ${en}`);
