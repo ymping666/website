@@ -319,4 +319,6 @@ import {coreNextProblems} from './core-next-problems.mjs';
 problems.push(...coreNextProblems);
 import {feedbackProblems} from './feedback-problems.mjs';
 problems.push(...feedbackProblems);
+import {rsiProblems} from './rsi-problems.mjs';
+problems.push(...rsiProblems);
 export const byId = Object.fromEntries(problems.map(p=>[p.id,p]));

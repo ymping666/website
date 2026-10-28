@@ -1,4 +1,5 @@
 import {feedbackConcept,feedbackChapterFor} from '../src/concept-feedback.mjs';
+import {renderRsiConcept} from './render-rsi-concept.mjs';
 import {renderFeedbackConcept} from './render-concept-feedback.mjs';
 import {foundationsConcept,foundationsChapterFor} from '../src/concept-foundations.mjs';
 import {renderFoundationsConcept} from './render-concept-foundations.mjs';
@@ -12,6 +13,7 @@ import {renderGenerativeConcept} from './render-concept-generative.mjs';
 import {generativeConcept,generativeChapterFor,generativeLabels} from '../src/concept-generative.mjs';
 const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderConceptLesson({concept,concepts,set,problems,row,a,heading,base}){
+ if(concept.slug==='recursive-self-improvement')return renderRsiConcept({concept,problems,row,a,base});
  if(concept.slug===feedbackConcept.slug||feedbackChapterFor(concept.slug))return renderFeedbackConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug===foundationsConcept.slug||foundationsChapterFor(concept.slug))return renderFoundationsConcept({concept,concepts,problems,row,a,heading,base});
  if(concept.slug===transformerConcept.slug||transformerChapterFor(concept.slug))return renderTransformerConcept({concept,concepts,problems,row,a,heading,base});

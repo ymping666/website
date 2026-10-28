@@ -1482,5 +1482,145 @@
         "output": "0.5004024235381879"
       }
     ]
+  ],
+  "rsi-select": [
+    [
+      {
+        "input": "verified_revision(scores=[0.9, 0.7, 0.8], verified=[False, True, True], costs=[1, 2, 4], budget=3)",
+        "output": "1"
+      }
+    ],
+    [
+      {
+        "input": "verified_revision(scores=[0.5, 0.5], verified=[True, True], costs=[1, 1], budget=1)",
+        "output": "0"
+      }
+    ]
+  ],
+  "rsi-stop": [
+    [
+      {
+        "input": "refinement_action(costs=[2, 2], passed=[False, False], budget=6, next_cost=2)",
+        "output": "'revise'"
+      }
+    ],
+    [
+      {
+        "input": "refinement_action(costs=[3], passed=[True], budget=3, next_cost=2)",
+        "output": "'accept'"
+      }
+    ]
+  ],
+  "rsi-filter": [
+    [
+      {
+        "input": "star_training_rows(answers=['4', '5', '6'], targets=['4', '4', '6'], rationales=['2+2', 'guess', '3+3'])",
+        "output": "[(0, '2+2', '4'), (2, '3+3', '6')]"
+      }
+    ],
+    [
+      {
+        "input": "star_training_rows(answers=['4 '], targets=['4'], rationales=['proof'])",
+        "output": "[]"
+      }
+    ]
+  ],
+  "rsi-loss": [
+    [
+      {
+        "input": "masked_token_nll(logits=[[1000, 1000], [0, 1000], [0, 0]], targets=[0, 0, 1], mask=[True, False, True])",
+        "output": "0.6931471805599453"
+      }
+    ],
+    [
+      {
+        "input": "masked_token_nll(logits=[[0, 0]], targets=[1], mask=[True])",
+        "output": "0.6931471805599453"
+      }
+    ]
+  ],
+  "rsi-update": [
+    [
+      {
+        "input": "categorical_bias_step(bias=[0, 0], target=1, lr=0.2)",
+        "output": "[-0.1, 0.1]"
+      }
+    ],
+    [
+      {
+        "input": "categorical_bias_step(bias=[0, 0], target=0, lr=0.2)",
+        "output": "[0.1, -0.1]"
+      }
+    ]
+  ],
+  "rsi-admit": [
+    [
+      {
+        "input": "admit_verified_skills(existing=['parse'], candidates=[{'id': 'route', 'checks': [True, True]}, {'id': 'unsafe', 'checks': [True, False]}])",
+        "output": "['parse', 'route']"
+      }
+    ],
+    [
+      {
+        "input": "admit_verified_skills(existing=[], candidates=[{'id': 'x', 'checks': []}])",
+        "output": "[]"
+      }
+    ]
+  ],
+  "rsi-retrieve": [
+    [
+      {
+        "input": "retrieve_skill_indices(query=[1, 0], embeddings=[[1, 0], [1, 1], [-1, 0], [0, 0]], k=3)",
+        "output": "[0, 1, 3]"
+      }
+    ],
+    [
+      {
+        "input": "retrieve_skill_indices(query=[0, 0], embeddings=[[1, 0], [0, 1]], k=2)",
+        "output": "[0, 1]"
+      }
+    ]
+  ],
+  "rsi-pareto": [
+    [
+      {
+        "input": "prompt_pareto_front(quality=[0.6, 0.8, 0.7, 0.9], costs=[1, 2, 3, 4])",
+        "output": "[0, 1, 3]"
+      }
+    ],
+    [
+      {
+        "input": "prompt_pareto_front(quality=[1, 1], costs=[2, 2])",
+        "output": "[0, 1]"
+      }
+    ]
+  ],
+  "rsi-promote": [
+    [
+      {
+        "input": "promote_scaffold(before=[0.5, 0.75], after=[0.875, 0.5], min_gain=0, max_drop=0.125)",
+        "output": "False"
+      }
+    ],
+    [
+      {
+        "input": "promote_scaffold(before=[0.5, 0.75], after=[0.875, 0.5], min_gain=0.0625, max_drop=0.25)",
+        "output": "True"
+      }
+    ]
+  ],
+  "rsi-compare": [
+    [
+      {
+        "input": "paired_improver_gain(old_runs=[{'start': 's', 'seed': 0, 'budget': 10, 'initial': 0.25, 'final': 0.5}], new_runs=[{'start': 's', 'seed': 0, 'budget': 10, 'initial': 0.25, 'final': 0.75}])",
+        "output": "0.25"
+      }
+    ],
+    [
+      {
+        "input": "paired_improver_gain(old_runs=[{'start': 's', 'seed': 0, 'budget': 1, 'initial': 0, 'final': 0.5}, {'start': 's', 'seed': 1, 'budget': 1, 'initial': 0, 'final': 0.25}], new_runs=[{'start': 's', 'seed': 1, 'budget': 1, 'initial': 0, 'final': 0.5}, {'start': 's', 'seed': 0, 'budget': 1, 'initial': 0, 'final': 0.25}])",
+        "output": "0.0"
+      }
+    ]
   ]
 }

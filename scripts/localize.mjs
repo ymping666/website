@@ -1,4 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
+import {rsiTranslations} from '../src/rsi-curriculum.mjs';
 import { zhUI, translate } from '../src/locales/zh-ui.mjs';
 import { problems } from '../src/problems.mjs';
 import { concepts } from '../src/concepts.mjs';
@@ -47,6 +48,7 @@ export async function loadChinese() {
     }
   }
   Object.assign(dictionary, searchTranslations, policyTranslations, lessonTranslations, collectionTranslations, gateStatementTranslations, conceptLessonTranslations, feedbackTranslations);
+  Object.assign(dictionary,rsiTranslations);
   return { dictionary, translate: text => translate(text, dictionary) };
 }
 

@@ -398,3 +398,5 @@ export const practiceSets = [
 }
 ];
 practiceSets.push(...feedbackSets);
+import {rsiSets} from './rsi-curriculum.mjs';
+practiceSets.push(...rsiSets);

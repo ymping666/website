@@ -31,6 +31,7 @@ export const practiceCollections = [
   description:text('Build neural network components in Python: convolutions, pooling, normalization, manual gradients and optimizer updates, with tests and solutions.','通过 Python 练习卷积、池化、归一化、手动梯度与优化器更新，分空间运算和训练原理两条方向，结合测试与完整题解理解核心计算。'),
   groups:[section('spatial','Convolution & pooling','卷积与池化',['cnn-and-pooling']),section('training','Gradients & optimization','梯度与优化',['normalization-and-gradients','sgd-adam-optimization'])]}
 ];
+practiceCollections[0].groups.push(section('self-improvement','Self-improvement: L0–L3','自我改进：L0–L3',['rsi-l0-practice','rsi-l1-practice','rsi-l2-practice','rsi-l3-practice']));
 export const collectionTranslations = {
  ...translations,
  'Choose a topic, then a learning unit.':'先选专题，再选学习单元。',
