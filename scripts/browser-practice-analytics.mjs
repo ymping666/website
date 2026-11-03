@@ -32,10 +32,26 @@ try {
     await page.locator('[data-next-practice]').first().evaluate(el=>el.addEventListener('click',event=>event.preventDefault()));
     await page.locator('[data-next-practice]').first().click();
     const calls=await page.evaluate(()=>window.recordedEvents);
-    assert.deepEqual(calls.map(call=>call[1]),['practice_run','practice_submit','practice_pass','practice_next']);
+    assert.deepEqual(calls.map(call=>call[1]),['practice_run','practice_results','practice_submit','practice_results','practice_pass','practice_next']);
     for(const call of calls) assert.deepEqual(call[2],{problem_id:'stable-softmax',content_language:language,transport_type:'beacon'});
     assert.ok(!JSON.stringify(calls).includes('private code'));
     await page.close();
+    const failurePage=await browser.newPage();
+    await failurePage.addInitScript(()=>{
+      window.recordedEvents=[];
+      window.gtag=(...args)=>window.recordedEvents.push(args);
+      window.Worker=class {
+        postMessage() { setTimeout(()=>this.onerror(new Error('private runtime details')),0); }
+        terminate() {}
+      };
+    });
+    await failurePage.goto(`${base}${prefix}problems/stable-softmax/`);
+    await failurePage.locator('#run-samples').click();
+    await failurePage.waitForFunction(()=>document.querySelector('#run-samples').disabled===false);
+    const failureCalls=await failurePage.evaluate(()=>window.recordedEvents);
+    assert.deepEqual(failureCalls.map(call=>call[1]),['practice_run','practice_runtime_failure']);
+    assert.ok(!JSON.stringify(failureCalls).includes('private runtime details'));
+    await failurePage.close();
   }
   console.log('PASS bilingual workbench event flow, no code or test payload, and next-link interaction');
 } finally { if(browser) await browser.close(); if(server) server.kill(); }

@@ -117,7 +117,8 @@ if ($('#challenge-json')) {
     active = null;
     setBusy(false);
   }
-  function fail(message, title = 'Unable to run') {
+  function fail(message, title = 'Unable to run', eventName = null) {
+    if (eventName && active && active.mode !== 'custom') track(eventName);
     if (active?.mode === 'custom') customResult.textContent = title;
     terminate(); finish();
     status.textContent = title;
@@ -231,13 +232,13 @@ if ($('#challenge-json')) {
         status.textContent = active.mode === 'custom' ? 'Running custom input…' : 'Running ' + (active.mode === 'submit' ? 'full suite' : 'samples') + '…';
         // Enforce a wall-clock limit even for Python code that never yields.
         clearTimeout(executionTimer);
-        executionTimer = setTimeout(() => fail('Your code or tests exceeded the 15-second execution limit. The Python worker was stopped; try a bounded implementation.', 'Time limit exceeded'), 15000);
+        executionTimer = setTimeout(() => fail('Your code or tests exceeded the 15-second execution limit. The Python worker was stopped; try a bounded implementation.', 'Time limit exceeded', 'practice_execution_timeout'), 15000);
       } else if (data.type === 'progress') {
         status.textContent = `Running ${data.finished}/${data.total} tests…`;
         clearTimeout(executionTimer);
-        executionTimer = setTimeout(() => fail('No test completed within 15 seconds. The Python worker was stopped.', 'Time limit exceeded'), 15000);
+        executionTimer = setTimeout(() => fail('No test completed within 15 seconds. The Python worker was stopped.', 'Time limit exceeded', 'practice_execution_timeout'), 15000);
       } else if (data.type === 'error') {
-        fail('Python runtime error: ' + data.error + '. Check your network and retry.', 'Runtime error');
+        fail('Python runtime error: ' + data.error + '. Check your network and retry.', 'Runtime error', 'practice_runtime_failure');
       } else if (data.type === 'custom-result') {
         const result = data.result;
         customResult.replaceChildren();
@@ -251,6 +252,7 @@ if ($('#challenge-json')) {
         note.textContent = 'Custom experiments do not change your solved marks. Submit to check the full suite.';
         finish();
       } else if (data.type === 'results') {
+        track('practice_results');
         const finishedAt = performance.now();
         const runningAt = active.runningAt || active.startedAt;
         metrics.hidden = false;
@@ -259,7 +261,7 @@ if ($('#challenge-json')) {
         finish();
       }
     };
-    worker.onerror = () => fail('Python worker could not load. Your browser or network may block the Pyodide CDN.', 'Runtime blocked');
+    worker.onerror = () => fail('Python worker could not load. Your browser or network may block the Pyodide CDN.', 'Runtime blocked', 'practice_runtime_failure');
     return worker;
   }
   function execute(mode) {
@@ -279,9 +281,9 @@ if ($('#challenge-json')) {
     setBusy(true);
     status.textContent = 'Preparing Python…';
     note.textContent = 'Local execution in your browser · No code sent to our server.';
-    loadingTimer = setTimeout(() => fail('Could not load Python within 90 seconds. Check your internet connection or CDN access.', 'Load timeout'), 90000);
+    loadingTimer = setTimeout(() => fail('Could not load Python within 90 seconds. Check your internet connection or CDN access.', 'Load timeout', 'practice_runtime_failure'), 90000);
     try { ensureWorker().postMessage({ type: 'run', requestId, code, tests, mode, call: customCall.value, functionName: problem.functionName }); }
-    catch (error) { fail('Unable to start Python: ' + error.message, 'Runtime blocked'); }
+    catch (error) { fail('Unable to start Python: ' + error.message, 'Runtime blocked', 'practice_runtime_failure'); }
   }
   runSamples.addEventListener('click', () => execute('samples'));
   submit.addEventListener('click', () => execute('submit'));

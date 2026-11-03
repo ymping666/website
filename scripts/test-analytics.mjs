@@ -23,12 +23,12 @@ assert.equal(context.dataLayer[1][1], measurementId);
 
 const calls=[];
 const target={gtag:(...args)=>calls.push(args)};
-for(const name of ['practice_run','practice_submit','practice_pass','practice_next']) trackPractice(target,name,'stable-softmax','zh-CN');
-assert.deepEqual(calls.map(call=>call[1]),['practice_run','practice_submit','practice_pass','practice_next']);
+for(const name of ['practice_run','practice_submit','practice_pass','practice_next','practice_results','practice_runtime_failure','practice_execution_timeout']) trackPractice(target,name,'stable-softmax','zh-CN');
+assert.deepEqual(calls.map(call=>call[1]),['practice_run','practice_submit','practice_pass','practice_next','practice_results','practice_runtime_failure','practice_execution_timeout']);
 assert.deepEqual(calls[0][2],{problem_id:'stable-softmax',content_language:'zh',transport_type:'beacon'});
 trackPractice(target,'practice_pass','user input with spaces','en');
 trackPractice(target,'unknown','stable-softmax','en');
-assert.equal(calls.length,4);
+assert.equal(calls.length,7);
 assert.doesNotThrow(()=>trackPractice({},'practice_run','stable-softmax','en'));
 assert.doesNotThrow(()=>trackPractice({gtag(){throw Error('blocked')}},'practice_run','stable-softmax','en'));
 assert.ok((await readFile(join(siteRoot,'assets/practice-analytics.mjs'),'utf8')).includes('trackPractice'));

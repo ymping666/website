@@ -1,6 +1,6 @@
 // Only send predefined practice actions and a published problem identifier.
 // No editor contents, test details, free-form input, or stored progress are sent.
-const events = new Set(['practice_run', 'practice_submit', 'practice_pass', 'practice_next']);
+const events = new Set(['practice_run', 'practice_submit', 'practice_pass', 'practice_next', 'practice_results', 'practice_runtime_failure', 'practice_execution_timeout']);
 
 export function trackPractice(target, name, problemId, language) {
   if (!events.has(name) || typeof problemId !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(problemId)) return;
