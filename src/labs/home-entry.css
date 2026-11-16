@@ -11,6 +11,16 @@
 .practice-format .practice-format-new dt{color:#4e3c89;font-weight:650}.practice-format .practice-format-new dd{color:#4e3c89;font-weight:550}
 .hub-format{margin:0 0 26px;padding:18px 20px;border:1px solid #dcd5f2;border-radius:10px;background:#f6f3ff}
 .hub-format .practice-format{font-size:14px;margin:0}.hub-format .practice-format>div{grid-template-columns:90px minmax(0,1fr)}
-.hub-heading .eyebrow{color:#51418b}
+.lab-starter{display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap;padding:20px clamp(16px,3vw,28px);margin:0 0 28px;border:1px solid #dcd5f2;border-radius:10px;background:#f6f3ff}
+.lab-starter>div:first-child{flex:1 1 320px;min-width:0}
+.lab-starter h2{color:#342759;font-size:clamp(20px,3vw,25px)}
+.lab-starter p{margin:5px 0 0;color:#555267}
+.lab-starter .lab-starter-meta{margin:0 0 6px;color:#51418b;font-size:12px;font-weight:650}
+.lab-starter-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.lab-starter-actions .button.primary{background:#5945a0;color:#fff}
+.lab-starter-actions .button.primary:hover{background:#483581}
+.lab-starter-browse{display:inline-flex;align-items:center;min-height:44px;color:#51418b;font-weight:650;text-decoration:underline;text-underline-offset:3px}
+#lab-exercises-title{scroll-margin-top:80px}
+.practice-groups+.hub-format{margin-top:30px}
 @media(max-width:600px){.home-lab-entry{align-items:flex-start;gap:12px;padding:16px;flex-direction:column}.home-lab-entry p{font-size:12px}}
 @media(max-width:600px){.practice-format>div,.hub-format .practice-format>div{grid-template-columns:1fr;gap:1px}.practice-format{gap:9px}.hub-format .practice-format{font-size:13px}}

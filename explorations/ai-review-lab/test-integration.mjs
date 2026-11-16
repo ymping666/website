@@ -36,10 +36,11 @@ try {
       assert.deepEqual([...home.matchAll(pattern)].map(x=>x[0]),[...built.matchAll(pattern)].map(x=>x[0]));
     }
     const hub=await (await fetch(origin+hubURL(locale))).text();
-    assert.ok(hub.includes(locale==='zh'?'从接手代码开始，练习新型编程面试。':'Practice a different interview format: start with existing code.'));
+    assert.ok(hub.includes(locale==='zh'?'开始调试迷宫 →':'Start maze debugging →'));
     assert.ok(hub.includes('class="practice-format"'));
     assert.ok(hub.includes(locale==='zh'?'为什么做这类练习？':'Why practice this now?'));
-    assert.ok(hub.indexOf('id="lab-context-title"')<hub.indexOf('class="scenario-cards"'));
+    assert.ok(hub.indexOf('class="lab-starter"')<hub.indexOf('class="scenario-cards"'));
+    assert.ok(hub.indexOf('class="scenario-cards"')<hub.indexOf('id="lab-context-title"'));
     assert.ok(hub.includes('canva.dev/blog/engineering/yes-you-can-use-ai-in-our-interviews/'));
     assert.ok(hub.includes('activity-7386046074240737280-wnwA'));
     assert.ok(hub.includes(`href="${homePath}"`));

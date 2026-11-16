@@ -4,7 +4,7 @@ export const searchPages = {
     title: ['AI Coding Challenges — Foundations to Frontier AI', 'AI 编程练习：从基础到 Agent、世界模型等前沿方向'],
     description: ['Practice Softmax, Attention, agents, world models and more frontier AI in Python, with browser tests, complete solutions and selected visual guides.', '从 Softmax、Attention 等基础与核心组件，到 Flow Matching、Agent、世界模型等前沿 AI 方向，通过 Python 编程练习理解原理。支持浏览器内测试、完整题解与部分交互式可视化讲解，题库持续维护与拓展。'],
     heading: ['Code AI, from foundations to the frontier.', '从基础到前沿，动手实现 AI。'],
-    intro: ['AI coding challenges from Softmax and Attention to diffusion, Flow Matching, agents, world models and more frontier AI components. Run Python in your browser, check your work with tests, and learn with complete solutions and selected visual explanations.', '通过 AI 编程练习，从 Softmax、Attention 等基础与核心组件入手，逐步探索 Diffusion、Flow Matching、Agent、世界模型等前沿 AI 方向。在浏览器编写与测试 Python，结合完整题解和部分交互式可视化讲解理解原理。题库持续维护与拓展。']
+    intro: ['AI coding challenges in Python, from Softmax to agents and world models. Write and test your code in the browser.', '用 Python 做 AI 编程练习，从 Softmax 到 Agent 和世界模型。打开浏览器即可编写和测试代码。']
   },
   '/problems/': {
     title: ['AI Coding Challenge Library — Agents, World Models & More', 'AI 编程题库：Agent、世界模型等前沿方向'],

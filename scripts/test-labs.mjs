@@ -22,6 +22,9 @@ const base=siteBase(),origin=(process.env.SITE_ORIGIN||'').replace(/\/$/,'');
 for(const locale of ['en','zh']){
   const prefix=locale==='zh'?'zh/':'';
   const home=await readFile(join(siteRoot,prefix,'index.html'),'utf8');
+  const hero=home.match(/<section class="home-hero">[\s\S]*?<\/section>/)[0];
+  assert.ok(hero.includes(`href="${base}${prefix}problems/stable-softmax/?set=attention-from-scratch" class="button primary"`));
+  assert.ok(hero.includes(locale==='zh'?'从 Softmax 开始 →':'Start with Softmax →'));
   assert.equal((home.match(/class="home-lab-entry"/g)||[]).length,1,'One small homepage entry');
   assert.ok(home.includes(`href="${base}${prefix}labs/"`));
   assert.ok(home.indexOf('class="learning-paths"')<home.indexOf('class="home-lab-entry"'));
@@ -41,7 +44,12 @@ for(const locale of ['en','zh']){
       const groups=[...html.matchAll(/<section class="practice-group" id="category-([^"]+)"[\s\S]*?<\/section>/g)];
       const review=groups.find(g=>g[1]==='review')[0];
       for(const id of ['tool-reply-review','load-balancer-review'])assert.ok(review.includes(`data-practice-id="${id}"`));
-      assert.ok(html.indexOf('id="lab-context-title"')<html.indexOf('class="practice-groups"'));
+      const starter=html.match(/<section class="lab-starter"[^>]*>[\s\S]*?<\/section>/)[0];
+      assert.ok(starter.includes(`class="button primary" href="${base}${prefix}labs/maze-debugging/"`));
+      assert.ok(starter.includes(locale==='zh'?'开始调试迷宫 →':'Start maze debugging →'));
+      assert.ok(starter.includes('href="#lab-exercises-title"'));
+      assert.ok(html.indexOf(starter)<html.indexOf('id="lab-exercises-title"'));
+      assert.ok(html.indexOf('class="practice-groups"')<html.indexOf('id="lab-context-title"'));
     }
   }
 }
@@ -58,5 +66,5 @@ for(const base of ['/','/website/']){
   assert.ok(html.includes(`href="${base}assets/labs/home-entry.css"`));
 }
 const css=await readFile(join(siteRoot,'assets/labs/home-entry.css'),'utf8');
-assert.ok(css.includes('.hub-heading .eyebrow{color:#51418b}'));
+assert.ok(css.includes('.lab-starter-actions .button.primary{background:#5945a0;color:#fff}'));
 console.log('PASS '+labPaths.length*2+' released lab routes: bilingual categories, portable runtime assets, metadata, policies, preserved draft keys and purple module styling');
